@@ -3,6 +3,7 @@
 namespace App\Queries\Shared;
 
 use App\Helpers\FilterHelper;
+use App\Models\User;
 use App\Queries\BaseQuery;
 use Spatie\QueryBuilder\AllowedFilter;
 
@@ -10,7 +11,7 @@ class UserQuery extends BaseQuery
 {
     protected function getModel(): string
     {
-        return tenant() ? \App\Models\Tenant\User::class : \App\Models\Central\User::class;
+        return User::class;
     }
 
     protected function getAllowedFilters(): array

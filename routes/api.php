@@ -1,14 +1,12 @@
 <?php
 
-use App\Http\Controllers\Central\TenantController;
-use App\Http\Controllers\Shared\AuthController;
-use App\Http\Controllers\Shared\RoleController;
-use App\Http\Controllers\Shared\UserController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::as('api.')
-    ->prefix('central')
     ->group(function () {
 
         Route::get('health', fn() => response()->json('health'));
@@ -30,16 +28,6 @@ Route::as('api.')
                 Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
             });
         });
-
-        Route::prefix('tenants')->group( function (){
-            Route::get("/", [TenantController::class, 'findAll'])->name('tenants.findAll');
-            Route::get("/{tenant:code}", [TenantController::class, 'show'])->name('tenants.show');
-            Route::put("/{tenant}", [TenantController::class, 'update'])->name('tenants.update');
-                // ->middleware('auth:sanctum');
-            Route::post("/", [TenantController::class, 'store'])->name('tenants.store');
-                // ->middleware('auth:sanctum');
-        });
-
 
         Route::middleware('auth:sanctum')->group(function (): void {
             Route::prefix('users')->group(function () {

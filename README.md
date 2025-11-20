@@ -46,8 +46,3 @@ php artisan tenants:migrate-fresh
 php artisan tenants:seed
 ```
 
-
-# Iniciar un tenant en tinker
-```
-tenancy()->initialize( Tenant::first() );
-```
