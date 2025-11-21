@@ -18,7 +18,7 @@
                     "Authentication"
                 ],
                 "summary": "Iniciar sesión",
-                "description": "Autentica un usuario y retorna un token de acceso",
+                "description": "Autentica un usuario y retorna token, datos completos del usuario y permisos",
                 "operationId": "8dcb70df1020986038d098cc08d05dae",
                 "requestBody": {
                     "required": true,
@@ -59,12 +59,83 @@
                                     "properties": {
                                         "data": {
                                             "properties": {
-                                                "user": {
+                                                "token": {
+                                                    "properties": {
+                                                        "token": {
+                                                            "type": "string",
+                                                            "format": "token",
+                                                            "example": "1|abc123..."
+                                                        },
+                                                        "expiresAt": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "example": "2025-11-21T15:01:50-06:00"
+                                                        },
+                                                        "tokenType": {
+                                                            "type": "string",
+                                                            "format": "tokenType",
+                                                            "example": "Bearer"
+                                                        }
+                                                    },
                                                     "type": "object"
                                                 },
-                                                "token": {
-                                                    "type": "string",
-                                                    "example": "1|abc123..."
+                                                "user": {
+                                                    "description": "Objeto completo del usuario, idéntico al endpoint /user",
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Admin"
+                                                        },
+                                                        "lastName": {
+                                                            "type": "string",
+                                                            "example": "System"
+                                                        },
+                                                        "email": {
+                                                            "type": "string",
+                                                            "example": "admin@acsyt.com"
+                                                        },
+                                                        "language": {
+                                                            "type": "string",
+                                                            "example": "en"
+                                                        },
+                                                        "roles": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "string"
+                                                            },
+                                                            "example": [
+                                                                "admin"
+                                                            ]
+                                                        },
+                                                        "permissions": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "string"
+                                                            },
+                                                            "example": [
+                                                                "users.create"
+                                                            ]
+                                                        },
+                                                        "active": {
+                                                            "type": "boolean",
+                                                            "example": true
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "permissions": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "example": [
+                                                        "users.create",
+                                                        "users.view"
+                                                    ]
                                                 }
                                             },
                                             "type": "object"
@@ -83,7 +154,14 @@
                         "description": "Credenciales inválidas"
                     },
                     "422": {
-                        "description": "Error de validación"
+                        "description": "Error de validación",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrors"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -94,7 +172,6 @@
                     "Authentication"
                 ],
                 "summary": "Obtener usuario autenticado",
-                "description": "Retorna la información del usuario actualmente autenticado",
                 "operationId": "b3c2811c57c1ffa70c76a938f23f36a6",
                 "responses": {
                     "200": {
@@ -102,6 +179,57 @@
                         "content": {
                             "application/json": {
                                 "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "John"
+                                                },
+                                                "lastName": {
+                                                    "type": "string",
+                                                    "example": "Doe"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "format": "email",
+                                                    "example": "john@example.com"
+                                                },
+                                                "language": {
+                                                    "type": "string",
+                                                    "example": "en"
+                                                },
+                                                "roles": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "example": [
+                                                        "admin"
+                                                    ]
+                                                },
+                                                "permissions": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "example": [
+                                                        "users.create",
+                                                        "users.view"
+                                                    ]
+                                                },
+                                                "active": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
                                     "type": "object"
                                 }
                             }
@@ -124,11 +252,10 @@
                     "Authentication"
                 ],
                 "summary": "Cerrar sesión",
-                "description": "Invalida el token de acceso actual del usuario",
                 "operationId": "69281b12abb272c76871f19cb17ca563",
                 "responses": {
                     "200": {
-                        "description": "Sesión cerrada exitosamente",
+                        "description": "Sesión cerrada",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -158,13 +285,47 @@
                 ]
             }
         },
+        "/api/auth/permissions": {
+            "get": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Obtener permisos del usuario",
+                "operationId": "0d3303d437e3f080351caaf34b8a90b3",
+                "responses": {
+                    "200": {
+                        "description": "Lista de permisos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "example": "users.create"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/auth/forgot-password": {
             "post": {
                 "tags": [
                     "Password Reset"
                 ],
                 "summary": "Solicitar recuperación de contraseña",
-                "description": "Envía un email con instrucciones para recuperar la contraseña",
                 "operationId": "cff9b52a898f73f39d684747bd69c4e1",
                 "requestBody": {
                     "required": true,
@@ -207,7 +368,14 @@
                         }
                     },
                     "422": {
-                        "description": "Error de validación"
+                        "description": "Error de validación",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrors"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -217,8 +385,7 @@
                 "tags": [
                     "Password Reset"
                 ],
-                "summary": "Enviar link de reset",
-                "description": "Envía email con link para resetear contraseña",
+                "summary": "Enviar link de reset (Alias)",
                 "operationId": "65714c4affcd029eab19c4a7033320d8",
                 "requestBody": {
                     "required": true,
@@ -269,7 +436,6 @@
                     "Password Reset"
                 ],
                 "summary": "Resetear contraseña",
-                "description": "Resetea la contraseña del usuario usando el token recibido por email",
                 "operationId": "6af92e090f994419a2295111b391a205",
                 "requestBody": {
                     "required": true,
@@ -290,7 +456,7 @@
                                     },
                                     "token": {
                                         "type": "string",
-                                        "example": "abc123token456"
+                                        "example": "abc123token..."
                                     },
                                     "password": {
                                         "type": "string",
@@ -329,7 +495,7 @@
                         }
                     },
                     "422": {
-                        "description": "Token inválido o expirado"
+                        "description": "Token inválido o datos incorrectos"
                     }
                 }
             }
@@ -340,7 +506,6 @@
                     "Password Reset"
                 ],
                 "summary": "Validar token de reset",
-                "description": "Valida si un token de reset de contraseña es válido y no ha expirado",
                 "operationId": "fad57a1001bc376aa7bd0de86cb74170",
                 "parameters": [
                     {
@@ -363,7 +528,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Token válido",
+                        "description": "Resultado validación",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -377,9 +542,6 @@
                                 }
                             }
                         }
-                    },
-                    "422": {
-                        "description": "Token inválido"
                     }
                 }
             }
@@ -389,9 +551,8 @@
                 "tags": [
                     "Email Verification"
                 ],
-                "summary": "Enviar email de verificación",
-                "description": "Envía un email con link para verificar la dirección de correo",
-                "operationId": "3c39a6007b749f628dfe2c7b41fcb249",
+                "summary": "Reenviar email de verificación",
+                "operationId": "15a06d02734b786571d142710eed9fd2",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -431,66 +592,16 @@
                                 }
                             }
                         }
-                    }
-                }
-            }
-        },
-        "/api/auth/verify-email-token": {
-            "post": {
-                "tags": [
-                    "Email Verification"
-                ],
-                "summary": "Verificar email con token",
-                "description": "Verifica el email del usuario usando un token",
-                "operationId": "0840a94858b92e59e5c8332ba75fa74b",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "email",
-                                    "token"
-                                ],
-                                "properties": {
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "admin@acsyt.com"
-                                    },
-                                    "token": {
-                                        "type": "string",
-                                        "example": "verification-token"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Email verificado",
+                    },
+                    "422": {
+                        "description": "Error de validación",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Email verified successfully"
-                                        }
-                                    },
-                                    "type": "object"
+                                    "$ref": "#/components/schemas/ValidationErrors"
                                 }
                             }
                         }
-                    },
-                    "422": {
-                        "description": "Token inválido"
                     }
                 }
             }
@@ -500,14 +611,12 @@
                 "tags": [
                     "Email Verification"
                 ],
-                "summary": "Verificar email con link firmado",
-                "description": "Verifica el email usando un link firmado enviado por email",
+                "summary": "Verificar email (Link)",
                 "operationId": "8f566d336ee057246d3749b25b340532",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "ID del usuario",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -516,7 +625,6 @@
                     {
                         "name": "hash",
                         "in": "path",
-                        "description": "Hash de verificación",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -525,7 +633,6 @@
                     {
                         "name": "signature",
                         "in": "query",
-                        "description": "Firma del link (generada automáticamente)",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -554,15 +661,33 @@
                     },
                     "400": {
                         "description": "Link inválido o expirado"
-                    },
-                    "404": {
-                        "description": "Usuario no encontrado"
                     }
                 }
             }
         }
     },
     "components": {
+        "schemas": {
+            "ValidationErrors": {
+                "title": "Errores de Validación",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "The given data was invalid."
+                    },
+                    "errors": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "type": "object"
+            }
+        },
         "securitySchemes": {
             "sanctum": {
                 "type": "http",
