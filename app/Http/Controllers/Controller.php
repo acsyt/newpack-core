@@ -9,15 +9,11 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Spatie\QueryBuilder\QueryBuilder;
 
-
 /**
  * @OA\Info(
- *     title="NewPack API Documentation",
  *     version="1.0.0",
- *     description="API Documentation for NewPack application",
- *     @OA\Contact(
- *         email="support@newpack.com"
- *     )
+ *     title="NewPack API Documentation",
+ *     description="Documentación completa de la API de NewPack",
  * )
  *
  * @OA\Server(
@@ -30,7 +26,22 @@ use Spatie\QueryBuilder\QueryBuilder;
  *     type="http",
  *     scheme="bearer",
  *     bearerFormat="JWT",
- *     description="Enter your bearer token"
+ *     description="Ingresa tu token de autenticación Sanctum"
+ * )
+ *
+ * @OA\Tag(
+ *     name="Authentication",
+ *     description="Endpoints de autenticación de usuarios"
+ * )
+ *
+ * @OA\Tag(
+ *     name="Users",
+ *     description="Gestión de usuarios"
+ * )
+ *
+ * @OA\Tag(
+ *     name="Roles",
+ *     description="Gestión de roles y permisos"
  * )
  */
 abstract class Controller

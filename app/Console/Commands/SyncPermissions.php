@@ -51,6 +51,8 @@ class SyncPermissions extends Command
 
             $this->syncDatabase();
 
+            app()[PermissionRegistrar::class]->forgetCachedPermissions();
+
             $this->info('Permissions synchronized successfully.');
             return 0;
         } catch (\Exception $e) {

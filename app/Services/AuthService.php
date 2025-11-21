@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Services;
 
 use App\Exceptions\CustomException;
@@ -8,324 +7,289 @@ use App\Models\User;
 use App\Models\Role;
 use App\Models\UserToken;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Hash;
 
-
 class AuthService
 {
-
-    public function login(array $data)
-    {
+    /**
+     * Login con protección correcta contra Timing Attacks
+     */
+    public function login(array $data): array {
         $email = $data['email'];
         $password = $data['password'];
         $remember = $data['remember'] ?? false;
 
-        $fakeHash = '$2y$10$usesomesillystringfore7hnbRJHxXVLeakoG8K30oukPsA.ztMG';
+        $user = User::with('roles.permissions')->firstWhere('email', $email);
 
-        $user = null;
-        $found = false;
-        $anyHashCheck = false;
+        //
+        if (!$user || !Hash::check($password, $user->password)) {
 
-        $candidate = User::firstWhere('email', $email);
 
-        if (!$candidate) {
-            Hash::check($password, $fakeHash);
-            $anyHashCheck = true;
+            if (!$user) {
+                Hash::check($password, '$2y$10$usesomesillystringfore7hnbRJHxXVLeakoG8K30oukPsA.ztMG');
+            }
+
+            throw ValidationException::withMessages(['email' => ['Invalid username or password']]);
         }
 
-        if (isset($candidate->active) && !$candidate->active) {
+        if (isset($user->active) && !$user->active) {
             throw ValidationException::withMessages([
                 'email' => ['Your account has been deactivated'],
             ]);
         }
 
-        if (Hash::check($password, $candidate->password)) {
-            $user = $candidate;
-            $found = true;
-            $anyHashCheck = true;
-        } else {
-            Hash::check($password, $fakeHash);
-            $anyHashCheck = true;
-        }
-
-        if (!$anyHashCheck) Hash::check($password, $fakeHash);
-
-        if (!$found) throw ValidationException::withMessages(['email' => ['Invalid username or password'],]);
-
         $userData = $this->getUserData($user);
 
         return [
-            'token'         => $this->generateToken($user, $remember),
-            'user'          => $userData,
-            'permissions'   => $userData['permissions'],
+            'token' => $this->generateToken($user, $remember),
+            'user' => $userData,
+            'permissions' => $userData['permissions'],
         ];
     }
 
-    public function getUserData($user)
-    {
-        $roleNames = $user->getRoleNames() ?? [];
-        $roles = Role::whereIn('name', $roleNames)->with('permissions')->get();
-        $permissions = $roles->pluck('permissions')->flatten()->pluck('name')->unique();
+    public function getUserData(User $user): array {
+
+        $permissions = $this->extractPermissions($user);
 
         return [
-            'id'                => $user->id,
-            'name'              => $user->name,
-            'lastName'          => $user->last_name,
-            'email'             => $user->email,
-            'language'          => $user->language ?? 'en',
-            'roles'             => $roleNames,
-            'permissions'       => $permissions,
-            'active'            => $user->active,
+            'id'            => $user->id,
+            'name'          => $user->name,
+            'lastName'      => $user->last_name ?? '',
+            'email'         => $user->email,
+            'language'      => $user->language ?? 'en',
+            'roles'         => $user->getRoleNames(),
+            'permissions'   => $permissions,
+            'active'        => $user->active,
         ];
     }
 
-    public function generateToken($model, $remember): array
-    {
+    public function generateToken(User $model, bool $remember): array {
         $expiresAt = $remember
             ? Carbon::now()->addWeek()
             : Carbon::now()->addHours(24);
+
         $accessToken = $model->createToken('access_token', ['*'], $expiresAt);
-        $expirationTime = Carbon::parse($accessToken->accessToken->expires_at)->toIso8601String();
+
         return [
-            'token'     => $accessToken->plainTextToken,
-            'expiresAt' => $expirationTime,
+            'token' => $accessToken->plainTextToken,
+            'expiresAt' => $accessToken->accessToken->expires_at->toIso8601String(),
             'tokenType' => 'Bearer'
         ];
     }
 
-    public function getUserPermissions($user)
-    {
-        $role = $user->roles->first();
-        if (!$role) return [];
-        $permissions = $role->permissions->pluck('name');
-        return $permissions->toArray();
+    public function getUserPermissions(User $user): array {
+        return $this->extractPermissions($user)->toArray();
     }
 
-    public function getBootstrapData() {
-        $user = null;
-        $userData = null;
-        $permissions = [];
-
-        $user = Auth::guard('sanctum')->user();
-        if( $user ) {
-            $userData = $this->getUserData($user);
-            $permissions = $userData['permissions'];
-        }
-
-        return [
-            'user'          => $userData,
-            'permissions'   => $permissions,
-        ];
+    private function extractPermissions(User $user) {
+        return $user->roles->flatMap(function ($role) {
+            return $role->permissions;
+        })->pluck('name')->unique()->values();
     }
 
-    public function validateResetToken($token, $email): bool
-    {
+    public function validateResetToken(string $token, string $email): bool {
         try {
-            $resetData = UserToken::where('email', $email)
-                ->where('type', UserToken::TYPE_PASSWORD_RESET)
-                ->where('used', false)
-                ->first();
+            $resetToken = $this->findValidToken($email, $token, UserToken::TYPE_PASSWORD_RESET);
 
-            if (!$resetData || !Hash::check($token, $resetData->token)) return false;
-
-            if ($resetData->expires_at && Carbon::now()->isAfter($resetData->expires_at)) {
-                $resetData->delete();
-                return false;
-            }
-
-            if (!$resetData->resettable) return false;
+            if (!$resetToken) return false;
+            if (!$resetToken->resettable) return false;
 
             return true;
-        } catch (CustomException $e) {
-            DB::rollBack();
-            throw $e;
+
         } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('Error validating reset token', [
-                'email' => $email,
-                'error' => $e->getMessage()
-            ]);
-            throw new CustomException('Error validating the reset token');
+            Log::error('Error validating reset token', ['email' => $email, 'error' => $e->getMessage()]);
+
+            return false;
         }
     }
 
-    public function resetPassword($email, $token, $password): bool
-    {
+    public function resetPassword(string $email, string $token, string $password): bool {
         try {
             DB::beginTransaction();
 
-            $resetToken = UserToken::where('email', $email)
-                ->where('type', UserToken::TYPE_PASSWORD_RESET)
-                ->where('used', false)
-                ->where('expires_at', '>', now())
-                ->get()
-                ->first(function ($tokenRecord) use ($token) {
-                    return Hash::check($token, $tokenRecord->token);
-                });
+            $resetToken = $this->findValidToken($email, $token, UserToken::TYPE_PASSWORD_RESET);
 
             if (!$resetToken) throw new CustomException('Invalid or expired reset token');
 
             $user = $resetToken->resettable;
 
-            $user = User::where('email', $email)->first();
-
             if (!$user) throw new CustomException('No user found with that email address');
 
-            if (Hash::check($password, $user->password)) throw new CustomException('You cannot use your previous password');
+            if (Hash::check($password, $user->password)) {
+                throw new CustomException('You cannot use your previous password');
+            }
 
-            $user->password = $password;
+            $user->password = Hash::make($password);
             $user->save();
 
             $resetToken->markAsUsed();
 
+
             UserToken::where('email', $email)
                 ->where('type', UserToken::TYPE_PASSWORD_RESET)
-                ->where('id', '!=', $resetToken->id)
                 ->delete();
 
             $user->tokens()->delete();
 
             DB::commit();
-
             return true;
+
         } catch (CustomException $e) {
             DB::rollBack();
             throw $e;
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error resetting password', [
-                'email' => $email,
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
+            Log::error('Error resetting password', ['email' => $email, 'error' => $e->getMessage()]);
             throw new CustomException('Error resetting password');
         }
     }
 
-
-    public function forgotPassword($email): void
-    {
+    public function forgotPassword(string $email): void {
         try {
-            DB::beginTransaction();
-
-            $this->checkEmailVerificationLimits($email);
+            $this->checkPasswordResetLimits($email);
 
             $user = User::firstWhere('email', $email);
-
             if (!$user) throw new CustomException('No user found with the provided email address');
 
-            $token = Str::random(32);
+            DB::beginTransaction();
 
             UserToken::where('email', $email)
                 ->where('type', UserToken::TYPE_PASSWORD_RESET)
                 ->delete();
 
+            $plainToken = Str::random(32);
+
             $verificationToken = new UserToken([
                 'email' => $email,
-                'token' => Hash::make($token),
+                'token' => Hash::make($plainToken),
                 'type' => UserToken::TYPE_PASSWORD_RESET,
+                'created_at' => now(),
+                'expires_at' => now()->addHour(),
             ]);
 
             $verificationToken->resettable()->associate($user);
             $verificationToken->save();
 
-            // $this->emailService->sendPasswordResetEmail($user, $token);
+            // $this->emailService->sendPasswordResetEmail($user, $plainToken);
 
             DB::commit();
 
-            return;
         } catch (CustomException $e) {
             DB::rollBack();
             throw $e;
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error creating verification token', [
-                'email' => $email,
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
+            Log::error('Error creating verification token', ['email' => $email, 'error' => $e->getMessage()]);
             throw new CustomException('Error creating verification token');
         }
     }
 
-    public function verifyEmail($email, $token): bool
-    {
+    public function verifyEmail(string $email, string $token): bool {
         try {
             DB::beginTransaction();
 
-            $verificationToken = UserToken::where('email', $email)
-                ->where('type', UserToken::TYPE_EMAIL_VERIFICATION)
-                ->where('used', false)
-                ->where('expires_at', '>', now())
-                ->get()
-                ->first(function ($tokenRecord) use ($token) {
-                    return Hash::check($token, $tokenRecord->token);
-                });
+            $verificationToken = $this->findValidToken($email, $token, UserToken::TYPE_EMAIL_VERIFICATION);
 
             if (!$verificationToken) throw new CustomException('Invalid or expired verification token');
 
             $user = $verificationToken->resettable;
-
             if (!$user) throw new CustomException('User not found');
 
-            $user->email_verified_at = now();
-            $user->save();
-
-            $verificationToken->markAsUsed();
+            if (!$user->hasVerifiedEmail()) {
+                $user->markEmailAsVerified();
+            }
 
             UserToken::where('email', $email)
                 ->where('type', UserToken::TYPE_EMAIL_VERIFICATION)
-                ->where('id', '!=', $verificationToken->id)
                 ->delete();
 
             DB::commit();
-
             return true;
+
         } catch (CustomException $e) {
             DB::rollBack();
             throw $e;
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error verifying email', [
-                'email' => $email,
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
+            Log::error('Error verifying email', ['email' => $email, 'error' => $e->getMessage()]);
             throw new CustomException('Error verifying email');
         }
     }
 
-    private function checkPasswordResetLimits($email): void
-    {
-        $activeCount = UserToken::where('email', $email)
-            ->where('type', UserToken::TYPE_PASSWORD_RESET)
-            ->where('expires_at', '>', now())
+    private function findValidToken(string $email, string $plainToken, string $type): ?UserToken {
+        $candidates = UserToken::where('email', $email)
+            ->where('type', $type)
             ->where('used', false)
-            ->count();
+            ->where('expires_at', '>', now())
+            ->get();
 
-        if ($activeCount >= 3) throw new CustomException('You have reached the maximum number of reset requests.');
-
-        $recentCount = UserToken::where('email', $email)
-            ->where('type', UserToken::TYPE_PASSWORD_RESET)
-            ->where('created_at', '>=', Carbon::now()->subHour())
-            ->count();
-
-        if ($recentCount >= 5) throw new CustomException('You have exceeded the hourly request limit.');
-
-        // $lastToken = UserToken::where('email', $email)
-        //     ->where('type', UserToken::TYPE_PASSWORD_RESET)
-        //     ->orderBy('created_at', 'desc')
-        //     ->first();
-        // if ($lastToken && $lastToken->created_at->diffInMinutes(now()) < 1) throw new CustomException('You must wait 1 minute before requesting another token.');
+        return $candidates->first(function ($tokenRecord) use ($plainToken) {
+            return Hash::check($plainToken, $tokenRecord->token);
+        });
     }
 
-    private function checkEmailVerificationLimits($email): void
-    {
+    private function checkPasswordResetLimits(string $email): void {
+        $recentCount = UserToken::where('email', $email)
+            ->where('type', UserToken::TYPE_PASSWORD_RESET)
+            ->where('created_at', '>=', now()->subHour())
+            ->count();
+
+        if ($recentCount >= 5) {
+            throw new CustomException('You have exceeded the hourly request limit.');
+        }
+    }
+
+
+    public function resendVerificationEmail(string $email): void {
+        try {
+            $this->checkEmailVerificationLimits($email);
+
+            $user = User::firstWhere('email', $email);
+
+            if (!$user) throw new CustomException('User not found');
+            if ($user->hasVerifiedEmail()) throw new CustomException('Email already verified');
+
+            DB::beginTransaction();
+
+            UserToken::where('email', $email)
+                ->where('type', UserToken::TYPE_EMAIL_VERIFICATION)
+                ->delete();
+
+            $plainToken = Str::random(32);
+
+            $verificationToken = new UserToken([
+                'email' => $email,
+                'token' => Hash::make($plainToken),
+                'type' => UserToken::TYPE_EMAIL_VERIFICATION,
+                'created_at' => now(),
+                'expires_at' => now()->addHours(24),
+            ]);
+
+            $verificationToken->resettable()->associate($user);
+            $verificationToken->save();
+
+            // $this->emailService->sendVerificationEmail($user, $plainToken);
+
+            DB::commit();
+
+        } catch (CustomException $e) {
+            DB::rollBack();
+            throw $e;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error sending verification email', [
+                'email' => $email,
+                'error' => $e->getMessage()
+            ]);
+            throw new CustomException('Error sending verification email');
+        }
+    }
+
+    private function checkEmailVerificationLimits(string $email): void {
         $activeCount = UserToken::where('email', $email)
             ->where('type', UserToken::TYPE_EMAIL_VERIFICATION)
             ->where('expires_at', '>', now())

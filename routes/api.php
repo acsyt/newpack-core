@@ -6,22 +6,22 @@ use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::as('api.')
+Route:: as('api.')
     ->group(function () {
-
-        Route::get('health', fn() => response()->json('health'));
 
         Route::group(['prefix' => 'auth'], function () {
             Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
+
             Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('password.reset');
-            Route::post('/send-reset-link', [AuthController::class, 'sendResetLink'])->name('password.send_reset_link');
+            Route::post('/send-reset-link', [AuthController::class, 'forgotPassword'])->name('password.send_reset_link');
+
             Route::get('/validate-token', [AuthController::class, 'validateToken'])->name('password.validate_token');
             Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
+
             Route::post('/send-verification-email', [AuthController::class, 'sendVerificationEmail'])->name('auth.send_verification');
+
             Route::post('/verify-email-token', [AuthController::class, 'verifyEmailWithToken'])->name('auth.verify_email_token');
             Route::get('/verify-email/{id}/{hash}', [AuthController::class, 'verifyEmail'])->name('verification.verify');
-            Route::post('/verify-email', [AuthController::class, 'sendVerificationEmail'])->name('auth.verify_email');
-            Route::get('/bootstrap', [AuthController::class, 'bootstrap'])->name('auth.bootstrap');
 
             Route::middleware(['auth:sanctum'])->group(function () {
                 Route::get('/user', [AuthController::class, 'getUser'])->name('auth.user');

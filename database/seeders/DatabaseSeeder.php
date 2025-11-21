@@ -8,23 +8,31 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
+use Illuminate\Support\Str;use Spatie\Permission\PermissionRegistrar;
 
 class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
 
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
         Artisan::call('sync:permissions');
 
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
+
+        $this->createAdminUser();
+
+        if (app()->environment('local')) {
+            $this->createDummyUsers();
+        }
+    }
+
+    private function createAdminUser(): void
+    {
         $admin = User::firstOrNew(['email' => 'admin@acsyt.com']);
 
         if (!$admin->exists) {
-            $admin->password = Hash::make('123456');
+            $admin->password = Hash::make(env('ADMIN_PASSWORD', '123456'));
             $admin->remember_token = Str::random(10);
             $admin->email_verified_at = now();
         }
@@ -32,19 +40,26 @@ class DatabaseSeeder extends Seeder
         $admin->name = 'Admin';
         $admin->last_name = 'System';
         $admin->language = 'en';
+        $admin->active = true;
 
         $admin->save();
 
-        $admin->syncRoles(['admin']);
+        $roleAdmin = Role::where('name', 'admin')->first();
 
-        if (app()->environment('local')) {
-            User::factory()
-                ->count(50)
-                ->create()
-                ->each(function ($user) {
-                    $user->assignRole('admin');
-                });
+        if ($roleAdmin) {
+            $admin->syncRoles($roleAdmin);
         }
+    }
 
+    private function createDummyUsers(): void
+    {
+        $roleAdmin = Role::where('name', 'admin')->first();
+
+        User::factory()
+            ->count(50)
+            ->create()
+            ->each(function (User $user) use( $roleAdmin ) {
+                $user->assignRole($roleAdmin);
+            });
     }
 }

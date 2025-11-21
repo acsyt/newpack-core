@@ -16,13 +16,14 @@ class UserController extends Controller
 
     public function __construct(
         private readonly UserQuery $userQuery,
-    ) {}
+    ) {
+    }
 
 
     public function findAll()
     {
         $query = $this->userQuery->paginated(request());
-        return UserResource::collection( $query );
+        return UserResource::collection($query);
     }
 
     public function show($id)
@@ -35,21 +36,21 @@ class UserController extends Controller
     public function store(StoreUserRequest $request)
     {
         $data = $request->validated();
-        $user = app(CreateUserAction::class)->handle( $data );
+        $user = app(CreateUserAction::class)->handle($data);
         return response()->json([
-            'data'      => $user,
-            'message'   => 'User created successfully'
+            'data' => $user,
+            'message' => 'User created successfully'
         ], 201);
     }
 
     public function update(UpdateUserRequest $request, $id): Response
     {
         $data = $request->validated();
-        $updatedUser = app(UpdateUserAction::class)->handle( $id, $data );
+        $updatedUser = app(UpdateUserAction::class)->handle($id, $data);
 
         return response()->json([
-            'data'      => $updatedUser,
-            'message'   => 'User updated successfully'
+            'data' => $updatedUser,
+            'message' => 'User updated successfully'
         ]);
     }
 
