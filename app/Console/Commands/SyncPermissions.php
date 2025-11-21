@@ -47,15 +47,12 @@ class SyncPermissions extends Command
         try {
             $this->info('Synchronizing permissions in database...');
 
-            app()[PermissionRegistrar::class]->forgetCachedPermissions();
-
             $this->syncDatabase();
-
-            app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
             $this->info('Permissions synchronized successfully.');
             return 0;
         } catch (\Exception $e) {
+
             $this->error("Error during synchronization: {$e->getMessage()}");
             return 1;
         }
@@ -64,13 +61,6 @@ class SyncPermissions extends Command
     private function syncDatabase()
     {
         DB::transaction(function () {
-            foreach ($this->roles as $role) {
-                Role::updateOrCreate(
-                    ['name' => $role['name'], 'guard_name' => 'web'],
-                    ['description' => $role['description'] ?? '']
-                );
-            }
-
             $configPermissions = $this->allPermissions;
             $configNames = $configPermissions->pluck('name')->toArray();
 
@@ -120,6 +110,18 @@ class SyncPermissions extends Command
                     ]);
                     $this->info("Creado: {$permName}");
                 }
+            }
+
+            app()[PermissionRegistrar::class]->forgetCachedPermissions();
+
+            foreach ($this->roles as $role) {
+                Role::updateOrCreate(
+                    ['name' => $role['name'], 'guard_name' => 'web'],
+                    [
+                        'description' => $role['description'] ?? '',
+                        'active' => $role['active'] ?? true,
+                    ]
+                );
             }
 
             $this->assignPermissionsToRoles($configPermissions);

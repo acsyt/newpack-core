@@ -16,9 +16,17 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        Artisan::call('sync:permissions');
+        $this->command->info('Synchronizing permissions and roles...');
 
-        app()[PermissionRegistrar::class]->forgetCachedPermissions();
+        $exitCode = Artisan::call('sync:permissions');
+        $output = Artisan::output();
+
+        $this->command->line($output);
+
+        if ($exitCode !== 0) {
+            $this->command->error('Failed to sync permissions. Exit code: ' . $exitCode);
+            return;
+        }
 
         $this->createAdminUser();
 

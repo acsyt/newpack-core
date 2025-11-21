@@ -3,7 +3,20 @@
 namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use OpenApi\Attributes as OA;
 
+/**
+ * @OA\Schema(
+ *     schema="PermissionResource",
+ *     title="Permission Resource",
+ *     description="Permission resource representation",
+ *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(property="name", type="string", example="create_users"),
+ *     @OA\Property(property="description", type="string", example="Create new users"),
+ *     @OA\Property(property="createdAt", type="string", format="date-time"),
+ *     @OA\Property(property="updatedAt", type="string", format="date-time")
+ * )
+ */
 class PermissionResource extends JsonResource
 {
     /**

@@ -3,7 +3,26 @@
 namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use OpenApi\Attributes as OA;
 
+/**
+ * @OA\Schema(
+ *     schema="RoleResource",
+ *     title="Role Resource",
+ *     description="Role resource representation",
+ *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(property="name", type="string", example="admin"),
+ *     @OA\Property(property="description", type="string", example="Administrator role"),
+ *     @OA\Property(property="active", type="boolean", example=true),
+ *     @OA\Property(
+ *         property="permissions",
+ *         type="array",
+ *         @OA\Items(ref="#/components/schemas/PermissionResource")
+ *     ),
+ *     @OA\Property(property="createdAt", type="string", format="date-time"),
+ *     @OA\Property(property="updatedAt", type="string", format="date-time")
+ * )
+ */
 class RoleResource extends JsonResource
 {
     /**

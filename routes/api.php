@@ -41,10 +41,10 @@ Route:: as('api.')
             });
 
             Route::prefix('roles')->group(function () {
-                Route::get("/", [RoleController::class, 'findAll'])->name('roles.findAll');
-                Route::get("/{role}", [RoleController::class, 'findById'])->name('roles.findById');
-                Route::post('/', [RoleController::class, 'createRole'])->name('roles.createRole');
-                Route::put("/{role}", [RoleController::class, 'updateRole'])->name('roles.updateRole');
+                Route::get("/", [RoleController::class, 'findAll'])->name('roles.index');
+                Route::get("/{role}", [RoleController::class, 'show'])->name('roles.show');
+                Route::post('/', [RoleController::class, 'store'])->name('roles.store');
+                Route::put("/{role}", [RoleController::class, 'update'])->name('roles.update');
             });
         });
     });

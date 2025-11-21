@@ -71,7 +71,7 @@ abstract class BaseQuery
         return $this->buildQuery($request)->count();
     }
 
-    protected function buildQuery(Request $request = null): QueryBuilder
+    protected function buildQuery(Request $request): QueryBuilder
     {
         $query = QueryBuilder::for($this->getModel())
             ->allowedFilters($this->getAllowedFilters())
@@ -91,7 +91,7 @@ abstract class BaseQuery
         return $query;
     }
 
-    public function getQueryBuilder(Request $request = null): QueryBuilder
+    public function getQueryBuilder(Request $request): QueryBuilder
     {
         return $this->buildQuery($request);
     }
