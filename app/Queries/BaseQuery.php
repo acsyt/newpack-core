@@ -2,6 +2,7 @@
 
 namespace App\Queries;
 
+use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -21,23 +22,31 @@ abstract class BaseQuery
 
     abstract protected function getIncludes(): array;
 
-    public function paginated(Request $request): Collection | LengthAwarePaginator {
+    public function paginated(Request $request, ?Closure $extraQuery = null): Collection | LengthAwarePaginator {
         $hasPagination = $request->boolean('has_pagination', true);
+        $perPage = $request->integer('per_page', 10);
 
-        $perPage = $request->integer('per_page', default: 10);
+        $query = $this->buildQuery($request);
+
+        if ($extraQuery) {
+            $extraQuery($query);
+        }
 
         if ($hasPagination) {
-            return $this->buildQuery($request)
-                ->paginate($perPage);
+            return $query->paginate($perPage);
         } else {
-            return $this->get($request);
+            return $query->get();
         }
     }
 
-    public function get(Request $request): Collection {
+    public function get(Request $request, ?Closure $extraQuery = null): Collection {
         $query = $this->buildQuery($request);
 
-        if ($request && $request->has('limit')) {
+        if ($extraQuery) {
+            $extraQuery($query);
+        }
+
+        if ($request->has('limit')) {
             $limit = $request->integer('limit');
             if ($limit > 0) {
                 $query->limit($limit);
