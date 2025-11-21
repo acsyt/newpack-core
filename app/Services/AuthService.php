@@ -1,16 +1,12 @@
 <?php
 
 
-namespace App\Services\Shared;
+namespace App\Services;
 
 use App\Exceptions\CustomException;
-use App\Models\Central\User as CentralUser;
-use App\Models\Shared\Role;
-use App\Models\Shared\UserToken;
-use App\Models\Tenant\Resident;
-use App\Models\Tenant\User;
-use App\Models\Tenant;
-use App\StateMachines\ResidentStateMachine;
+use App\Models\User;
+use App\Models\Role;
+use App\Models\UserToken;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -23,82 +19,55 @@ use Illuminate\Support\Facades\Hash;
 class AuthService
 {
 
-    private const USER_TYPES = [
-        CentralUser::class  => 'central-user',
-        User::class         => 'tenant-user',
-    ];
-
-    public function login(array $data, ?Tenant $tenant = null)
+    public function login(array $data)
     {
         $email = $data['email'];
         $password = $data['password'];
         $remember = $data['remember'] ?? false;
 
-        $models = $this->getAuthModels($tenant);
         $fakeHash = '$2y$10$usesomesillystringfore7hnbRJHxXVLeakoG8K30oukPsA.ztMG';
 
         $user = null;
         $found = false;
         $anyHashCheck = false;
 
-        foreach ($models as $model) {
-            $candidate = $model::where('email', $email)
-                ->first();
+        $candidate = User::firstWhere('email', $email);
 
-            if (!$candidate) {
-                Hash::check($password, $fakeHash);
-                $anyHashCheck = true;
-                continue;
-            }
+        if (!$candidate) {
+            Hash::check($password, $fakeHash);
+            $anyHashCheck = true;
+        }
 
-            if ($tenant && $tenant->property) {
-                if (!$tenant->property->active) {
-                    throw ValidationException::withMessages([
-                        'username' => [__('app.modules.auth.errors.propertyInactive')],
-                    ]);
-                }
-            }
+        if (isset($candidate->active) && !$candidate->active) {
+            throw ValidationException::withMessages([
+                'email' => ['Your account has been deactivated'],
+            ]);
+        }
 
-            if (isset($candidate->active) && !$candidate->active) {
-                throw ValidationException::withMessages([
-                    'username' => [__('app.modules.auth.errors.accountDeactivated')],
-                ]);
-            }
-
-            if (Hash::check($password, $candidate->password)) {
-                $user = $candidate;
-                $found = true;
-                $anyHashCheck = true;
-                break;
-            } else {
-                Hash::check($password, $fakeHash);
-                $anyHashCheck = true;
-            }
+        if (Hash::check($password, $candidate->password)) {
+            $user = $candidate;
+            $found = true;
+            $anyHashCheck = true;
+        } else {
+            Hash::check($password, $fakeHash);
+            $anyHashCheck = true;
         }
 
         if (!$anyHashCheck) Hash::check($password, $fakeHash);
 
-        if (!$found) throw ValidationException::withMessages(['username' => [__('app.modules.auth.errors.invalidCredentials')],]);
+        if (!$found) throw ValidationException::withMessages(['email' => ['Invalid username or password'],]);
 
         $userData = $this->getUserData($user);
 
         return [
             'token'         => $this->generateToken($user, $remember),
             'user'          => $userData,
-            'userType'      => $this->getUserType($user),
             'permissions'   => $userData['permissions'],
         ];
     }
 
-    public function getUserType($user): string
-    {
-        return self::USER_TYPES[get_class($user)];
-    }
-
     public function getUserData($user)
     {
-        $userType = $this->getUserType($user);
-
         $roleNames = $user->getRoleNames() ?? [];
         $roles = Role::whereIn('name', $roleNames)->with('permissions')->get();
         $permissions = $roles->pluck('permissions')->flatten()->pluck('name')->unique();
@@ -112,7 +81,6 @@ class AuthService
             'roles'             => $roleNames,
             'permissions'       => $permissions,
             'active'            => $user->active,
-            'userType'          => $userType,
         ];
     }
 
@@ -130,15 +98,6 @@ class AuthService
         ];
     }
 
-    public function getAuthModels(?Tenant $tenant)
-    {
-        return $tenant ? [
-            User::class,
-        ] : [
-            CentralUser::class,
-        ];
-    }
-
     public function getUserPermissions($user)
     {
         $role = $user->roles->first();
@@ -148,8 +107,6 @@ class AuthService
     }
 
     public function getBootstrapData() {
-        $tenant = tenant(); // ?? null
-
         $user = null;
         $userData = null;
         $permissions = [];
@@ -189,15 +146,15 @@ class AuthService
             throw $e;
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error al validar token de restablecimiento', [
+            Log::error('Error validating reset token', [
                 'email' => $email,
                 'error' => $e->getMessage()
             ]);
-            throw new CustomException('Error al validar el token de restablecimiento');
+            throw new CustomException('Error validating the reset token');
         }
     }
 
-    public function resetPassword($email, $token, $password, ?Tenant $tenant = null): bool
+    public function resetPassword($email, $token, $password): bool
     {
         try {
             DB::beginTransaction();
@@ -211,24 +168,15 @@ class AuthService
                     return Hash::check($token, $tokenRecord->token);
                 });
 
-            if (!$resetToken) throw new CustomException('Token de restablecimiento inválido o expirado');
+            if (!$resetToken) throw new CustomException('Invalid or expired reset token');
 
             $user = $resetToken->resettable;
 
-            if (!$user) {
-                $models = $this->getAuthModels($tenant);
-                foreach ($models as $modelClass) {
-                    $candidate = $modelClass::where('email', $email)->first();
-                    if ($candidate) {
-                        $user = $candidate;
-                        break;
-                    }
-                }
-            }
+            $user = User::where('email', $email)->first();
 
-            if (!$user) throw new CustomException('No se encontró un usuario con ese correo electrónico');
+            if (!$user) throw new CustomException('No user found with that email address');
 
-            if (Hash::check($password, $user->password)) throw new CustomException('No puede usar su contraseña anterior');
+            if (Hash::check($password, $user->password)) throw new CustomException('You cannot use your previous password');
 
             $user->password = $password;
             $user->save();
@@ -244,46 +192,32 @@ class AuthService
 
             DB::commit();
 
-            Log::info('Contraseña restablecida exitosamente', [
-                'email' => $email,
-                'user_type' => $this->getUserType($user),
-                'token_id' => $resetToken->id
-            ]);
-
             return true;
         } catch (CustomException $e) {
             DB::rollBack();
             throw $e;
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error al restablecer la contraseña', [
+            Log::error('Error resetting password', [
                 'email' => $email,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            throw new CustomException('Error al restablecer la contraseña');
+            throw new CustomException('Error resetting password');
         }
     }
 
-    private function findUserByEmail(string $email, ?Tenant $tenant)
-    {
-        $models = $this->getAuthModels($tenant);
-        return collect($models)
-            ->map(fn($modelClass) => $modelClass::where('email', $email)->first())
-            ->filter()
-            ->first();
-    }
 
-    public function forgotPassword($email, ?Tenant $tenant = null): void
+    public function forgotPassword($email): void
     {
         try {
             DB::beginTransaction();
 
             $this->checkEmailVerificationLimits($email);
 
-            $user = $this->findUserByEmail($email, $tenant);
+            $user = User::firstWhere('email', $email);
 
-            if (!$user) throw new CustomException('No se encontró un usuario con el correo electrónico proporcionado');
+            if (!$user) throw new CustomException('No user found with the provided email address');
 
             $token = Str::random(32);
 
@@ -300,15 +234,9 @@ class AuthService
             $verificationToken->resettable()->associate($user);
             $verificationToken->save();
 
-            // $this->emailService->sendPasswordResetEmail($user, $token, $tenant);
+            // $this->emailService->sendPasswordResetEmail($user, $token);
 
             DB::commit();
-
-            Log::info('Token de verificación creado', [
-                'email' => $email,
-                'user_type' => $this->getUserType($user),
-                'tenant_id' => $tenant?->id
-            ]);
 
             return;
         } catch (CustomException $e) {
@@ -316,12 +244,12 @@ class AuthService
             throw $e;
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error al crear token de verificación', [
+            Log::error('Error creating verification token', [
                 'email' => $email,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            throw new CustomException('Error al crear el token de verificación');
+            throw new CustomException('Error creating verification token');
         }
     }
 
@@ -339,11 +267,11 @@ class AuthService
                     return Hash::check($token, $tokenRecord->token);
                 });
 
-            if (!$verificationToken) throw new CustomException('Token de verificación inválido o expirado');
+            if (!$verificationToken) throw new CustomException('Invalid or expired verification token');
 
             $user = $verificationToken->resettable;
 
-            if (!$user) throw new CustomException('Usuario no encontrado');
+            if (!$user) throw new CustomException('User not found');
 
             $user->email_verified_at = now();
             $user->save();
@@ -357,23 +285,18 @@ class AuthService
 
             DB::commit();
 
-            Log::info('Email verificado exitosamente', [
-                'email' => $email,
-                'user_type' => $this->getUserType($user)
-            ]);
-
             return true;
         } catch (CustomException $e) {
             DB::rollBack();
             throw $e;
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error al verificar email', [
+            Log::error('Error verifying email', [
                 'email' => $email,
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            throw new CustomException('Error al verificar el correo electrónico');
+            throw new CustomException('Error verifying email');
         }
     }
 
@@ -385,20 +308,20 @@ class AuthService
             ->where('used', false)
             ->count();
 
-        if ($activeCount >= 3) throw new CustomException('Has alcanzado el límite máximo de solicitudes de restablecimiento.');
+        if ($activeCount >= 3) throw new CustomException('You have reached the maximum number of reset requests.');
 
         $recentCount = UserToken::where('email', $email)
             ->where('type', UserToken::TYPE_PASSWORD_RESET)
             ->where('created_at', '>=', Carbon::now()->subHour())
             ->count();
 
-        if ($recentCount >= 5) throw new CustomException('Has excedido el límite de solicitudes por hora.');
+        if ($recentCount >= 5) throw new CustomException('You have exceeded the hourly request limit.');
 
         // $lastToken = UserToken::where('email', $email)
         //     ->where('type', UserToken::TYPE_PASSWORD_RESET)
         //     ->orderBy('created_at', 'desc')
         //     ->first();
-        // if ($lastToken && $lastToken->created_at->diffInMinutes(now()) < 1) throw new CustomException('Debes esperar 1 minuto antes de solicitar otro token.');
+        // if ($lastToken && $lastToken->created_at->diffInMinutes(now()) < 1) throw new CustomException('You must wait 1 minute before requesting another token.');
     }
 
     private function checkEmailVerificationLimits($email): void
@@ -409,13 +332,13 @@ class AuthService
             ->where('used', false)
             ->count();
 
-        if ($activeCount >= 2) throw new CustomException('Ya tienes tokens de verificación activos.');
+        if ($activeCount >= 2) throw new CustomException('You already have active verification tokens.');
 
         $recentCount = UserToken::where('email', $email)
             ->where('type', UserToken::TYPE_EMAIL_VERIFICATION)
             ->where('created_at', '>=', Carbon::now()->subMinutes(10))
             ->count();
 
-        if ($recentCount >= 3) throw new CustomException('Debes esperar 10 minutos entre solicitudes de verificación.');
+        if ($recentCount >= 3) throw new CustomException('You must wait 10 minutes between verification requests.');
     }
 }

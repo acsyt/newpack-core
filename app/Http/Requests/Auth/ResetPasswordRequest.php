@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Shared\Auth;
+namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\Services\Shared\AuthService;
 
 class ResetPasswordRequest extends FormRequest {
     public function authorize(): bool
@@ -43,15 +42,15 @@ class ResetPasswordRequest extends FormRequest {
     public function messages(): array
     {
         return [
-            'email.required'                   => 'El correo electrónico es obligatorio.',
-            'email.email'                      => 'El correo electrónico debe tener un formato válido.',
-            'email.max'                        => 'El correo electrónico no puede tener más de 255 caracteres.',
-            'token.required'                   => 'El token es obligatorio.',
-            'token.min'                        => 'El token debe tener al menos 32 caracteres.',
-            'password.required'                => 'La contraseña es obligatoria.',
-            'password.min'                     => 'La contraseña debe tener al menos 8 caracteres.',
-            'password.confirmed'                => 'La confirmación de contraseña no coincide.',
-            'password_confirmation.required'    => 'La confirmación de contraseña es obligatoria.',
+            'email.required'                   => 'The email field is required.',
+            'email.email'                      => 'The email must be a valid email address.',
+            'email.max'                        => 'The email may not be greater than 255 characters.',
+            'token.required'                   => 'The token is required.',
+            'token.min'                        => 'The token must be at least 32 characters.',
+            'password.required'                => 'The password is required.',
+            'password.min'                     => 'The password must be at least 8 characters.',
+            'password.confirmed'                => 'The password confirmation does not match.',
+            'password_confirmation.required'    => 'The password confirmation is required.',
         ];
     }
 }

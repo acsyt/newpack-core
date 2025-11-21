@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Shared\Auth;
+namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\Services\Shared\AuthService;
 
 class ForgotPasswordRequest extends FormRequest
 {
@@ -37,9 +36,9 @@ class ForgotPasswordRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'email.required'    => 'El correo electrónico es obligatorio.',
-            'email.email'       => 'El correo electrónico debe tener un formato válido.',
-            'email.max'         => 'El correo electrónico no puede tener más de 255 caracteres.',
+            'email.required'    => 'The email field is required.',
+            'email.email'       => 'The email must be a valid email address.',
+            'email.max'         => 'The email may not be greater than 255 characters.',
         ];
     }
 }

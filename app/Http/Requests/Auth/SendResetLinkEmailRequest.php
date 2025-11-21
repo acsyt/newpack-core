@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests\Shared\Auth;
+namespace App\Http\Requests\Auth;
 
-use App\Http\Requests\Shared\Auth\ForgotPasswordRequest;
+use App\Http\Requests\Auth\ForgotPasswordRequest;
 
 class SendResetLinkEmailRequest extends ForgotPasswordRequest {
 

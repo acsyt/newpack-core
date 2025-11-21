@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Http\Controllers\Shared;
+namespace App\Http\Controllers;
 
 use App\Exceptions\CustomException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Shared\Auth\ForgotPasswordRequest;
-use App\Http\Requests\Shared\Auth\LoginRequest;
-use App\Http\Requests\Shared\Auth\ReactivateAccountRequest;
-use App\Http\Requests\Shared\Auth\ResetPasswordRequest;
-use App\Http\Requests\Shared\Auth\ValidateTokenRequest;
-use App\Http\Requests\Shared\Auth\VerifyEmailRequest;
-use App\Http\Requests\Shared\Auth\VerifyEmailTokenRequest;
-use App\Http\Requests\Shared\Auth\SendResetLinkEmailRequest;
-use App\Services\Shared\AuthService;
-use App\Services\Central\TranslationService;
+use App\Http\Requests\Auth\ForgotPasswordRequest;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\ReactivateAccountRequest;
+use App\Http\Requests\Auth\ResetPasswordRequest;
+use App\Http\Requests\Auth\ValidateTokenRequest;
+use App\Http\Requests\Auth\VerifyEmailRequest;
+use App\Http\Requests\Auth\VerifyEmailTokenRequest;
+use App\Http\Requests\Auth\SendResetLinkEmailRequest;
+use App\Models\User;
+use App\Services\AuthService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -26,10 +26,9 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request) {
         $data = $request->validated();
-        $tenant = tenant();
         return [
-            'data'      => $this->authService->login($data, $tenant),
-            'message'   => __('app.pages.auth.login.toasts.success')
+            'data'      => $this->authService->login($data),
+            'message'   => 'Logged in successfully'
         ];
     }
 
@@ -53,14 +52,14 @@ class AuthController extends Controller
         $user = $request->user();
 
         if (!$user) return response()->json([
-            'message' => 'Usuario no autenticado'
+            'message' => 'User not authenticated'
         ], 401);
 
         $user->currentAccessToken()->delete();
 
         return response()->json([
-            'success' => true,
-            'message' => 'Sesión cerrada exitosamente'
+            'data' => true,
+            'message' => 'Successfully logged out'
         ], 200);
     }
 
@@ -71,40 +70,36 @@ class AuthController extends Controller
 
     public function forgotPassword(ForgotPasswordRequest $request) {
         $data = $request->validated();
-        $tenant = tenant();
-        $this->authService->forgotPassword($data['email'], $tenant);
+        $this->authService->forgotPassword($data['email']);
         return [
             'data'      => true,
-            'message'   => 'Hemos enviado un correo con instrucciones para recuperar tu contraseña.',
+            'message'   => 'We have sent an email with instructions to recover your password.',
         ];
     }
 
     public function sendResetLink(SendResetLinkEmailRequest $request) {
         $data    = $request->validated();
-        $tenant  = tenant();
 
-        $this->authService->forgotPassword($data['email'], $tenant);
+        $this->authService->forgotPassword($data['email']);
 
         return [
             'data'      => true,
-            'message'   => 'Hemos enviado un correo con instrucciones para restablecer tu contraseña.',
+            'message'   => 'We have sent an email with instructions to reset your password.',
         ];
     }
 
     public function resetPassword(ResetPasswordRequest $request) {
         $data = $request->validated();
-        $tenant = tenant();
 
         $this->authService->resetPassword(
             $data['email'],
             $data['token'],
             $data['password'],
-            $tenant
         );
 
         return [
             'data'      => true,
-            'message'   => 'Tu contraseña ha sido restablecida con éxito.'
+            'message'   => 'Your password has been reset successfully.'
         ];
     }
 
@@ -120,13 +115,12 @@ class AuthController extends Controller
 
     public function sendVerificationEmail(VerifyEmailRequest $request) {
         $data = $request->validated();
-        $tenant = tenant();
 
-        $this->authService->forgotPassword($data['email'], $tenant);
+        $this->authService->forgotPassword($data['email']);
 
         return [
             'data'      => true,
-            'message'   => 'Hemos enviado un correo con instrucciones para verificar tu email.',
+            'message'   => 'We have sent an email with instructions to verify your email address.',
         ];
     }
 
@@ -137,39 +131,29 @@ class AuthController extends Controller
 
         return [
             'data'      => true,
-            'message'   => 'Email verificado exitosamente'
+            'message'   => 'Email verified successfully'
         ];
     }
 
     public function verifyEmail(Request $request, $id, $hash) {
-        if (!$request->hasValidSignature()) throw new CustomException('Enlace de verificación inválido');
+        if (!$request->hasValidSignature()) throw new CustomException('Invalid verification link');
 
-        $tenant = tenant();
-        $models = $this->authService->getAuthModels($tenant);
-        $user = null;
+        $user = User::find( $id );
 
-        foreach ($models as $modelClass) {
-            $candidate = $modelClass::find($id);
-            if ($candidate) {
-                $user = $candidate;
-                break;
-            }
-        }
+        if (!$user) throw new CustomException('User not found');
 
-        if (!$user) throw new CustomException('Usuario no encontrado');
-
-        if (!hash_equals((string) $hash, sha1($user->getEmailForVerification()))) throw new CustomException('Enlace de verificación inválido');
+        if (!hash_equals((string) $hash, sha1($user->getEmailForVerification()))) throw new CustomException('Invalid verification link');
 
         if ($user->hasVerifiedEmail()) return [
             'data'    => true,
-            'message' => 'Email ya verificado'
+            'message' => 'Email already verified'
         ];
 
         $user->markEmailAsVerified();
 
         return [
             'data'      => true,
-            'message'   => 'Email verificado exitosamente'
+            'message'   => 'Email verified successfully'
         ];
     }
 

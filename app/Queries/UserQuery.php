@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Queries\Shared;
+namespace App\Queries;
 
 use App\Helpers\FilterHelper;
 use App\Models\User;

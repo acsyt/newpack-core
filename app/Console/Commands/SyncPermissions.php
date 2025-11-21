@@ -2,30 +2,18 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Shared\Role;
-use App\Models\Shared\Permission;
-use App\Models\Tenant;
+use App\Models\Role;
+use App\Models\Permission;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\PermissionRegistrar;
 
 class SyncPermissions extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'sync:permissions';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Sincroniza los permisos con la base de datos';
 
     private $roles;
-
     private $allPermissions;
 
     private $moduleOrderCentral = [
@@ -34,166 +22,106 @@ class SyncPermissions extends Command
         'roles',
     ];
 
-    private $moduleOrderTenant = [
-        'dashboard',
-        'roles',
-        'users'
-    ];
-
     public function __construct()
     {
         parent::__construct();
+
         $this->roles = collect([
-            ['name' => 'admin',             'description' => 'Administrator'],
+            ['name' => 'admin', 'description' => 'Administrator'],
         ]);
 
         $this->allPermissions = collect([
-            // 1. Dashboard
-            ['name' => 'dashboard.index',   'description' => 'Ingresar a módulo',   'roles' => ['admin'], 'connection' => ['central', 'tenant']],
+            ['name' => 'dashboard.index',       'description' => 'Ingresar a módulo',           'roles' => ['admin']],
 
-            ['name' => 'users.index',           'description' => 'Listar usuarios',                        'roles' => ['admin'], 'connection' => ['central', 'tenant']],
-            ['name' => 'users.create',          'description' => 'Crear usuario',                          'roles' => ['admin'], 'connection' => ['central', 'tenant']],
-            ['name' => 'users.export',          'description' => 'Exportar listado de usuarios',           'roles' => ['admin'], 'connection' => ['central', 'tenant']],
-            ['name' => 'users.show',            'description' => 'Ver detalles de usuario',                'roles' => ['admin'], 'connection' => ['central', 'tenant']],
-            ['name' => 'users.edit',            'description' => 'Editar usuario',                         'roles' => ['admin'], 'connection' => ['central', 'tenant']],
-            ['name' => 'users.change-password', 'description' => 'Cambiar contraseña de usuario',         'roles' => ['admin'], 'connection' => ['central', 'tenant']],
+            ['name' => 'users.index',           'description' => 'Listar usuarios',             'roles' => ['admin']],
+            ['name' => 'users.create',          'description' => 'Crear usuario',               'roles' => ['admin']],
+            ['name' => 'users.export',          'description' => 'Exportar listado de usuarios','roles' => ['admin']],
+            ['name' => 'users.show',            'description' => 'Ver detalles de usuario',     'roles' => ['admin']],
+            ['name' => 'users.edit',            'description' => 'Editar usuario',              'roles' => ['admin']],
+            ['name' => 'users.change-password', 'description' => 'Cambiar contraseña de usuario','roles' => ['admin']],
         ]);
     }
 
-    /**
-     * Execute the console command.
-     */
     public function handle()
     {
         try {
-            $this->info('Sincronizando permisos en base de datos central...');
+            $this->info('Synchronizing permissions in database...');
+
+            app()[PermissionRegistrar::class]->forgetCachedPermissions();
+
             $this->syncDatabase();
-            $this->info('Permisos sincronizados en central correctamente.');
 
-            $tenants = Tenant::all();
-
-            if ($tenants->isNotEmpty()) {
-                $this->info('Sincronizando permisos en tenants...');
-                $bar = $this->output->createProgressBar(count($tenants));
-                $bar->start();
-
-                foreach ($tenants as $tenant) {
-                    $tenant->run(function () use ($tenant) {
-                        $this->syncDatabase($tenant);
-                    });
-                    $bar->advance();
-                }
-
-                $bar->finish();
-                $this->newLine();
-                $this->info('Permisos sincronizados en todos los tenants correctamente.');
-            } else {
-                $this->info('No se encontraron tenants para sincronizar.');
-            }
-
+            $this->info('Permissions synchronized successfully.');
             return 0;
         } catch (\Exception $e) {
-            $this->error("Error durante la sincronización: {$e->getMessage()}");
+            $this->error("Error during synchronization: {$e->getMessage()}");
             return 1;
         }
     }
 
-    private function syncDatabase($tenant = null)
+    private function syncDatabase()
     {
-        DB::transaction(function () use ($tenant) {
+        DB::transaction(function () {
             foreach ($this->roles as $role) {
-                Role::updateOrCreate([
-                    'name'        => $role['name'],
-                    'guard_name'  => 'web',
-                ], [
-                    'description' => $role['description'] ?? '',
-                    'created_at'  => now(),
-                    'updated_at'  => now(),
-                ]);
+                Role::updateOrCreate(
+                    ['name' => $role['name'], 'guard_name' => 'web'],
+                    ['description' => $role['description'] ?? '']
+                );
             }
 
-            $filteredPermissions = $this->allPermissions->filter(function ($permission) use ($tenant) {
-                $connection = $permission['connection'] ?? [];
-                if ($tenant === null) return in_array('central', $connection);
-                return in_array('tenant', $connection);
-            });
+            $configPermissions = $this->allPermissions;
+            $configNames = $configPermissions->pluck('name')->toArray();
 
-            // Obtener los nombres de permisos del arreglo para esta conexión
-            $permissionNames = $filteredPermissions->pluck('name')->toArray();
-
-            // Eliminar permisos que están en la DB pero no en el arreglo del sistema
-            $deletedCount = Permission::where('guard_name', 'web')
-                ->whereNotIn('name', $permissionNames)
+            $deleted = Permission::where('guard_name', 'web')
+                ->whereNotIn('name', $configNames)
                 ->delete();
 
-            if ($deletedCount > 0) {
-                $this->info("Eliminados {$deletedCount} permisos que no están en el arreglo del sistema");
+            if ($deleted > 0) {
+                $this->warn("Eliminados {$deleted} permisos obsoletos.");
             }
 
-            // Aplicar orden personalizado según el tipo de conexión
-            $orderedPermissions = $this->applyCustomOrder($filteredPermissions, $tenant);
+            $orderedPermissions = $this->applyCustomOrder($configPermissions);
 
-            // Crear o actualizar permisos del arreglo
-            foreach ($orderedPermissions as $index => $permission) {
-                $existingPermission = Permission::where('name', $permission['name'])
-                    ->where('guard_name', 'web')
-                    ->first();
+            $existingPermissions = Permission::where('guard_name', 'web')
+                ->get()
+                ->keyBy('name');
 
-                if ($existingPermission) {
-                    // Actualizar descripción y orden si son diferentes
-                    $needsUpdate = false;
-                    $updateData = [];
+            foreach ($orderedPermissions as $index => $configPerm) {
+                $permName = $configPerm['name'];
+                $permDesc = $configPerm['description'] ?? '';
 
-                    if ($existingPermission->description !== ($permission['description'] ?? '')) {
-                        $updateData['description'] = $permission['description'] ?? '';
-                        $needsUpdate = true;
+                $existing = $existingPermissions->get($permName);
+
+                if ($existing) {
+                    $hasChanges = false;
+
+                    if ($existing->description !== $permDesc) {
+                        $existing->description = $permDesc;
+                        $hasChanges = true;
                     }
 
-                    if ($existingPermission->order !== $index) {
-                        $updateData['order'] = $index;
-                        $needsUpdate = true;
+                    if ($existing->order !== $index) {
+                        $existing->order = $index;
+                        $hasChanges = true;
                     }
 
-                    if ($needsUpdate) {
-                        $existingPermission->update($updateData);
-                        $this->info("Actualizado permiso: {$permission['name']} (orden: {$index})");
-                    } else {
-                        $this->info("Permiso existente: {$permission['name']} - sin cambios");
+                    if ($hasChanges) {
+                        $existing->save();
+                        $this->info("Actualizado: {$permName}");
                     }
                 } else {
-                    $this->info("Creando nuevo permiso: {$permission['name']} (orden: {$index})");
                     Permission::create([
-                        'name'        => $permission['name'],
+                        'name'        => $permName,
                         'guard_name'  => 'web',
-                        'description' => $permission['description'] ?? '',
+                        'description' => $permDesc,
                         'order'       => $index,
-                        'created_at'  => now(),
-                        'updated_at'  => now(),
                     ]);
+                    $this->info("Creado: {$permName}");
                 }
             }
 
-            $this->assignPermissionsToRoles($filteredPermissions);
+            $this->assignPermissionsToRoles($configPermissions);
         });
-    }
-
-    private function syncPermissions(Role $role, array $newPermissions)
-    {
-        if (empty($newPermissions)) return;
-
-        $permissions = Permission::whereIn('name', $newPermissions)
-            ->where('guard_name', 'web')
-            ->get();
-
-        $permissionNames = $permissions->pluck('name')->toArray();
-        $missingPermissions = array_diff($newPermissions, $permissionNames);
-
-        if (!empty($missingPermissions)) {
-            throw new \Exception("Permisos no encontrados: " . implode(', ', $missingPermissions));
-        }
-
-        $role->syncPermissions($permissions);
-        $this->info("Sincronizados " . count($permissions) . " permisos para rol: {$role->name}");
     }
 
     private function assignPermissionsToRoles($filteredPermissions)
@@ -206,53 +134,29 @@ class SyncPermissions extends Command
             }
         }
 
-        foreach ($rolesToPermissions as $roleName => $permissions) {
-            if ($role = Role::where('name', $roleName)
-                ->where('guard_name', 'web')
-                ->first()
-            ) {
-                $this->syncPermissions($role, $permissions);
+        foreach ($rolesToPermissions as $roleName => $permissionNames) {
+            $role = Role::where('name', $roleName)->where('guard_name', 'web')->first();
+
+            if ($role) {
+                $role->syncPermissions($permissionNames);
+                $count = count($permissionNames);
+                $this->line("Rol [{$roleName}] sincronizado con {$count} permisos.");
             }
         }
     }
 
-    private function applyCustomOrder($permissions, $tenant = null)
+    private function applyCustomOrder($permissions)
     {
-        $moduleOrder = $tenant === null ? $this->moduleOrderCentral : $this->moduleOrderTenant;
+        $moduleOrder = array_flip($this->moduleOrderCentral);
 
-        // Crear un mapa de módulo a orden
-        $orderMap = array_flip($moduleOrder);
+        return $permissions->sort(function ($a, $b) use ($moduleOrder) {
+            $moduleA = explode('.', $a['name'])[0];
+            $moduleB = explode('.', $b['name'])[0];
 
-        // Ordenar permisos según el orden del módulo
-        return $permissions->sort(function ($a, $b) use ($orderMap) {
-            $moduleA = $this->getModuleFromPermission($a['name']);
-            $moduleB = $this->getModuleFromPermission($b['name']);
-
-            $orderA = $orderMap[$moduleA] ?? 999;
-            $orderB = $orderMap[$moduleB] ?? 999;
+            $orderA = $moduleOrder[$moduleA] ?? 999;
+            $orderB = $moduleOrder[$moduleB] ?? 999;
 
             return $orderA <=> $orderB;
         })->values();
-    }
-
-    private function getModuleFromPermission($permissionName)
-    {
-        // Extraer el módulo del nombre del permiso
-        $parts = explode('.', $permissionName);
-        $module = $parts[0];
-
-        // Mapear algunos casos especiales
-        $moduleMap = [
-            'binnacle' => 'binnacle',
-            'emails-sender' => 'emails-sender',
-            'email-templates' => 'email-templates',
-            'patrolling-reports' => 'patrolling-reports',
-            'permit-types' => 'permit-types',
-            'banned-vehicles' => 'banned-vehicles',
-            'my-requests' => 'my-requests',
-            'spots' => 'spots'
-        ];
-
-        return $moduleMap[$module] ?? $module;
     }
 }

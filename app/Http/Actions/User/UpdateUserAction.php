@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Actions\Shared\User;
+namespace App\Http\Actions\User;
 
 use App\Exceptions\CustomException;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
@@ -14,8 +15,7 @@ class UpdateUserAction
         DB::beginTransaction();
         try {
 
-            $userClass = tenant() ? \App\Models\Tenant\User::class : \App\Models\Central\User::class;
-            $user = $userClass::findOrFail($id);
+            $user = User::findOrFail($id);
 
             if (isset($data['password'])) {
                 $data['password'] = Hash::make($data['password']);

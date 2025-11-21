@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Actions\Shared\User;
+namespace App\Http\Actions\User;
 
 use App\Exceptions\CustomException;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -13,12 +14,11 @@ class CreateUserAction
     public function handle(array $data) {
         DB::beginTransaction();
         try {
-            $userClass = tenant() ? \App\Models\Tenant\User::class : \App\Models\Central\User::class;
 
             $newPassword = Str::random(10);
             $data['password'] = Hash::make( $newPassword );
 
-            $user = $userClass::create($data);
+            $user = User::create($data);
 
             if (isset($data['role_id'])) {
                 $role = Role::find($data['role_id']);

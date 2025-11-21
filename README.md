@@ -3,46 +3,31 @@
 
 # ERP Core
 
-
 ## Instalación
 
-1. Clona el repositorio en tu máquina local:
-```
-git clone https://devacsyt@bitbucket.org/paletstudio/newpack-core.git
-```
+1. Navega al directorio del proyecto
 
-2. Navega hasta el directorio del proyecto:
-```
-cd newpack-core
-```
-
-3. Instala las dependencias del proyecto utilizando Composer:
+2. Instala las dependencias del proyecto con Composer:
 ```
 composer install
 ```
 
-4. Crea un archivo `.env` basado en el archivo `.env.example` y actualiza la configuración de la base de datos y otros ajustes según sea necesario.
+3. Crea un archivo `.env` basado en `.env.example` y actualiza la configuración de la base de datos según sea necesario.
 
-5. Genera una clave de aplicación:
+4. Genera una clave de aplicación:
 ```
 php artisan key:generate
 ```
 
-6. Ejecuta las migraciones de la base de datos con el seeder incluido:
+5. Ejecuta las migraciones de la base de datos con los datos de prueba:
 ```
 php artisan migrate:fresh --seed
 ```
 
-7. Inicia el servidor de desarrollo de Laravel:
+6. Inicia el servidor de desarrollo de Laravel:
 ```
 php artisan serve
 ```
 
-El servidor de desarrollo se ejecutará en `http://localhost:8000`.
-
-# Purgar la bd y correr seed de los tenant
-```
-php artisan tenants:migrate-fresh
-php artisan tenants:seed
-```
+El servidor de desarrollo estará disponible en `http://localhost:8000`.
 

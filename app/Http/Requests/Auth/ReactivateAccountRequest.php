@@ -1,5 +1,5 @@
 <?php
 
-namespace App\Http\Requests\Shared\Auth;
+namespace App\Http\Requests\Auth;
 
 class ReactivateAccountRequest extends ForgotPasswordRequest {}

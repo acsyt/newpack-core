@@ -1,20 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Shared;
+namespace App\Http\Controllers;
 
-use App\Http\Actions\Shared\User\CreateUserAction;
-use App\Http\Actions\Shared\User\UpdateUserAction;
+use App\Http\Actions\User\CreateUserAction;
+use App\Http\Actions\User\UpdateUserAction;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Shared\PasswordRequest;
-use App\Http\Requests\Shared\User\StoreUserRequest;
-use App\Http\Requests\Shared\User\UpdateUserRequest;
-use App\Http\Requests\Shared\UserRequest;
-use App\Http\Resources\Shared\UserResource;
-use App\Queries\Shared\UserQuery;
-use App\Services\Shared\UserService;
-use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\DB;
+use App\Http\Requests\User\StoreUserRequest;
+use App\Http\Requests\User\UpdateUserRequest;
+use App\Http\Resources\UserResource;
+use App\Queries\UserQuery;
 use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends Controller

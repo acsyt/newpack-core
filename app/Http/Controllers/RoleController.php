@@ -1,14 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Shared;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Shared\SaveRoleRequest;
-use App\Http\Resources\Shared\PermissionResource;
-use App\Http\Resources\Shared\RoleResource;
-use App\Models\Shared\Role;
-use App\Models\Tenant;
-use App\Services\Shared\RoleService;
+use App\Http\Requests\Role\SaveRoleRequest;
+use App\Http\Resources\PermissionResource;
+use App\Http\Resources\RoleResource;
+use App\Models\Role;
+use App\Services\RoleService;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role as SpatieRole;
 
@@ -42,9 +41,7 @@ class RoleController extends Controller
         $role->load('permissions');
 
         return response()->json([
-            'message'   => __('app.common.feedback.success.created.singular.masculine', [
-                'entity' => __('app.common.entities.role.singular')
-            ]),
+            'message'   => 'Role created successfully',
             'data'      => new RoleResource( $role )
         ]);
     }
@@ -60,9 +57,7 @@ class RoleController extends Controller
         $role->load('permissions');
 
         return response()->json([
-            'message'   => __('app.common.feedback.success.updated.singular.masculine', [
-                'entity' => __('app.common.entities.role.singular')
-            ]),
+            'message'   => 'Role updated successfully',
             'data'      => new RoleResource( $role )
         ]);
     }

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Services\Shared;
+namespace App\Services;
 
 use App\Exceptions\CustomException;
 use App\Helpers\FilterHelper;
-use App\Models\Shared\Permission;
-use App\Models\Shared\Role;
+use App\Models\Permission;
+use App\Models\Role;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
@@ -121,12 +121,12 @@ class RoleService
             throw $e;
         } catch (QueryException $dbe) {
             DB::rollback();
-            Log::error('Error en la base de datos: ' . $dbe->getMessage());
-            throw new CustomException('Error al procesar la solicitud. Por favor, inténtalo de nuevo.');
+            Log::error('Database error: ' . $dbe->getMessage());
+            throw new CustomException('Error processing your request. Please try again.');
         } catch (Exception $e) {
             DB::rollback();
-            Log::error('Error desconocido: ' . $e->getMessage());
-            throw new CustomException('Se produjo un error inesperado. Por favor, inténtalo de nuevo.');
+            Log::error('Unknown error: ' . $e->getMessage());
+            throw new CustomException('An unexpected error occurred. Please try again.');
         }
     }
 
@@ -153,12 +153,12 @@ class RoleService
             throw $e;
         } catch (QueryException $dbe) {
             DB::rollback();
-            Log::error('Error en la base de datos: ' . $dbe->getMessage());
-            throw new CustomException('Error al procesar la solicitud. Por favor, inténtalo de nuevo.');
+            Log::error('Database error: ' . $dbe->getMessage());
+            throw new CustomException('Error processing your request. Please try again.');
         } catch (Exception $e) {
             DB::rollback();
-            Log::error('Error desconocido: ' . $e->getMessage());
-            throw new CustomException('Se produjo un error inesperado. Por favor, inténtalo de nuevo.');
+            Log::error('Unknown error: ' . $e->getMessage());
+            throw new CustomException('An unexpected error occurred. Please try again.');
         }
     }
 
@@ -172,7 +172,7 @@ class RoleService
         $permissionNames = $permissions->pluck('name')->toArray();
         $missingPermissions = array_diff($newPermissions, $permissionNames);
 
-        if (!empty($missingPermissions)) throw new CustomException("Los siguientes permisos no existen: " . implode(', ', $missingPermissions));
+        if (!empty($missingPermissions)) throw new CustomException("The following permissions do not exist: " . implode(', ', $missingPermissions));
 
         $role->syncPermissions($permissions);
     }
