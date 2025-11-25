@@ -1,33 +1,99 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# NEWPACK-CORE
+
+## 🚀 Primeros pasos
+1. **Instalar dependencias:**
+   ```bash
+   composer install
+   ```
+
+2. **Copiar el archivo .env.example a .env y editar las credenciales de BD**
+
+3. **Ejecutar**
+   ```bash
+   php artisan key:generate
+   ```
+
+4. **Configurar base de datos y migraciones:**
+   ```bash
+   php artisan migrate
+   php artisan db:seed
+   ```
+
+5. **Usuario de prueba:**
+   - Email: `admin@acsyt.com`
+   - Password: `123456`
+
+6. **Iniciar servidor:**
+   ```bash
+   php artisan serve --port=8001
+   ```
 
 
-# ERP Core
+7. **Personalizar plantilla de modelo (stubs):**
+   ```bash
+   php artisan stub:publish
+   ```
 
-## Instalación
+   - Edita el archivo `stubs/model.stub` para adaptar tus modelos por defecto.
+   - Puedes agregar traits, propiedades y configuración común (p.ej. `$guarded`, `$casts`).
+   - Ejemplo mínimo de `model.stub`:
+     ```php
+     <?php
 
-1. Navega al directorio del proyecto
+     namespace {{ namespace }};
 
-2. Instala las dependencias del proyecto con Composer:
+     use Illuminate\\Database\\Eloquent\\Model;
+
+     class {{ class }} extends Model
+     {
+         // use HasCamelCaseAttributes;
+         protected $guarded = [];
+     }
+     ```
+
+   - Para que se aplique al generar nuevos modelos:
+     ```bash
+     php artisan make:model Example -m
+     ```
+
+## 🏗️ Arquitectura de módulos
 ```
-composer install
+Controller
+├── FormRequest (validación)
+├── Resource (transformación de respuesta)
+├── Actions (lógica de negocio)
+├── Queries (consultas complejas)
+└── Services (servicios externos)
 ```
 
-3. Crea un archivo `.env` basado en `.env.example` y actualiza la configuración de la base de datos según sea necesario.
+## 📋 Consideraciones técnicas
 
-4. Genera una clave de aplicación:
-```
-php artisan key:generate
+### Actions sobre Services
+Utilizar **Actions** para lógica de negocio que manipule datos (crear, actualizar, eliminar).
+
+**¿Cómo usar un Action?**
+- Inyección de dependencias en el constructor
+- Inyección de método en el controlador
+
+**Ejemplo:**
+```php
+public function store(Request $request, CreateUser $createUser)
+{
+    $user = $createUser->handle($request);
+    return response()->json($user);
+}
 ```
 
-5. Ejecuta las migraciones de la base de datos con los datos de prueba:
-```
-php artisan migrate:fresh --seed
-```
+**Importante:** Siempre envolver las operaciones en `DB::transaction` cuando se trate de transacciones que afecten a más de una entidad.
 
-6. Inicia el servidor de desarrollo de Laravel:
-```
-php artisan serve
-```
+### Jobs y Queues
+**SIEMPRE USAR QUEUES** para operaciones que demoren tiempo:
+- Cargas masivas
+- Exportación de datos  
+- Procesamiento en segundo plano
 
-El servidor de desarrollo estará disponible en `http://localhost:8000`.
+### Arquitectura Query
+Para endpoints con filtros, paginación y ordenamiento, usar `BaseQuery`.
 
+## 📚 Librerías recomendadas
+   
