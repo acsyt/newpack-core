@@ -96,6 +96,73 @@ php artisan route:clear
 php artisan l5-swagger:generate
 ```
 
+### Personalizar plantilla de modelo (stubs)
+
+```bash
+php artisan stub:publish
+```
+
+- Edita el archivo `stubs/model.stub` para adaptar tus modelos por defecto.
+- Puedes agregar traits, propiedades y configuración común (p.ej. `$guarded`, `$casts`).
+- Ejemplo mínimo de `model.stub`:
+  ```php
+  <?php
+
+  namespace {{ namespace }};
+
+  use Illuminate\Database\Eloquent\Model;
+
+  class {{ class }} extends Model
+  {
+      // use HasCamelCaseAttributes;
+      protected $guarded = [];
+  }
+  ```
+
+- Para que se aplique al generar nuevos modelos:
+  ```bash
+  php artisan make:model Example -m
+  ```
+
+## 🏗️ Arquitectura de módulos
+```
+Controller
+├── FormRequest (validación)
+├── Resource (transformación de respuesta)
+├── Actions (lógica de negocio)
+├── Queries (consultas complejas)
+└── Services (servicios externos)
+```
+
+## 📋 Consideraciones técnicas
+
+### Actions sobre Services
+Utilizar **Actions** para lógica de negocio que manipule datos (crear, actualizar, eliminar).
+
+**¿Cómo usar un Action?**
+- Inyección de dependencias en el constructor
+- Inyección de método en el controlador
+
+**Ejemplo:**
+```php
+public function store(Request $request, CreateUser $createUser)
+{
+    $user = $createUser->handle($request);
+    return response()->json($user);
+}
+```
+
+**Importante:** Siempre envolver las operaciones en `DB::transaction` cuando se trate de transacciones que afecten a más de una entidad.
+
+### Jobs y Queues
+**SIEMPRE USAR QUEUES** para operaciones que demoren tiempo:
+- Cargas masivas
+- Exportación de datos
+- Procesamiento en segundo plano
+
+### Arquitectura Query
+Para endpoints con filtros, paginación y ordenamiento, usar `BaseQuery`.
+
 ## 📚 Documentación API (Swagger)
 
 Acceder a la documentación de la API:
