@@ -382,4 +382,47 @@ class AuthController extends Controller
             'message' => 'Email verified successfully'
         ];
     }
+
+    /**
+     * @OA\Post(
+     *     path="/api/auth/verify-email-token",
+     *     tags={"Email Verification"},
+     *     summary="Verificar email con token",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email", "token"},
+     *             @OA\Property(property="email", type="string", format="email", example="user@example.com"),
+     *             @OA\Property(property="token", type="string", example="verification_token_here")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Email verificado exitosamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Email verificado exitosamente")
+     *         )
+     *     ),
+     *     @OA\Response(response=400, description="Token inválido o expirado"),
+     *     @OA\Response(response=404, description="Usuario no encontrado"),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Error de validación",
+     *         @OA\JsonContent(ref="#/components/schemas/ValidationErrors")
+     *     )
+     * )
+     */
+    public function verifyEmailWithToken(VerifyEmailTokenRequest $request)
+    {
+        $email = $request->validated('email');
+        $token = $request->validated('token');
+
+        $this->authService->verifyEmail($email, $token);
+
+        return response()->json([
+            'data' => true,
+            'message' => 'Email verificado exitosamente'
+        ]);
+    }
 }

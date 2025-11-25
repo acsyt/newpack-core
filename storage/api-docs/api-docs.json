@@ -7,7 +7,7 @@
     },
     "servers": [
         {
-            "url": "http://localhost:8001",
+            "url": "http://localhost:8000",
             "description": "API Server"
         }
     ],
@@ -665,6 +665,305 @@
                 }
             }
         },
+        "/api/auth/verify-email-token": {
+            "post": {
+                "tags": [
+                    "Email Verification"
+                ],
+                "summary": "Verificar email con token",
+                "operationId": "0840a94858b92e59e5c8332ba75fa74b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "token"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@example.com"
+                                    },
+                                    "token": {
+                                        "type": "string",
+                                        "example": "verification_token_here"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Email verificado exitosamente",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Email verificado exitosamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Token inválido o expirado"
+                    },
+                    "404": {
+                        "description": "Usuario no encontrado"
+                    },
+                    "422": {
+                        "description": "Error de validación",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrors"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/customers": {
+            "get": {
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Get all customers",
+                "operationId": "c680baeaff1a8944e0c9cbe5c6b5c1ac",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "client_type",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Customers list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CustomerResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Create a new customer",
+                "operationId": "428d5533c8386f91d2baf4de69f01468",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreCustomerRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Customer created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CustomerResource"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/customers/{customer}": {
+            "get": {
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Get a customer by ID",
+                "operationId": "dab8c06ba11e633bb424e2fca1f0fbac",
+                "parameters": [
+                    {
+                        "name": "customer",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Customer details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CustomerResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Update a customer",
+                "operationId": "f28e50b8a6a110ecab6f2aa45eca980b",
+                "parameters": [
+                    {
+                        "name": "customer",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateCustomerRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Customer updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CustomerResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Soft delete a customer",
+                "operationId": "eae002fbdbb9a6ef1275605e346d807f",
+                "parameters": [
+                    {
+                        "name": "customer",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Deleted"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/roles": {
             "get": {
                 "tags": [
@@ -1119,6 +1418,148 @@
                 },
                 "type": "object"
             },
+            "StoreCustomerRequest": {
+                "title": "Store Customer",
+                "required": [
+                    "name",
+                    "last_name",
+                    "status",
+                    "client_type"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Juan"
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "example": "Pérez"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "juan.perez@example.com"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "5512345678"
+                    },
+                    "rfc": {
+                        "type": "string",
+                        "example": "PEPJ800101AB1"
+                    },
+                    "colonia_id": {
+                        "type": "integer",
+                        "example": 123
+                    },
+                    "street": {
+                        "type": "string",
+                        "example": "Calle 123"
+                    },
+                    "exterior_number": {
+                        "type": "string",
+                        "example": "45"
+                    },
+                    "interior_number": {
+                        "type": "string",
+                        "example": "2B"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "active",
+                            "inactive",
+                            "suspended"
+                        ],
+                        "example": "active"
+                    },
+                    "client_type": {
+                        "type": "string",
+                        "enum": [
+                            "individual",
+                            "company"
+                        ],
+                        "example": "individual"
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "VIP client",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateCustomerRequest": {
+                "title": "Update Customer",
+                "required": [
+                    "name",
+                    "last_name",
+                    "status",
+                    "client_type"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Juan"
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "example": "Pérez"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "juan.perez@example.com"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "5512345678"
+                    },
+                    "rfc": {
+                        "type": "string",
+                        "example": "PEPJ800101AB1"
+                    },
+                    "colonia_id": {
+                        "type": "integer",
+                        "example": 123
+                    },
+                    "street": {
+                        "type": "string",
+                        "example": "Calle 123"
+                    },
+                    "exterior_number": {
+                        "type": "string",
+                        "example": "45"
+                    },
+                    "interior_number": {
+                        "type": "string",
+                        "example": "2B"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "active",
+                            "inactive",
+                            "suspended"
+                        ],
+                        "example": "active"
+                    },
+                    "client_type": {
+                        "type": "string",
+                        "enum": [
+                            "individual",
+                            "company"
+                        ],
+                        "example": "individual"
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "VIP client",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "SaveRoleRequest": {
                 "required": [
                     "name",
@@ -1198,6 +1639,218 @@
                 },
                 "type": "object"
             },
+            "CityResource": {
+                "title": "CityResource",
+                "description": "Recurso de Ciudad para representar los datos de la ciudad con relaciones.",
+                "properties": {
+                    "id": {
+                        "description": "ID de la ciudad",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "Nombre de la ciudad",
+                        "type": "string",
+                        "example": "Los Angeles"
+                    },
+                    "stateId": {
+                        "description": "ID del estado al que pertenece la ciudad",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "active": {
+                        "description": "Indica si la ciudad está activa",
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "CountryResource": {
+                "title": "CountryResource",
+                "description": "Recurso de País para representar los datos de un país.",
+                "properties": {
+                    "id": {
+                        "description": "ID del país",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "code": {
+                        "description": "Código del país",
+                        "type": "string",
+                        "example": "MX"
+                    },
+                    "name": {
+                        "description": "Nombre del país",
+                        "type": "string",
+                        "example": "México"
+                    }
+                },
+                "type": "object"
+            },
+            "CustomerResource": {
+                "title": "Customer",
+                "description": "Customer resource with complete information",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Juan"
+                    },
+                    "lastName": {
+                        "type": "string",
+                        "example": "Pérez"
+                    },
+                    "fullName": {
+                        "type": "string",
+                        "example": "Juan Pérez"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "juan.perez@example.com",
+                        "nullable": true
+                    },
+                    "emailVerifiedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "5512345678",
+                        "nullable": true
+                    },
+                    "phoneSecondary": {
+                        "type": "string",
+                        "example": "5587654321",
+                        "nullable": true
+                    },
+                    "mobile": {
+                        "type": "string",
+                        "example": "5511223344",
+                        "nullable": true
+                    },
+                    "whatsapp": {
+                        "type": "string",
+                        "example": "5511223344",
+                        "nullable": true
+                    },
+                    "suburbId": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "street": {
+                        "type": "string",
+                        "example": "Av. Insurgentes",
+                        "nullable": true
+                    },
+                    "exteriorNumber": {
+                        "type": "string",
+                        "example": "123",
+                        "nullable": true
+                    },
+                    "interiorNumber": {
+                        "type": "string",
+                        "example": "4B",
+                        "nullable": true
+                    },
+                    "addressReference": {
+                        "type": "string",
+                        "example": "Entre calles X y Y",
+                        "nullable": true
+                    },
+                    "fullAddress": {
+                        "type": "string",
+                        "example": "Av. Insurgentes 123, Int. 4B, Col. Centro, CDMX",
+                        "nullable": true
+                    },
+                    "rfc": {
+                        "type": "string",
+                        "example": "PEPJ800101AB1",
+                        "nullable": true
+                    },
+                    "razonSocial": {
+                        "type": "string",
+                        "example": "Empresa SA de CV",
+                        "nullable": true
+                    },
+                    "regimenFiscal": {
+                        "type": "string",
+                        "example": "601",
+                        "nullable": true
+                    },
+                    "usoCfdi": {
+                        "type": "string",
+                        "example": "G03",
+                        "nullable": true
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "active",
+                            "inactive",
+                            "suspended",
+                            "blacklisted"
+                        ],
+                        "example": "active"
+                    },
+                    "clientType": {
+                        "type": "string",
+                        "enum": [
+                            "individual",
+                            "company"
+                        ],
+                        "example": "individual"
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Cliente VIP",
+                        "nullable": true
+                    },
+                    "createdBy": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "updatedBy": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "deletedBy": {
+                        "type": "integer",
+                        "example": null,
+                        "nullable": true
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "deletedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "suburb": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/SuburbResource"
+                            }
+                        ],
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "PermissionResource": {
                 "title": "Permission Resource",
                 "description": "Permission resource representation",
@@ -1262,6 +1915,55 @@
                 },
                 "type": "object"
             },
+            "StateResource": {
+                "title": "State",
+                "description": "Recurso de Estado que representa la información de un estado y sus ciudades asociadas.",
+                "properties": {
+                    "id": {
+                        "description": "ID del estado",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "Nombre del estado",
+                        "type": "string",
+                        "example": "California"
+                    },
+                    "code": {
+                        "description": "Código del estado",
+                        "type": "string",
+                        "example": "CA"
+                    },
+                    "active": {
+                        "description": "Estado de actividad",
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "SuburbResource": {
+                "title": "Suburb",
+                "description": "Suburb resource",
+                "properties": {
+                    "id": {
+                        "description": "ID del suburb",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "Nombre del suburb",
+                        "type": "string",
+                        "example": "Centro"
+                    },
+                    "zipCodeId": {
+                        "description": "ID del código postal asociado",
+                        "type": "integer",
+                        "example": 101
+                    }
+                },
+                "type": "object"
+            },
             "UserResource": {
                 "title": "User Resource",
                 "description": "User resource representation",
@@ -1315,6 +2017,33 @@
                     }
                 },
                 "type": "object"
+            },
+            "ZipCodeResource": {
+                "title": "Zip Code",
+                "description": "Zip Code resource",
+                "properties": {
+                    "id": {
+                        "description": "ID del código postal",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "Nombre del código postal",
+                        "type": "string",
+                        "example": "10001"
+                    },
+                    "cityId": {
+                        "description": "ID de la ciudad asociada",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "stateId": {
+                        "description": "ID del estado asociado",
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
             }
         },
         "securitySchemes": {
@@ -1336,6 +2065,9 @@
         },
         {
             "name": "Roles"
+        },
+        {
+            "name": "Customers"
         },
         {
             "name": "Password Reset",

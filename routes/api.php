@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CustomerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -45,6 +46,16 @@ Route:: as('api.')
                 Route::get("/{role}", [RoleController::class, 'show'])->name('roles.show');
                 Route::post('/', [RoleController::class, 'store'])->name('roles.store');
                 Route::put("/{role}", [RoleController::class, 'update'])->name('roles.update');
+            });
+
+            Route::prefix('customers')->group(function () {
+                Route::get('/', [CustomerController::class, 'findAll'])->name('customers.index');
+                Route::post('/', [CustomerController::class, 'store'])->name('customers.store');
+                Route::prefix('{customer}')->group(function () {
+                    Route::get('/', [CustomerController::class, 'show'])->name('customers.show');
+                    Route::put('/', [CustomerController::class, 'update'])->name('customers.update');
+                    Route::delete('/', [CustomerController::class, 'destroy'])->name('customers.destroy');
+                });
             });
         });
     });
