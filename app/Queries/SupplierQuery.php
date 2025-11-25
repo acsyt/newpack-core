@@ -2,29 +2,28 @@
 
 namespace App\Queries;
 
-use App\Models\Customer;
+use App\Models\Supplier;
 use App\Queries\BaseQuery;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
 
-class CustomerQuery extends BaseQuery
+class SupplierQuery extends BaseQuery
 {
     protected function getModel(): string
     {
-        return Customer::class;
+        return Supplier::class;
     }
 
     protected function getAllowedFilters(): array
     {
         return [
-            AllowedFilter::partial('name'),
-            AllowedFilter::partial('last_name'),
+            AllowedFilter::partial('company_name'),
+            AllowedFilter::partial('contact_name'),
             AllowedFilter::partial('email'),
             AllowedFilter::partial('rfc'),
             AllowedFilter::exact('status'),
-            AllowedFilter::exact('client_type'),
+            AllowedFilter::exact('supplier_type'),
             AllowedFilter::exact('suburb_id'),
             AllowedFilter::scope('search'),
         ];
@@ -33,8 +32,8 @@ class CustomerQuery extends BaseQuery
     protected function getAllowedSorts(): array
     {
         return [
-            'name',
-            'last_name',
+            'company_name',
+            'contact_name',
             'email',
             'created_at',
             'updated_at',
@@ -50,6 +49,7 @@ class CustomerQuery extends BaseQuery
     {
         return [
             'suburb.zipCode.city.state',
+            'bankAccounts',
         ];
     }
 }

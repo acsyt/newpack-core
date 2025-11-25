@@ -42,7 +42,7 @@ class RoleQuery extends BaseQuery
         return 'name';
     }
 
-    protected function getIncludes(): array
+    protected function getAllowedIncludes(): array
     {
         return [
             'permissions'

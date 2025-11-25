@@ -5,16 +5,13 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('customers', function (Blueprint $table) {
+        Schema::create('suppliers', function (Blueprint $table) {
             $table->id();
 
-            $table->string('name');
-            $table->string('last_name');
+            $table->string('company_name');
+            $table->string('contact_name')->nullable();
             $table->string('email')->unique()->nullable();
 
             $table->string('phone', 20)->nullable();
@@ -29,15 +26,15 @@ return new class extends Migration {
             $table->text('address_reference')->nullable();
 
             $table->string('rfc', 13)->unique()->nullable();
-            $table->string('legal_name')->nullable(); // Razón Social
-            $table->string('tax_system', 10)->nullable(); // Regimen Fiscal
-            $table->string('cfdi_use', 10)->nullable()->default('G03'); // Uso CFDI
+            $table->string('legal_name')->nullable();
+            $table->string('tax_system', 10)->nullable();
+            $table->string('use_cfdi', 10)->nullable()->default('G03');
+
+            $table->enum('supplier_type', ['product', 'service', 'both'])->default('product');
+            $table->string('payment_terms', 100)->nullable();
+            $table->decimal('credit_limit', 15, 2)->nullable();
 
             $table->enum('status', ['active', 'inactive', 'suspended', 'blacklisted'])->default('active');
-            $table->enum('client_type', ['individual', 'company'])->default('individual');
-
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('email_verification_token')->nullable();
 
             $table->text('notes')->nullable();
 
@@ -48,21 +45,18 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes();
 
+            $table->index('company_name');
+            $table->index('contact_name');
             $table->index('status');
-            $table->index('client_type');
+            $table->index('supplier_type');
             $table->index('email');
             $table->index('rfc');
             $table->index('suburb_id');
-            $table->index('legal_name');
-            $table->index(['last_name', 'name']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('customers');
+        Schema::dropIfExists('suppliers');
     }
 };

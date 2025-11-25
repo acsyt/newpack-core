@@ -8,16 +8,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Exception;
+use Symfony\Component\HttpFoundation\Response;
 
 class UpdateCustomerAction
 {
-    public function handle(int $id, array $data): Customer
+    public function handle(Customer $customer, array $data): Customer
     {
         DB::beginTransaction();
 
         try {
-            $customer = Customer::findOrFail($id);
-
             $originalData = $customer->only([
                 'name', 'last_name', 'email', 'phone', 'status', 'client_type'
             ]);
@@ -39,24 +38,17 @@ class UpdateCustomerAction
         } catch (Exception $e) {
             DB::rollBack();
 
-            Log::error('Failed to update customer', [
-                'customer_id' => $id,
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'data' => $data,
-                'user_id' => Auth::id(),
+            Log::error(UpdateCustomerAction::class, [
+                'customer_id' => $customer->id,
+                'error'       => $e->getMessage(),
+                'trace'       => $e->getTraceAsString(),
+                'data'        => $data,
+                'user_id'     => Auth::id(),
             ]);
 
-            if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
-                throw new CustomException(
-                    'Customer not found.',
-                    404
-                );
-            }
-
             throw new CustomException(
-                'No se pudo actualizar el cliente. Por favor, intente nuevamente.',
-                500
+                'The system was unable to update the customer. Please try again.',
+                Response::HTTP_INTERNAL_SERVER_ERROR
             );
         }
     }

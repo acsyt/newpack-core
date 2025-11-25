@@ -25,7 +25,7 @@ return new class extends Migration
             $table->timestamps();
         });
         $sql = file_get_contents(database_path('sql/sat_codes.sql'));
-        DB::unprepared($sql);
+        // DB::unprepared($sql);
     }
 
     /**

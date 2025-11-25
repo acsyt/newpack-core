@@ -47,7 +47,7 @@ class UserQuery extends BaseQuery
         return 'created_at';
     }
 
-    protected function getIncludes(): array
+    protected function getAllowedIncludes(): array
     {
         return [
             'roles',

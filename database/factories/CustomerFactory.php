@@ -20,30 +20,30 @@ class CustomerFactory extends Factory
         $usosCfdi = ['G01', 'G02', 'G03', 'I01', 'I02', 'I03', 'I04', 'I05', 'I06', 'I07', 'I08'];
 
         return [
-            'name' => $isCompany ? fake()->company() : fake()->firstName(),
-            'last_name' => $isCompany ? fake()->randomElement(['SA de CV', 'SC', 'SPR de RL']) : fake()->lastName() . ' ' . fake()->lastName(),
-            'email' => fake()->unique()->safeEmail(),
-            'phone' => '55' . fake()->numerify('########'),
-            'phone_secondary' => fake()->boolean(30) ? '55' . fake()->numerify('########') : null,
-            'mobile' => fake()->boolean(70) ? '55' . fake()->numerify('########') : null,
-            'whatsapp' => fake()->boolean(60) ? '55' . fake()->numerify('########') : null,
-            'suburb_id' => Suburb::inRandomOrder()->first()?->id,
-            'street' => fake()->streetName(),
-            'exterior_number' => fake()->buildingNumber(),
-            'interior_number' => fake()->boolean(40) ? fake()->randomElement(['A', 'B', 'C', '1', '2', '3', '101', '202']) : null,
-            'address_reference' => fake()->boolean(50) ? fake()->sentence(6) : null,
-            'rfc' => $this->generateRFC($isCompany),
-            'razon_social' => $isCompany ? fake()->company() . ' ' . fake()->randomElement(['SA de CV', 'SC', 'SPR de RL']) : null,
-            'regimen_fiscal' => fake()->randomElement($regimenesFiscales),
-            'uso_cfdi' => fake()->randomElement($usosCfdi),
-            'status' => fake()->randomElement(['active', 'active', 'active', 'active', 'inactive', 'suspended']),
-            'client_type' => $clientType,
-            'notes' => fake()->boolean(40) ? fake()->sentence(10) : null,
-            'email_verified_at' => fake()->boolean(80) ? now() : null,
-            'email_verification_token' => null,
-            'created_by' => User::first()?->id,
-            'updated_by' => null,
-            'deleted_by' => null,
+            'name'                      => $isCompany ? fake()->company() : fake()->firstName(),
+            'last_name'                 => $isCompany ? fake()->randomElement(['SA de CV', 'SC', 'SPR de RL']) : fake()->lastName() . ' ' . fake()->lastName(),
+            'email'                     => fake()->unique()->safeEmail(),
+            'phone'                     => '55' . fake()->numerify('########'),
+            'phone_secondary'           => fake()->boolean(30) ? '55' . fake()->numerify('########') : null,
+            'mobile'                    => fake()->boolean(70) ? '55' . fake()->numerify('########') : null,
+            'whatsapp'                  => fake()->boolean(60) ? '55' . fake()->numerify('########') : null,
+            'suburb_id'                 => Suburb::inRandomOrder()->first()?->id,
+            'street'                    => fake()->streetName(),
+            'exterior_number'           => fake()->buildingNumber(),
+            'interior_number'           => fake()->boolean(40) ? fake()->randomElement(['A', 'B', 'C', '1', '2', '3', '101', '202']) : null,
+            'address_reference'         => fake()->boolean(50) ? fake()->sentence(6) : null,
+            'rfc'                       => $this->generateRFC($isCompany),
+            'legal_name'                => $isCompany ? fake()->company() . ' ' . fake()->randomElement(['SA de CV', 'SC', 'SPR de RL']) : null,
+            'tax_system'                => fake()->randomElement($regimenesFiscales),
+            'cfdi_use'                  => fake()->randomElement($usosCfdi),
+            'status'                    => fake()->randomElement(['active', 'active', 'active', 'active', 'inactive', 'suspended']),
+            'client_type'               => $clientType,
+            'notes'                     => fake()->boolean(40) ? fake()->sentence(10) : null,
+            'email_verified_at'          => fake()->boolean(80) ? now() : null,
+            'email_verification_token'   => null,
+            'created_by'                => User::first()?->id,
+            'updated_by'                => null,
+            'deleted_by'                => null,
         ];
     }
 
@@ -81,7 +81,7 @@ class CustomerFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'client_type' => 'individual',
-            'razon_social' => null,
+            'legal_name' => null,
         ]);
     }
 
@@ -91,7 +91,7 @@ class CustomerFactory extends Factory
             'client_type' => 'company',
             'name' => fake()->company(),
             'last_name' => fake()->randomElement(['SA de CV', 'SC', 'SPR de RL']),
-            'razon_social' => fake()->company() . ' ' . fake()->randomElement(['SA de CV', 'SC', 'SPR de RL']),
+            'legal_name' => fake()->company() . ' ' . fake()->randomElement(['SA de CV', 'SC', 'SPR de RL']),
         ]);
     }
 

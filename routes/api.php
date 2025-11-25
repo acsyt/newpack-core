@@ -4,6 +4,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\SupplierBankAccountController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,7 +32,7 @@ Route:: as('api.')
             });
         });
 
-        Route::middleware('auth:sanctum')->group(function (): void {
+        // Route::middleware('auth:sanctum')->group(function (): void {
             Route::prefix('users')->group(function () {
                 Route::get('/', [UserController::class, 'findAll'])->name('user.index');
                 Route::post('/', [UserController::class, 'store'])->name('user.store');
@@ -57,5 +59,25 @@ Route:: as('api.')
                     Route::delete('/', [CustomerController::class, 'destroy'])->name('customers.destroy');
                 });
             });
+
+            Route::prefix('suppliers')->group(function () {
+                Route::get('/', [SupplierController::class, 'findAll'])->name('suppliers.index');
+                Route::post('/', [SupplierController::class, 'createSupplier'])->name('suppliers.store');
+                Route::prefix('{supplier}')->group(function () {
+                    Route::get('/', [SupplierController::class, 'findOne'])->name('suppliers.show');
+                    Route::put('/', [SupplierController::class, 'updateSupplier'])->name('suppliers.update');
+                    Route::delete('/', [SupplierController::class, 'deleteSupplier'])->name('suppliers.destroy');
+
+                    Route::prefix('bank-accounts')->group(function () {
+                        Route::get('/', [SupplierBankAccountController::class, 'findAll'])->name('suppliers.bank-accounts.index');
+                        Route::post('/', [SupplierBankAccountController::class, 'createBankAccount'])->name('suppliers.bank-accounts.store');
+                        Route::prefix('{bankAccount}')->group(function () {
+                            Route::put('/', [SupplierBankAccountController::class, 'updateBankAccount'])->name('suppliers.bank-accounts.update');
+                            Route::delete('/', [SupplierBankAccountController::class, 'deleteBankAccount'])->name('suppliers.bank-accounts.destroy');
+                            Route::post('/set-primary', [SupplierBankAccountController::class, 'setPrimary'])->name('suppliers.bank-accounts.set-primary');
+                        });
+                    });
+                });
+            // });
         });
     });

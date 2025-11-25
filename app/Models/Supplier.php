@@ -2,20 +2,22 @@
 
 namespace App\Models;
 
+use App\StateMachines\SupplierStatusStateMachine;
+use Asantibanez\LaravelEloquentStateMachines\Traits\HasStateMachines;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
-class Customer extends Model
+class Supplier extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, HasStateMachines;
 
     protected $fillable = [
-        'name',
-        'last_name',
+        'company_name',
+        'contact_name',
         'email',
 
         'phone',
@@ -32,13 +34,13 @@ class Customer extends Model
         'rfc',
         'legal_name',
         'tax_system',
-        'cfdi_use',
+        'use_cfdi',
+
+        'supplier_type',
+        'payment_terms',
+        'credit_limit',
 
         'status',
-        'client_type',
-
-        'email_verified_at',
-        'email_verification_token',
 
         'notes',
 
@@ -48,19 +50,24 @@ class Customer extends Model
     ];
 
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        'credit_limit' => 'decimal:2',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];
 
-    protected $hidden = [
-        'email_verification_token',
+    protected $stateMachines = [
+        'status' => SupplierStatusStateMachine::class
     ];
 
     public function suburb(): BelongsTo
     {
         return $this->belongsTo(Suburb::class);
+    }
+
+    public function bankAccounts(): HasMany
+    {
+        return $this->hasMany(SupplierBankAccount::class);
     }
 
     public function createdBy(): BelongsTo
@@ -77,19 +84,6 @@ class Customer extends Model
     {
         return $this->belongsTo(User::class, 'deleted_by');
     }
-
-
-    public function fullName(): Attribute
-    {
-        return Attribute::make(
-            get: fn (mixed $value, array $attributes) => Str::of($attributes['name'] ?? '')
-                ->append(' ', $attributes['last_name'] ?? '')
-                ->squish()
-                ->title()
-                ->toString()
-        );
-    }
-
 
     public function fullAddress(): Attribute
     {
@@ -112,26 +106,23 @@ class Customer extends Model
         );
     }
 
-
     public function scopeActive($query)
     {
-        return $query->where('status', 'active');
+        return $query->where('status', SupplierStatusStateMachine::ACTIVE);
     }
-
 
     public function scopeOfType($query, string $type)
     {
-        return $query->where('client_type', $type);
+        return $query->where('supplier_type', $type);
     }
-
 
     public function scopeSearch($query, ?string $search)
     {
         if (!$search) return $query;
 
         return $query->where(function ($q) use ($search) {
-            $q->where('name', 'like', "%{$search}%")
-                ->orWhere('last_name', 'like', "%{$search}%")
+            $q->where('company_name', 'like', "%{$search}%")
+                ->orWhere('contact_name', 'like', "%{$search}%")
                 ->orWhere('email', 'like', "%{$search}%")
                 ->orWhere('rfc', 'like', "%{$search}%");
         });

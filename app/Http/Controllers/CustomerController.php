@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\CustomException;
 use App\Http\Actions\Customer\CreateCustomerAction;
 use App\Http\Actions\Customer\UpdateCustomerAction;
 use App\Http\Resources\CustomerResource;
 use App\Http\Requests\Customer\StoreCustomerRequest;
 use App\Http\Requests\Customer\UpdateCustomerRequest;
+use App\Models\Customer;
 use App\Queries\CustomerQuery;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Response;
 use OpenApi\Attributes as OA;
 
@@ -17,10 +20,6 @@ use OpenApi\Attributes as OA;
  */
 class CustomerController extends Controller
 {
-    public function __construct(
-        private readonly CustomerQuery $customerQuery,
-    ) {}
-
     /**
      * @OA\Get(
      *     path="/api/customers",
@@ -29,18 +28,22 @@ class CustomerController extends Controller
      *     security={{"sanctum": {}}},
      *     @OA\Parameter(name="page", in="query", required=false, @OA\Schema(type="integer")),
      *     @OA\Parameter(name="per_page", in="query", required=false, @OA\Schema(type="integer")),
-     *     @OA\Parameter(name="search", in="query", required=false, @OA\Schema(type="string")),
-     *     @OA\Parameter(name="client_type", in="query", required=false, @OA\Schema(type="string")),
-     *     @OA\Parameter(name="status", in="query", required=false, @OA\Schema(type="string")),
+     *     @OA\Parameter(name="filter[name]", in="query", required=false, @OA\Schema(type="string"), description="Filter by customer name (partial match)"),
+     *     @OA\Parameter(name="filter[last_name]", in="query", required=false, @OA\Schema(type="string"), description="Filter by customer last name (partial match)"),
+     *     @OA\Parameter(name="filter[email]", in="query", required=false, @OA\Schema(type="string"), description="Filter by customer email (partial match)"),
+     *     @OA\Parameter(name="filter[rfc]", in="query", required=false, @OA\Schema(type="string"), description="Filter by customer RFC (partial match)"),
+     *     @OA\Parameter(name="filter[status]", in="query", required=false, @OA\Schema(type="string"), description="Filter by status (exact match)"),
+     *     @OA\Parameter(name="filter[client_type]", in="query", required=false, @OA\Schema(type="string"), description="Filter by client type (exact match)"),
+     *     @OA\Parameter(name="filter[suburb_id]", in="query", required=false, @OA\Schema(type="integer"), description="Filter by suburb ID (exact match)"),
+     *     @OA\Parameter(name="filter[search]", in="query", required=false, @OA\Schema(type="string"), description="Search across multiple fields using the search scope"),
      *     @OA\Response(response=200, description="Customers list", @OA\JsonContent(ref="#/components/schemas/CustomerResource")),
      *     @OA\Response(response=404, description="Not found")
      * )
      */
-    public function findAll(Request $request)
+    public function findAll()
     {
-        $query = $this->customerQuery;
-        $customers = $query->paginated($request);
-        return CustomerResource::collection($customers);
+        $users = CustomerQuery::make()->paginated();
+        return CustomerResource::collection($users);
     }
 
     /**
@@ -58,7 +61,10 @@ class CustomerController extends Controller
     {
         $data = $request->validated();
         $customer = app(CreateCustomerAction::class)->handle($data);
-        return response()->json(new CustomerResource($customer), Response::HTTP_CREATED);
+        return response()->json([
+            'data'      => new CustomerResource($customer),
+            'message'   => 'Customer created successfully',
+        ], Response::HTTP_CREATED);
     }
 
     /**
@@ -74,10 +80,7 @@ class CustomerController extends Controller
      */
     public function show($id)
     {
-        $customer = $this->customerQuery->findById((int) $id);
-        if (! $customer) {
-            return response()->json(['message' => 'Customer not found'], Response::HTTP_NOT_FOUND);
-        }
+        $customer = CustomerQuery::make()->findById((int) $id);
         return new CustomerResource($customer);
     }
 
@@ -96,9 +99,13 @@ class CustomerController extends Controller
      */
     public function update(UpdateCustomerRequest $request, $id)
     {
+        $customer = CustomerQuery::make()->findById((int) $id);
         $data = $request->validated();
-        $customer = app(UpdateCustomerAction::class)->handle((int) $id, $data);
-        return new CustomerResource($customer);
+        $customer = app(UpdateCustomerAction::class)->handle($customer, $data);
+        return response()->json([
+            'data'      => new CustomerResource($customer),
+            'message'   => 'Customer updated successfully',
+        ], Response::HTTP_OK);
     }
 
     /**
@@ -114,10 +121,7 @@ class CustomerController extends Controller
      */
     public function destroy($id)
     {
-        $customer = $this->customerQuery->findById((int) $id);
-        if (! $customer) {
-            return response()->json(['message' => 'Customer not found'], Response::HTTP_NOT_FOUND);
-        }
+        $customer = CustomerQuery::make()->findById((int) $id);
         $customer->delete();
         return response()->noContent();
     }

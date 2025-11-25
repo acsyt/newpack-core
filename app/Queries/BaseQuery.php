@@ -3,51 +3,78 @@
 namespace App\Queries;
 
 use Closure;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Log;
 
 abstract class BaseQuery
 {
+    protected $request;
+
+    public function __construct(?Request $request = null)
+    {
+        $this->request = $request ?? request();
+    }
+
+    public static function make(?Request $request = null): static
+    {
+        return new static($request);
+    }
+
     abstract protected function getModel(): string;
 
     abstract protected function getAllowedFilters(): array;
 
     abstract protected function getAllowedSorts(): array;
 
-    abstract protected function getDefaultSort(): string;
+    abstract protected function getAllowedIncludes(): array;
 
-    abstract protected function getIncludes(): array;
+    protected function getAllowedFields(): array
+    {
+        return [];
+    }
 
-    public function paginated(Request $request, ?Closure $extraQuery = null): Collection | LengthAwarePaginator {
-        $hasPagination = $request->boolean('has_pagination', true);
-        $perPage = $request->integer('per_page', 10);
+    protected function getAllowedAppends(): array
+    {
+        return [];
+    }
 
-        $query = $this->buildQuery($request);
+    protected function getDefaultSort(): string
+    {
+        return '-created_at';
+    }
+
+    public function paginated(?Closure $extraQuery = null): LengthAwarePaginator|Collection
+    {
+        $hasPagination = $this->request->boolean('has_pagination', true);
+        $perPage = $this->request->integer('per_page', 10);
+
+        $query = $this->buildQuery();
 
         if ($extraQuery) {
             $extraQuery($query);
         }
 
         if ($hasPagination) {
-            return $query->paginate($perPage);
-        } else {
-            return $query->get();
+            return $query->paginate($perPage)->appends($this->request->query());
         }
+
+        return $query->get();
     }
 
-    public function get(Request $request, ?Closure $extraQuery = null): Collection {
-        $query = $this->buildQuery($request);
+    public function get(?Closure $extraQuery = null): Collection
+    {
+        $query = $this->buildQuery();
 
         if ($extraQuery) {
             $extraQuery($query);
         }
 
-        if ($request->has('limit')) {
-            $limit = $request->integer('limit');
+        if ($this->request->has('limit')) {
+            $limit = $this->request->integer('limit');
             if ($limit > 0) {
                 $query->limit($limit);
             }
@@ -56,43 +83,46 @@ abstract class BaseQuery
         return $query->get();
     }
 
-    public function first(Request $request): ?Model
+    public function first(): ?Model
     {
-        return $this->buildQuery($request)->first();
+        return $this->buildQuery()->first();
     }
 
-    public function findById(int $id): ?Model
+    public function findById(int|string $id): ?Model
     {
-        return $this->getModel()::find($id);
+        return $this->buildQuery()->find($id);
     }
 
-    public function count(Request $request): int
+    public function count(): int
     {
-        return $this->buildQuery($request)->count();
+        return $this->buildQuery()->count();
     }
 
-    protected function buildQuery(Request $request): QueryBuilder
+    public function getBuilder(): QueryBuilder
     {
-        $query = QueryBuilder::for($this->getModel())
+        return $this->buildQuery();
+    }
+
+    protected function buildQuery(): QueryBuilder
+    {
+        $query = QueryBuilder::for($this->getModel(), $this->request)
             ->allowedFilters($this->getAllowedFilters())
             ->allowedSorts($this->getAllowedSorts())
-            ->allowedIncludes($this->getIncludes())
+            ->allowedIncludes($this->getAllowedIncludes())
+            ->allowedFields($this->getAllowedFields())
+            ->allowedAppends($this->getAllowedAppends())
             ->defaultSort($this->getDefaultSort());
 
-        if ($request) {
-            $query = $this->applyCustomFilters($query, $request);
-        }
-
-        return $query;
+        return $this->applyCustomLogic($query);
     }
 
-    protected function applyCustomFilters(QueryBuilder $query, Request $request): QueryBuilder
+    protected function applyCustomLogic(QueryBuilder $query): QueryBuilder
     {
         return $query;
     }
 
-    public function getQueryBuilder(Request $request): QueryBuilder
+    public function findByIdOrFail(int|string $id): Model
     {
-        return $this->buildQuery($request);
+        return $this->buildQuery()->findOrFail($id);
     }
 }

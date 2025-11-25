@@ -7,7 +7,7 @@
     },
     "servers": [
         {
-            "url": "http://localhost:8000",
+            "url": "http://localhost:8001",
             "description": "API Server"
         }
     ],
@@ -762,24 +762,72 @@
                         }
                     },
                     {
-                        "name": "search",
+                        "name": "filter[name]",
                         "in": "query",
+                        "description": "Filter by customer name (partial match)",
                         "required": false,
                         "schema": {
                             "type": "string"
                         }
                     },
                     {
-                        "name": "client_type",
+                        "name": "filter[last_name]",
                         "in": "query",
+                        "description": "Filter by customer last name (partial match)",
                         "required": false,
                         "schema": {
                             "type": "string"
                         }
                     },
                     {
-                        "name": "status",
+                        "name": "filter[email]",
                         "in": "query",
+                        "description": "Filter by customer email (partial match)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[rfc]",
+                        "in": "query",
+                        "description": "Filter by customer RFC (partial match)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[status]",
+                        "in": "query",
+                        "description": "Filter by status (exact match)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[client_type]",
+                        "in": "query",
+                        "description": "Filter by client type (exact match)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[suburb_id]",
+                        "in": "query",
+                        "description": "Filter by suburb ID (exact match)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filter[search]",
+                        "in": "query",
+                        "description": "Search across multiple fields using the search scope",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -1227,6 +1275,557 @@
                 ]
             }
         },
+        "/api/suppliers/{supplier}/bank-accounts": {
+            "get": {
+                "tags": [
+                    "Supplier Bank Accounts"
+                ],
+                "summary": "Get all bank accounts for a supplier",
+                "operationId": "d94ed499afc4f22520613360ca60af79",
+                "parameters": [
+                    {
+                        "name": "supplier",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Bank accounts list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/SupplierBankAccountResource"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Supplier not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Supplier Bank Accounts"
+                ],
+                "summary": "Create a bank account for a supplier",
+                "operationId": "b5e2fb16034a7fc8916fc25e4c1171c7",
+                "parameters": [
+                    {
+                        "name": "supplier",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "bank_name"
+                                ],
+                                "properties": {
+                                    "bank_name": {
+                                        "type": "string",
+                                        "example": "BBVA"
+                                    },
+                                    "account_number": {
+                                        "type": "string",
+                                        "example": "0123456789",
+                                        "nullable": true
+                                    },
+                                    "clabe": {
+                                        "type": "string",
+                                        "example": "012180001234567890",
+                                        "nullable": true
+                                    },
+                                    "swift_code": {
+                                        "type": "string",
+                                        "example": "BBVAMXMMXXX",
+                                        "nullable": true
+                                    },
+                                    "currency": {
+                                        "type": "string",
+                                        "example": "MXN"
+                                    },
+                                    "is_primary": {
+                                        "type": "boolean",
+                                        "example": false
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "active",
+                                            "inactive"
+                                        ],
+                                        "example": "active"
+                                    },
+                                    "notes": {
+                                        "type": "string",
+                                        "example": "Cuenta principal",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Bank account created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SupplierBankAccountResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Supplier not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/suppliers/{supplier}/bank-accounts/{bankAccount}": {
+            "put": {
+                "tags": [
+                    "Supplier Bank Accounts"
+                ],
+                "summary": "Update a bank account",
+                "operationId": "8696bcb94699341cc888bada5fe5fe51",
+                "parameters": [
+                    {
+                        "name": "supplier",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "bankAccount",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "bank_name": {
+                                        "type": "string",
+                                        "example": "BBVA"
+                                    },
+                                    "account_number": {
+                                        "type": "string",
+                                        "example": "0123456789",
+                                        "nullable": true
+                                    },
+                                    "clabe": {
+                                        "type": "string",
+                                        "example": "012180001234567890",
+                                        "nullable": true
+                                    },
+                                    "swift_code": {
+                                        "type": "string",
+                                        "example": "BBVAMXMMXXX",
+                                        "nullable": true
+                                    },
+                                    "currency": {
+                                        "type": "string",
+                                        "example": "MXN"
+                                    },
+                                    "is_primary": {
+                                        "type": "boolean",
+                                        "example": false
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "active",
+                                            "inactive"
+                                        ],
+                                        "example": "active"
+                                    },
+                                    "notes": {
+                                        "type": "string",
+                                        "example": "Cuenta actualizada",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Bank account updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SupplierBankAccountResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Supplier Bank Accounts"
+                ],
+                "summary": "Delete a bank account",
+                "operationId": "b2615367be07f3276c12e57b6290f043",
+                "parameters": [
+                    {
+                        "name": "supplier",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "bankAccount",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Deleted"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/suppliers/{supplier}/bank-accounts/{bankAccount}/set-primary": {
+            "post": {
+                "tags": [
+                    "Supplier Bank Accounts"
+                ],
+                "summary": "Set a bank account as primary",
+                "operationId": "030c5741051cc616c168b9b2895058fa",
+                "parameters": [
+                    {
+                        "name": "supplier",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "bankAccount",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Bank account set as primary",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SupplierBankAccountResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/suppliers": {
+            "get": {
+                "tags": [
+                    "Suppliers"
+                ],
+                "summary": "Get all suppliers",
+                "operationId": "918f9fb517e5a684df857bb069f14f72",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "supplier_type",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Suppliers list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SupplierResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Suppliers"
+                ],
+                "summary": "Create a new supplier",
+                "operationId": "bf86e79b2ce533aff7283f71fc453add",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreSupplierRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Supplier created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SupplierResource"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/suppliers/{supplier}": {
+            "get": {
+                "tags": [
+                    "Suppliers"
+                ],
+                "summary": "Get a supplier by ID",
+                "operationId": "d1e12bec91a2485ef7a723d2943a33c7",
+                "parameters": [
+                    {
+                        "name": "supplier",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Supplier details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SupplierResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Suppliers"
+                ],
+                "summary": "Update a supplier",
+                "operationId": "00e3c737eb0bf0ed7c9175404ef418e4",
+                "parameters": [
+                    {
+                        "name": "supplier",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateSupplierRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Supplier updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SupplierResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Suppliers"
+                ],
+                "summary": "Soft delete a supplier",
+                "operationId": "8837dedd53289fc9459fa7781c026bd2",
+                "parameters": [
+                    {
+                        "name": "supplier",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Deleted"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/users": {
             "get": {
                 "tags": [
@@ -1419,12 +2018,9 @@
                 "type": "object"
             },
             "StoreCustomerRequest": {
-                "title": "Store Customer",
                 "required": [
                     "name",
-                    "last_name",
-                    "status",
-                    "client_type"
+                    "last_name"
                 ],
                 "properties": {
                     "name": {
@@ -1433,43 +2029,90 @@
                     },
                     "last_name": {
                         "type": "string",
-                        "example": "Pérez"
+                        "example": "Pérez García"
                     },
                     "email": {
                         "type": "string",
                         "format": "email",
-                        "example": "juan.perez@example.com"
+                        "example": "juan.perez@example.com",
+                        "nullable": true
                     },
                     "phone": {
                         "type": "string",
-                        "example": "5512345678"
+                        "example": "5512345678",
+                        "nullable": true
                     },
-                    "rfc": {
+                    "phone_secondary": {
                         "type": "string",
-                        "example": "PEPJ800101AB1"
+                        "example": "5587654321",
+                        "nullable": true
                     },
-                    "colonia_id": {
+                    "mobile": {
+                        "type": "string",
+                        "example": "5511223344",
+                        "nullable": true
+                    },
+                    "whatsapp": {
+                        "type": "string",
+                        "example": "5511223344",
+                        "nullable": true
+                    },
+                    "suburb_id": {
                         "type": "integer",
-                        "example": 123
+                        "example": 1,
+                        "nullable": true
                     },
                     "street": {
                         "type": "string",
-                        "example": "Calle 123"
+                        "example": "Av. Insurgentes",
+                        "nullable": true
                     },
                     "exterior_number": {
                         "type": "string",
-                        "example": "45"
+                        "example": "123",
+                        "nullable": true
                     },
                     "interior_number": {
                         "type": "string",
-                        "example": "2B"
+                        "example": "4B",
+                        "nullable": true
+                    },
+                    "address_reference": {
+                        "type": "string",
+                        "example": "Entre calles X y Y",
+                        "nullable": true
+                    },
+                    "tax_id": {
+                        "description": "RFC - Tax ID",
+                        "type": "string",
+                        "example": "PEGJ800101AB1",
+                        "nullable": true
+                    },
+                    "legal_name": {
+                        "description": "Razón Social",
+                        "type": "string",
+                        "example": "Empresa SA de CV",
+                        "nullable": true
+                    },
+                    "tax_system": {
+                        "description": "Régimen Fiscal",
+                        "type": "string",
+                        "example": "601",
+                        "nullable": true
+                    },
+                    "cfdi_use": {
+                        "description": "Uso CFDI",
+                        "type": "string",
+                        "example": "G03",
+                        "nullable": true
                     },
                     "status": {
                         "type": "string",
                         "enum": [
                             "active",
                             "inactive",
-                            "suspended"
+                            "suspended",
+                            "blacklisted"
                         ],
                         "example": "active"
                     },
@@ -1483,20 +2126,13 @@
                     },
                     "notes": {
                         "type": "string",
-                        "example": "VIP client",
+                        "example": "Cliente VIP",
                         "nullable": true
                     }
                 },
                 "type": "object"
             },
             "UpdateCustomerRequest": {
-                "title": "Update Customer",
-                "required": [
-                    "name",
-                    "last_name",
-                    "status",
-                    "client_type"
-                ],
                 "properties": {
                     "name": {
                         "type": "string",
@@ -1504,43 +2140,90 @@
                     },
                     "last_name": {
                         "type": "string",
-                        "example": "Pérez"
+                        "example": "Pérez García"
                     },
                     "email": {
                         "type": "string",
                         "format": "email",
-                        "example": "juan.perez@example.com"
+                        "example": "juan.perez@example.com",
+                        "nullable": true
                     },
                     "phone": {
                         "type": "string",
-                        "example": "5512345678"
+                        "example": "5512345678",
+                        "nullable": true
                     },
-                    "rfc": {
+                    "phone_secondary": {
                         "type": "string",
-                        "example": "PEPJ800101AB1"
+                        "example": "5587654321",
+                        "nullable": true
                     },
-                    "colonia_id": {
+                    "mobile": {
+                        "type": "string",
+                        "example": "5511223344",
+                        "nullable": true
+                    },
+                    "whatsapp": {
+                        "type": "string",
+                        "example": "5511223344",
+                        "nullable": true
+                    },
+                    "suburb_id": {
                         "type": "integer",
-                        "example": 123
+                        "example": 1,
+                        "nullable": true
                     },
                     "street": {
                         "type": "string",
-                        "example": "Calle 123"
+                        "example": "Av. Insurgentes",
+                        "nullable": true
                     },
                     "exterior_number": {
                         "type": "string",
-                        "example": "45"
+                        "example": "123",
+                        "nullable": true
                     },
                     "interior_number": {
                         "type": "string",
-                        "example": "2B"
+                        "example": "4B",
+                        "nullable": true
+                    },
+                    "address_reference": {
+                        "type": "string",
+                        "example": "Entre calles X y Y",
+                        "nullable": true
+                    },
+                    "tax_id": {
+                        "description": "RFC - Tax ID",
+                        "type": "string",
+                        "example": "PEGJ800101AB1",
+                        "nullable": true
+                    },
+                    "legal_name": {
+                        "description": "Razón Social",
+                        "type": "string",
+                        "example": "Empresa SA de CV",
+                        "nullable": true
+                    },
+                    "tax_system": {
+                        "description": "Régimen Fiscal",
+                        "type": "string",
+                        "example": "601",
+                        "nullable": true
+                    },
+                    "cfdi_use": {
+                        "description": "Uso CFDI",
+                        "type": "string",
+                        "example": "G03",
+                        "nullable": true
                     },
                     "status": {
                         "type": "string",
                         "enum": [
                             "active",
                             "inactive",
-                            "suspended"
+                            "suspended",
+                            "blacklisted"
                         ],
                         "example": "active"
                     },
@@ -1554,7 +2237,7 @@
                     },
                     "notes": {
                         "type": "string",
-                        "example": "VIP client",
+                        "example": "Cliente VIP",
                         "nullable": true
                     }
                 },
@@ -1590,6 +2273,249 @@
                     "guard_name": {
                         "type": "string",
                         "example": "web"
+                    }
+                },
+                "type": "object"
+            },
+            "StoreSupplierRequest": {
+                "required": [
+                    "company_name"
+                ],
+                "properties": {
+                    "company_name": {
+                        "type": "string",
+                        "example": "Proveedora SA de CV"
+                    },
+                    "contact_name": {
+                        "type": "string",
+                        "example": "Juan Pérez",
+                        "nullable": true
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "contacto@proveedora.com",
+                        "nullable": true
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "5512345678",
+                        "nullable": true
+                    },
+                    "phone_secondary": {
+                        "type": "string",
+                        "example": "5587654321",
+                        "nullable": true
+                    },
+                    "mobile": {
+                        "type": "string",
+                        "example": "5511223344",
+                        "nullable": true
+                    },
+                    "whatsapp": {
+                        "type": "string",
+                        "example": "5511223344",
+                        "nullable": true
+                    },
+                    "suburb_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "street": {
+                        "type": "string",
+                        "example": "Av. Industrial",
+                        "nullable": true
+                    },
+                    "exterior_number": {
+                        "type": "string",
+                        "example": "500",
+                        "nullable": true
+                    },
+                    "interior_number": {
+                        "type": "string",
+                        "example": "A",
+                        "nullable": true
+                    },
+                    "address_reference": {
+                        "type": "string",
+                        "example": "Zona industrial norte",
+                        "nullable": true
+                    },
+                    "rfc": {
+                        "type": "string",
+                        "example": "PRO850101AB2",
+                        "nullable": true
+                    },
+                    "legal_name": {
+                        "type": "string",
+                        "example": "Proveedora SA de CV",
+                        "nullable": true
+                    },
+                    "tax_system": {
+                        "type": "string",
+                        "example": "601",
+                        "nullable": true
+                    },
+                    "use_cfdi": {
+                        "type": "string",
+                        "example": "G03",
+                        "nullable": true
+                    },
+                    "supplier_type": {
+                        "type": "string",
+                        "enum": [
+                            "product",
+                            "service",
+                            "both"
+                        ],
+                        "example": "product"
+                    },
+                    "payment_terms": {
+                        "type": "string",
+                        "example": "30 días",
+                        "nullable": true
+                    },
+                    "credit_limit": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 100000,
+                        "nullable": true
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "active",
+                            "inactive",
+                            "suspended",
+                            "blacklisted"
+                        ],
+                        "example": "active"
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Proveedor confiable",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateSupplierRequest": {
+                "properties": {
+                    "company_name": {
+                        "type": "string",
+                        "example": "Proveedora SA de CV"
+                    },
+                    "contact_name": {
+                        "type": "string",
+                        "example": "Juan Pérez",
+                        "nullable": true
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "contacto@proveedora.com",
+                        "nullable": true
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "5512345678",
+                        "nullable": true
+                    },
+                    "phone_secondary": {
+                        "type": "string",
+                        "example": "5587654321",
+                        "nullable": true
+                    },
+                    "mobile": {
+                        "type": "string",
+                        "example": "5511223344",
+                        "nullable": true
+                    },
+                    "whatsapp": {
+                        "type": "string",
+                        "example": "5511223344",
+                        "nullable": true
+                    },
+                    "suburb_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "street": {
+                        "type": "string",
+                        "example": "Av. Industrial",
+                        "nullable": true
+                    },
+                    "exterior_number": {
+                        "type": "string",
+                        "example": "500",
+                        "nullable": true
+                    },
+                    "interior_number": {
+                        "type": "string",
+                        "example": "A",
+                        "nullable": true
+                    },
+                    "address_reference": {
+                        "type": "string",
+                        "example": "Zona industrial norte",
+                        "nullable": true
+                    },
+                    "rfc": {
+                        "type": "string",
+                        "example": "PRO850101AB2",
+                        "nullable": true
+                    },
+                    "legal_name": {
+                        "type": "string",
+                        "example": "Proveedora SA de CV",
+                        "nullable": true
+                    },
+                    "tax_system": {
+                        "type": "string",
+                        "example": "601",
+                        "nullable": true
+                    },
+                    "use_cfdi": {
+                        "type": "string",
+                        "example": "G03",
+                        "nullable": true
+                    },
+                    "supplier_type": {
+                        "type": "string",
+                        "enum": [
+                            "product",
+                            "service",
+                            "both"
+                        ],
+                        "example": "product"
+                    },
+                    "payment_terms": {
+                        "type": "string",
+                        "example": "30 días",
+                        "nullable": true
+                    },
+                    "credit_limit": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 100000,
+                        "nullable": true
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "active",
+                            "inactive",
+                            "suspended",
+                            "blacklisted"
+                        ],
+                        "example": "active"
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Proveedor confiable",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -1964,6 +2890,247 @@
                 },
                 "type": "object"
             },
+            "SupplierBankAccountResource": {
+                "title": "SupplierBankAccount",
+                "description": "Supplier bank account resource",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "supplierId": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "bankName": {
+                        "type": "string",
+                        "example": "BBVA"
+                    },
+                    "accountNumber": {
+                        "type": "string",
+                        "example": "0123456789",
+                        "nullable": true
+                    },
+                    "clabe": {
+                        "type": "string",
+                        "example": "012180001234567890",
+                        "nullable": true
+                    },
+                    "swiftCode": {
+                        "type": "string",
+                        "example": "BBVAMXMMXXX",
+                        "nullable": true
+                    },
+                    "currency": {
+                        "type": "string",
+                        "example": "MXN"
+                    },
+                    "isPrimary": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "active",
+                            "inactive"
+                        ],
+                        "example": "active"
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Cuenta principal",
+                        "nullable": true
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "deletedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "SupplierResource": {
+                "title": "Supplier",
+                "description": "Supplier resource with complete information",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "companyName": {
+                        "type": "string",
+                        "example": "Proveedora SA de CV"
+                    },
+                    "contactName": {
+                        "type": "string",
+                        "example": "Juan Pérez",
+                        "nullable": true
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "contacto@proveedora.com",
+                        "nullable": true
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "5512345678",
+                        "nullable": true
+                    },
+                    "phoneSecondary": {
+                        "type": "string",
+                        "example": "5587654321",
+                        "nullable": true
+                    },
+                    "mobile": {
+                        "type": "string",
+                        "example": "5511223344",
+                        "nullable": true
+                    },
+                    "whatsapp": {
+                        "type": "string",
+                        "example": "5511223344",
+                        "nullable": true
+                    },
+                    "suburbId": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "street": {
+                        "type": "string",
+                        "example": "Av. Industrial",
+                        "nullable": true
+                    },
+                    "exteriorNumber": {
+                        "type": "string",
+                        "example": "500",
+                        "nullable": true
+                    },
+                    "interiorNumber": {
+                        "type": "string",
+                        "example": "A",
+                        "nullable": true
+                    },
+                    "addressReference": {
+                        "type": "string",
+                        "example": "Zona industrial",
+                        "nullable": true
+                    },
+                    "fullAddress": {
+                        "type": "string",
+                        "example": "Av. Industrial 500, Int. A, Col. Centro",
+                        "nullable": true
+                    },
+                    "rfc": {
+                        "type": "string",
+                        "example": "PRO850101AB2",
+                        "nullable": true
+                    },
+                    "legalName": {
+                        "type": "string",
+                        "example": "Proveedora SA de CV",
+                        "nullable": true
+                    },
+                    "taxSystem": {
+                        "type": "string",
+                        "example": "601",
+                        "nullable": true
+                    },
+                    "useCfdi": {
+                        "type": "string",
+                        "example": "G03",
+                        "nullable": true
+                    },
+                    "supplierType": {
+                        "type": "string",
+                        "enum": [
+                            "product",
+                            "service",
+                            "both"
+                        ],
+                        "example": "product"
+                    },
+                    "paymentTerms": {
+                        "type": "string",
+                        "example": "30 días",
+                        "nullable": true
+                    },
+                    "creditLimit": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 100000,
+                        "nullable": true
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "active",
+                            "inactive",
+                            "suspended",
+                            "blacklisted"
+                        ],
+                        "example": "active"
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Proveedor confiable",
+                        "nullable": true
+                    },
+                    "createdBy": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "updatedBy": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "deletedBy": {
+                        "type": "integer",
+                        "example": null,
+                        "nullable": true
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "deletedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "suburb": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/SuburbResource"
+                            }
+                        ],
+                        "nullable": true
+                    },
+                    "bankAccounts": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SupplierBankAccountResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
             "UserResource": {
                 "title": "User Resource",
                 "description": "User resource representation",
@@ -2068,6 +3235,12 @@
         },
         {
             "name": "Customers"
+        },
+        {
+            "name": "Supplier Bank Accounts"
+        },
+        {
+            "name": "Suppliers"
         },
         {
             "name": "Password Reset",

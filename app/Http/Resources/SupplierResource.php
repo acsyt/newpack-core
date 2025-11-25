@@ -6,32 +6,32 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @OA\Schema(
- *   schema="CustomerResource",
- *   title="Customer",
- *   description="Customer resource with complete information",
+ *   schema="SupplierResource",
+ *   title="Supplier",
+ *   description="Supplier resource with complete information",
  *   @OA\Property(property="id", type="integer", example=1),
- *   @OA\Property(property="name", type="string", example="Juan"),
- *   @OA\Property(property="lastName", type="string", example="Pérez"),
- *   @OA\Property(property="fullName", type="string", example="Juan Pérez"),
- *   @OA\Property(property="email", type="string", format="email", nullable=true, example="juan.perez@example.com"),
- *   @OA\Property(property="emailVerifiedAt", type="string", format="date-time", nullable=true),
+ *   @OA\Property(property="companyName", type="string", example="Proveedora SA de CV"),
+ *   @OA\Property(property="contactName", type="string", nullable=true, example="Juan Pérez"),
+ *   @OA\Property(property="email", type="string", format="email", nullable=true, example="contacto@proveedora.com"),
  *   @OA\Property(property="phone", type="string", nullable=true, example="5512345678"),
  *   @OA\Property(property="phoneSecondary", type="string", nullable=true, example="5587654321"),
  *   @OA\Property(property="mobile", type="string", nullable=true, example="5511223344"),
  *   @OA\Property(property="whatsapp", type="string", nullable=true, example="5511223344"),
  *   @OA\Property(property="suburbId", type="integer", nullable=true, example=1),
- *   @OA\Property(property="street", type="string", nullable=true, example="Av. Insurgentes"),
- *   @OA\Property(property="exteriorNumber", type="string", nullable=true, example="123"),
- *   @OA\Property(property="interiorNumber", type="string", nullable=true, example="4B"),
- *   @OA\Property(property="addressReference", type="string", nullable=true, example="Entre calles X y Y"),
- *   @OA\Property(property="fullAddress", type="string", nullable=true, example="Av. Insurgentes 123, Int. 4B, Col. Centro, CDMX"),
- *   @OA\Property(property="rfc", type="string", nullable=true, example="PEPJ800101AB1"),
- *   @OA\Property(property="razonSocial", type="string", nullable=true, example="Empresa SA de CV"),
- *   @OA\Property(property="regimenFiscal", type="string", nullable=true, example="601"),
- *   @OA\Property(property="usoCfdi", type="string", nullable=true, example="G03"),
+ *   @OA\Property(property="street", type="string", nullable=true, example="Av. Industrial"),
+ *   @OA\Property(property="exteriorNumber", type="string", nullable=true, example="500"),
+ *   @OA\Property(property="interiorNumber", type="string", nullable=true, example="A"),
+ *   @OA\Property(property="addressReference", type="string", nullable=true, example="Zona industrial"),
+ *   @OA\Property(property="fullAddress", type="string", nullable=true, example="Av. Industrial 500, Int. A, Col. Centro"),
+ *   @OA\Property(property="rfc", type="string", nullable=true, example="PRO850101AB2"),
+ *   @OA\Property(property="legalName", type="string", nullable=true, example="Proveedora SA de CV"),
+ *   @OA\Property(property="taxSystem", type="string", nullable=true, example="601"),
+ *   @OA\Property(property="useCfdi", type="string", nullable=true, example="G03"),
+ *   @OA\Property(property="supplierType", type="string", enum={"product","service","both"}, example="product"),
+ *   @OA\Property(property="paymentTerms", type="string", nullable=true, example="30 días"),
+ *   @OA\Property(property="creditLimit", type="number", format="float", nullable=true, example=100000.00),
  *   @OA\Property(property="status", type="string", enum={"active","inactive","suspended","blacklisted"}, example="active"),
- *   @OA\Property(property="clientType", type="string", enum={"individual","company"}, example="individual"),
- *   @OA\Property(property="notes", type="string", nullable=true, example="Cliente VIP"),
+ *   @OA\Property(property="notes", type="string", nullable=true, example="Proveedor confiable"),
  *   @OA\Property(property="createdBy", type="integer", nullable=true, example=1),
  *   @OA\Property(property="updatedBy", type="integer", nullable=true, example=1),
  *   @OA\Property(property="deletedBy", type="integer", nullable=true, example=null),
@@ -39,26 +39,19 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *   @OA\Property(property="updatedAt", type="string", format="date-time"),
  *   @OA\Property(property="deletedAt", type="string", format="date-time", nullable=true),
  *   @OA\Property(property="suburb", ref="#/components/schemas/SuburbResource", nullable=true),
+ *   @OA\Property(property="bankAccounts", type="array", @OA\Items(ref="#/components/schemas/SupplierBankAccountResource"))
  * )
  */
-class CustomerResource extends JsonResource
+class SupplierResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
     public function toArray($request): array
     {
         return [
             'id'                => $this->id,
-            'name'              => $this->name,
-            'lastName'          => $this->last_name,
-            'fullName'          => $this->full_name,
+            'companyName'       => $this->company_name,
+            'contactName'       => $this->contact_name,
 
             'email'             => $this->email,
-            'emailVerifiedAt'    => $this->email_verified_at,
             'phone'             => $this->phone,
             'phoneSecondary'    => $this->phone_secondary,
             'mobile'            => $this->mobile,
@@ -74,10 +67,13 @@ class CustomerResource extends JsonResource
             'rfc'               => $this->rfc,
             'legalName'         => $this->legal_name,
             'taxSystem'         => $this->tax_system,
-            'cfdiUse'           => $this->cfdi_use,
+            'useCfdi'           => $this->use_cfdi,
+
+            'supplierType'      => $this->supplier_type,
+            'paymentTerms'      => $this->payment_terms,
+            'creditLimit'       => $this->credit_limit,
 
             'status'            => $this->status,
-            'clientType'        => $this->client_type,
 
             'notes'             => $this->notes,
 
@@ -90,6 +86,7 @@ class CustomerResource extends JsonResource
             'deletedAt'         => $this->deleted_at,
 
             'suburb'            => new SuburbResource($this->whenLoaded('suburb')),
+            'bankAccounts'      => SupplierBankAccountResource::collection($this->whenLoaded('bankAccounts')),
         ];
     }
 }
