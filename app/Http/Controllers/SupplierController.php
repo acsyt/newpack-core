@@ -38,8 +38,7 @@ class SupplierController extends Controller
      */
     public function findAll(Request $request)
     {
-        $query = $this->supplierQuery;
-        $suppliers = $query->paginated($request);
+        $suppliers = SupplierQuery::make()->paginated();
         return SupplierResource::collection($suppliers);
     }
 
@@ -74,10 +73,7 @@ class SupplierController extends Controller
      */
     public function findOne($id)
     {
-        $supplier = $this->supplierQuery->findById((int) $id);
-        if (! $supplier) {
-            return response()->json(['message' => 'Supplier not found'], Response::HTTP_NOT_FOUND);
-        }
+        $supplier = SupplierQuery::make()->findById((int) $id);
         return new SupplierResource($supplier);
     }
 
@@ -97,7 +93,8 @@ class SupplierController extends Controller
     public function updateSupplier(UpdateSupplierRequest $request, $id)
     {
         $data = $request->validated();
-        $supplier = app(UpdateSupplierAction::class)->handle((int) $id, $data);
+        $supplier = SupplierQuery::make()->findById((int) $id);
+        $supplier->update($data);
         return new SupplierResource($supplier);
     }
 
@@ -114,10 +111,7 @@ class SupplierController extends Controller
      */
     public function deleteSupplier($id)
     {
-        $supplier = $this->supplierQuery->findById((int) $id);
-        if (! $supplier) {
-            return response()->json(['message' => 'Supplier not found'], Response::HTTP_NOT_FOUND);
-        }
+        $supplier = SupplierQuery::make()->findById((int) $id);
         $supplier->delete();
         return response()->noContent();
     }
