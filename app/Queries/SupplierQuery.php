@@ -49,7 +49,6 @@ class SupplierQuery extends BaseQuery
     {
         return [
             'suburb.zipCode.city.state',
-            'bankAccounts',
         ];
     }
 }

@@ -39,7 +39,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *   @OA\Property(property="updatedAt", type="string", format="date-time"),
  *   @OA\Property(property="deletedAt", type="string", format="date-time", nullable=true),
  *   @OA\Property(property="suburb", ref="#/components/schemas/SuburbResource", nullable=true),
- *   @OA\Property(property="bankAccounts", type="array", @OA\Items(ref="#/components/schemas/SupplierBankAccountResource"))
  * )
  */
 class SupplierResource extends JsonResource
@@ -86,7 +85,6 @@ class SupplierResource extends JsonResource
             'deletedAt'         => $this->deleted_at,
 
             'suburb'            => new SuburbResource($this->whenLoaded('suburb')),
-            'bankAccounts'      => SupplierBankAccountResource::collection($this->whenLoaded('bankAccounts')),
         ];
     }
 }

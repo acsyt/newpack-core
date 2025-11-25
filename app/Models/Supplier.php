@@ -65,11 +65,6 @@ class Supplier extends Model
         return $this->belongsTo(Suburb::class);
     }
 
-    public function bankAccounts(): HasMany
-    {
-        return $this->hasMany(SupplierBankAccount::class);
-    }
-
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
