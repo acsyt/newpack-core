@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\ProductType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -14,7 +15,7 @@ class ProductFactory extends Factory
         return [
             'name'                      => $this->faker->words(3, true),
             'sku'                       => strtoupper($this->faker->unique()->bothify('PROD-####')),
-            'type'                      => $this->faker->randomElement(['materia_prima', 'compuesto', 'insumo', 'servicio']),
+            'type'                      => $this->faker->randomElement(ProductType::cases()),
             'unit_of_measure'           => $this->faker->randomElement(['kg', 'lt', 'pza', 'm']),
             'average_cost'              => $this->faker->randomFloat(4, 1, 1000),
             'last_purchase_price'       => $this->faker->randomFloat(4, 1, 1000),
@@ -31,7 +32,7 @@ class ProductFactory extends Factory
     public function rawMaterial(): static
     {
         return $this->state(fn (array $attributes) => [
-            'type'              => 'materia_prima',
+            'type'              => ProductType::RAW_MATERIAL,
             'is_purchasable'    => true,
             'is_sellable'       => false,
             'track_batches'     => true, // MP crítica suele llevar lotes
@@ -41,7 +42,7 @@ class ProductFactory extends Factory
     public function compound(): static
     {
         return $this->state(fn (array $attributes) => [
-            'type'              => 'compuesto',
+            'type'              => ProductType::COMPOUND,
             'is_purchasable'    => false,
             'is_sellable'       => true,
             'average_cost'      => 0, // El costo depende de la receta

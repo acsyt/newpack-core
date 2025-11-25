@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CustomerController;
@@ -32,41 +33,51 @@ Route:: as('api.')
 
         // Route::middleware('auth:sanctum')->group(function (): void {
             Route::prefix('users')->group(function () {
-                Route::get('/', [UserController::class, 'findAll'])->name('user.index');
-                Route::post('/', [UserController::class, 'store'])->name('user.store');
+                Route::get('/', [UserController::class, 'findAllUsers'])->name('user.findAll');
+                Route::post('/', [UserController::class, 'createUser'])->name('user.create');
                 Route::prefix('{user}')->group(function (): void {
-                    Route::get('/', [UserController::class, 'show'])->name('user.show');
-                    Route::put('/', [UserController::class, 'update'])->name('user.update');
-                    Route::delete('/', [UserController::class, 'destroy'])->name('user.destroy');
+                    Route::get('/', [UserController::class, 'findOneUser'])->name('user.findOne');
+                    Route::put('/', [UserController::class, 'updateUser'])->name('user.update');
+                    Route::delete('/', [UserController::class, 'deleteUser'])->name('user.delete');
                 });
             });
 
             Route::prefix('roles')->group(function () {
-                Route::get("/", [RoleController::class, 'findAll'])->name('roles.index');
-                Route::get("/{role}", [RoleController::class, 'show'])->name('roles.show');
-                Route::post('/', [RoleController::class, 'store'])->name('roles.store');
-                Route::put("/{role}", [RoleController::class, 'update'])->name('roles.update');
+                Route::get("/", [RoleController::class, 'findAllRoles'])->name('roles.findAll');
+                Route::get("/{role}", [RoleController::class, 'findOneRole'])->name('roles.findOne');
+                Route::post('/', [RoleController::class, 'createRole'])->name('roles.create');
+                Route::put("/{role}", [RoleController::class, 'updateRole'])->name('roles.update');
             });
 
             Route::prefix('customers')->group(function () {
-                Route::get('/', [CustomerController::class, 'findAll'])->name('customers.index');
-                Route::post('/', [CustomerController::class, 'store'])->name('customers.store');
+                Route::get('/', [CustomerController::class, 'findAllCustomers'])->name('customers.findAll');
+                Route::post('/', [CustomerController::class, 'createCustomer'])->name('customers.create');
                 Route::prefix('{customer}')->group(function () {
-                    Route::get('/', [CustomerController::class, 'show'])->name('customers.show');
-                    Route::put('/', [CustomerController::class, 'update'])->name('customers.update');
-                    Route::delete('/', [CustomerController::class, 'destroy'])->name('customers.destroy');
+                    Route::get('/', [CustomerController::class, 'findOneCustomer'])->name('customers.findOne');
+                    Route::put('/', [CustomerController::class, 'updateCustomer'])->name('customers.update');
+                    Route::delete('/', [CustomerController::class, 'deleteCustomer'])->name('customers.delete');
+                });
+            });
+
+            Route::prefix('products')->group(function () {
+                Route::get('/', [ProductController::class, 'findAllProducts'])->name('products.findAll');
+                Route::post('/', [ProductController::class, 'createProduct'])->name('products.create');
+                Route::prefix('{product}')->group(function () {
+                    Route::get('/', [ProductController::class, 'findOneProduct'])->name('products.findOne');
+                    Route::put('/', [ProductController::class, 'updateProduct'])->name('products.update');
+                    Route::delete('/', [ProductController::class, 'deleteProduct'])->name('products.delete');
                 });
             });
 
             Route::prefix('suppliers')->group(function () {
-                Route::get('/', [SupplierController::class, 'findAll'])->name('suppliers.index');
-                Route::post('/', [SupplierController::class, 'createSupplier'])->name('suppliers.store');
+                Route::get('/', [SupplierController::class, 'findAllSuppliers'])->name('suppliers.findAll');
+                Route::post('/', [SupplierController::class, 'createSupplier'])->name('suppliers.create');
                 Route::prefix('{supplier}')->group(function () {
-                    Route::get('/', [SupplierController::class, 'findOne'])->name('suppliers.show');
+                    Route::get('/', [SupplierController::class, 'findOneSupplier'])->name('suppliers.findOne');
                     Route::put('/', [SupplierController::class, 'updateSupplier'])->name('suppliers.update');
-                    Route::delete('/', [SupplierController::class, 'deleteSupplier'])->name('suppliers.destroy');
+                    Route::delete('/', [SupplierController::class, 'deleteSupplier'])->name('suppliers.delete');
 
-                });
+            });
             // });
         });
     });

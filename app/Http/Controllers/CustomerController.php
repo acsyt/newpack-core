@@ -40,7 +40,7 @@ class CustomerController extends Controller
      *     @OA\Response(response=404, description="Not found")
      * )
      */
-    public function findAll()
+    public function findAllCustomers()
     {
         $users = CustomerQuery::make()->paginated();
         return CustomerResource::collection($users);
@@ -57,7 +57,7 @@ class CustomerController extends Controller
      *     @OA\Response(response=422, description="Validation error")
      * )
      */
-    public function store(StoreCustomerRequest $request)
+    public function createCustomer(StoreCustomerRequest $request)
     {
         $data = $request->validated();
         $customer = app(CreateCustomerAction::class)->handle($data);
@@ -78,7 +78,7 @@ class CustomerController extends Controller
      *     @OA\Response(response=404, description="Not found")
      * )
      */
-    public function show($id)
+    public function findOneCustomer($id)
     {
         $customer = CustomerQuery::make()->findById((int) $id);
         return new CustomerResource($customer);
@@ -97,7 +97,7 @@ class CustomerController extends Controller
      *     @OA\Response(response=422, description="Validation error")
      * )
      */
-    public function update(UpdateCustomerRequest $request, $id)
+    public function updateCustomer(UpdateCustomerRequest $request, $id)
     {
         $customer = CustomerQuery::make()->findById((int) $id);
         $data = $request->validated();
@@ -119,7 +119,7 @@ class CustomerController extends Controller
      *     @OA\Response(response=404, description="Not found")
      * )
      */
-    public function destroy($id)
+    public function deleteCustomer($id)
     {
         $customer = CustomerQuery::make()->findById((int) $id);
         $customer->delete();

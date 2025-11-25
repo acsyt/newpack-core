@@ -36,7 +36,7 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function findAll()
+    public function findAllUsers()
     {
         $query = $this->userQuery->paginated(request());
         return UserResource::collection($query);
@@ -62,7 +62,7 @@ class UserController extends Controller
      *     @OA\Response(response=404, description="User not found")
      * )
      */
-    public function show($id)
+    public function findOneUser($id)
     {
         $query = $this->userQuery->findById($id);
         return new UserResource($query);
@@ -89,7 +89,7 @@ class UserController extends Controller
      *     @OA\Response(response=422, description="Validation error")
      * )
      */
-    public function store(StoreUserRequest $request)
+    public function createUser(StoreUserRequest $request)
     {
         $data = $request->validated();
         $user = app(CreateUserAction::class)->handle($data);
@@ -127,7 +127,7 @@ class UserController extends Controller
      *     @OA\Response(response=422, description="Validation error")
      * )
      */
-    public function update(UpdateUserRequest $request, $id): Response
+    public function updateUser(UpdateUserRequest $request, $id): Response
     {
         $data = $request->validated();
         $updatedUser = app(UpdateUserAction::class)->handle($id, $data);

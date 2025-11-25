@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ProductType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -12,12 +13,11 @@ use Spatie\Activitylog\Traits\LogsActivity;
 class Product extends Model
 {
     use HasFactory, LogsActivity;
-    // Opcional: use SoftDeletes; // Si decides usar borrado lógico
 
     protected $fillable = [
         'name',
         'sku',
-        'type', // 'materia_prima', 'compuesto', 'insumo', 'servicio', 'wip'
+        'type',
         'unit_of_measure',
         'average_cost',
         'last_purchase_price',
@@ -31,13 +31,13 @@ class Product extends Model
     ];
 
     protected $casts = [
+        'type' => ProductType::class,
         'average_cost' => 'decimal:4',
         'current_stock' => 'decimal:4',
         'is_active' => 'boolean',
         'track_batches' => 'boolean',
     ];
 
-    // Configuración de Logs de Actividad (Spatie)
     public function getActivityLogOptions(): LogOptions {
         return LogOptions::defaults()
             ->logFillable()
@@ -48,22 +48,14 @@ class Product extends Model
 
     // RELACIONES
 
-    /**
-     * Ingredientes que componen este producto (Si soy un Compuesto).
-     * Ejemplo: Bolsa de Basura (Yo) -> requiere -> Polietileno (Ingrediente)
-     */
     public function ingredients()
     {
         return $this->belongsToMany(Product::class, 'product_compounds', 'compound_id', 'ingredient_id')
-            ->using(ProductCompound::class) // Usar nuestro modelo Pivot personalizado
+            ->using(ProductCompound::class)
             ->withPivot(['id', 'quantity', 'wastage_percent', 'process_stage', 'is_active'])
             ->withTimestamps();
     }
 
-    /**
-     * Productos donde soy usado como ingrediente (Si soy Materia Prima).
-     * Ejemplo: Polietileno (Yo) -> soy usado en -> Bolsa de Basura (Compuesto)
-     */
     public function usedInCompounds()
     {
         return $this->belongsToMany(Product::class, 'product_compounds', 'ingredient_id', 'compound_id')
@@ -72,15 +64,13 @@ class Product extends Model
             ->withTimestamps();
     }
 
-    // SCOPES (Helpers para consultas limpias)
-
-    public function scopeMateriaPrima($query)
+    public function scopeRawMaterial($query)
     {
-        return $query->where('type', 'materia_prima');
+        return $query->where('type', ProductType::RAW_MATERIAL);
     }
 
-    public function scopeCompuesto($query)
+    public function scopeCompound($query)
     {
-        return $query->where('type', 'compuesto');
+        return $query->where('type', ProductType::COMPOUND);
     }
 }

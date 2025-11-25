@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Product;
+use App\Enums\ProductType;
 use Illuminate\Database\Seeder;
 
 class ProductSeeder extends Seeder
@@ -14,7 +15,7 @@ class ProductSeeder extends Seeder
         $polietileno = Product::factory()->create([
             'name' => 'Polietileno de Baja Densidad (PEBD)',
             'sku' => 'MP-PEBD-001',
-            'type' => 'materia_prima',
+            'type' => ProductType::RAW_MATERIAL,
             'unit_of_measure' => 'kg',
             'average_cost' => 25.50,
             'track_batches' => true,
@@ -26,7 +27,7 @@ class ProductSeeder extends Seeder
         $pigmentoNegro = Product::factory()->create([
             'name' => 'Pigmento Masterbatch Negro',
             'sku' => 'MP-PIG-BLK',
-            'type' => 'materia_prima',
+            'type' => ProductType::RAW_MATERIAL,
             'unit_of_measure' => 'kg',
             'average_cost' => 150.00,
             'track_batches' => true,
@@ -38,7 +39,7 @@ class ProductSeeder extends Seeder
         $tintaBlanca = Product::factory()->create([
             'name' => 'Tinta Flexográfica Blanca',
             'sku' => 'MP-INK-WHT',
-            'type' => 'materia_prima',
+            'type' => ProductType::RAW_MATERIAL,
             'unit_of_measure' => 'kg',
             'average_cost' => 85.00,
             'track_batches' => true,
@@ -53,7 +54,7 @@ class ProductSeeder extends Seeder
         $bolsaNegra = Product::factory()->create([
             'name' => 'Bolsa Basura Negra 50x70 Calibre 200',
             'sku' => 'PT-BOL-NEG-5070',
-            'type' => 'compuesto',
+            'type' => ProductType::COMPOUND,
             'unit_of_measure' => 'pza',
             'average_cost' => 0,
             'track_batches' => true,
@@ -79,7 +80,7 @@ class ProductSeeder extends Seeder
         $bolsaImpresa = Product::factory()->create([
             'name' => 'Bolsa Boutique Impresa 30x40',
             'sku' => 'PT-BOL-IMP-3040',
-            'type' => 'compuesto',
+            'type' => ProductType::COMPOUND,
             'unit_of_measure' => 'pza',
             'is_purchasable' => false,
             'is_sellable' => true,

@@ -4,6 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+use App\Enums\ProductType;
+
 return new class extends Migration
 {
     public function up(): void
@@ -14,7 +16,7 @@ return new class extends Migration
             $table->string('sku')->unique();
 
             // 'wip' = Work In Progress (Semielaborado, ej: el rollo antes de hacerse bolsa)
-            $table->enum('type', ['materia_prima', 'compuesto', 'insumo', 'servicio', 'wip']);
+            $table->enum('type', array_column(ProductType::cases(), 'value'));
 
             $table->string('unit_of_measure', 10); // kg, lt, pza
 

@@ -72,7 +72,7 @@ class RoleController extends Controller
      *     )
      * )
      */
-    public function findAll()
+    public function findAllRoles()
     {
         $query = $this->roleQuery->paginated(request());
         return RoleResource::collection($query);
@@ -106,7 +106,7 @@ class RoleController extends Controller
      *     @OA\Response(response=404, description="Role not found")
      * )
      */
-    public function show(Role $role)
+    public function findOneRole(Role $role)
     {
         return new RoleResource($role);
     }
@@ -132,7 +132,7 @@ class RoleController extends Controller
      *     @OA\Response(response=422, description="Validation error")
      * )
      */
-    public function store(SaveRoleRequest $request)
+    public function createRole(SaveRoleRequest $request)
     {
         $data = $request->validated();
         $role = app(CreateRoleAction::class)->handle($data);
@@ -171,7 +171,7 @@ class RoleController extends Controller
      *     @OA\Response(response=422, description="Validation error")
      * )
      */
-    public function update(SaveRoleRequest $request, Role $role)
+    public function updateRole(SaveRoleRequest $request, Role $role)
     {
         $data = $request->validated();
         $updatedRole = app(UpdateRoleAction::class)->handle($role, $data);

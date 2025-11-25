@@ -7,7 +7,7 @@
     },
     "servers": [
         {
-            "url": "http://localhost:8001",
+            "url": "http://localhost:8000",
             "description": "API Server"
         }
     ],
@@ -743,7 +743,7 @@
                     "Customers"
                 ],
                 "summary": "Get all customers",
-                "operationId": "c680baeaff1a8944e0c9cbe5c6b5c1ac",
+                "operationId": "1899f3b57f815fe3199b7441746a9139",
                 "parameters": [
                     {
                         "name": "page",
@@ -860,7 +860,7 @@
                     "Customers"
                 ],
                 "summary": "Create a new customer",
-                "operationId": "428d5533c8386f91d2baf4de69f01468",
+                "operationId": "1521eebc80ec5af39c77bbc187ceddd3",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -899,7 +899,7 @@
                     "Customers"
                 ],
                 "summary": "Get a customer by ID",
-                "operationId": "dab8c06ba11e633bb424e2fca1f0fbac",
+                "operationId": "390c4f7b7f6e0842dc1d1df55a5ff979",
                 "parameters": [
                     {
                         "name": "customer",
@@ -936,7 +936,7 @@
                     "Customers"
                 ],
                 "summary": "Update a customer",
-                "operationId": "f28e50b8a6a110ecab6f2aa45eca980b",
+                "operationId": "7b7d4ca10025db4cbfba87b213391e62",
                 "parameters": [
                     {
                         "name": "customer",
@@ -986,10 +986,285 @@
                     "Customers"
                 ],
                 "summary": "Soft delete a customer",
-                "operationId": "eae002fbdbb9a6ef1275605e346d807f",
+                "operationId": "b6367d9795fba972bba12b3527fe9b98",
                 "parameters": [
                     {
                         "name": "customer",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Deleted"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/products": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Get all products",
+                "operationId": "aed250c93918ac943b7ab895d24f033f",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filter[name]",
+                        "in": "query",
+                        "description": "Filter by product name (partial match)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[sku]",
+                        "in": "query",
+                        "description": "Filter by SKU (partial match)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[type]",
+                        "in": "query",
+                        "description": "Filter by type (exact match): raw_material, compound, ingredient, service, wip",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[is_active]",
+                        "in": "query",
+                        "description": "Filter by active status",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "filter[is_sellable]",
+                        "in": "query",
+                        "description": "Filter by sellable status",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "filter[is_purchasable]",
+                        "in": "query",
+                        "description": "Filter by purchasable status",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "description": "Include relationships: ingredients, usedInCompounds",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Products list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Create a new product",
+                "operationId": "f79470c2afbdb583882235160180a63d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreProductRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Product created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductResource"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/products/{product}": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Get a product by ID",
+                "operationId": "63fe7f5b0151a41f8036e8cafa18c624",
+                "parameters": [
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "description": "Include relationships: ingredients, usedInCompounds",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Update a product",
+                "operationId": "cdd72815542caa943cf9aeb5fc0ab357",
+                "parameters": [
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateProductRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Product updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Soft delete a product",
+                "operationId": "fff90445bf05f04e798a8f5ad97dd7cb",
+                "parameters": [
+                    {
+                        "name": "product",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -1018,7 +1293,7 @@
                     "Roles"
                 ],
                 "summary": "List all roles",
-                "operationId": "1b3109827f0b2cb35793110582af74ee",
+                "operationId": "d5df7c846133e6d53998fd2ac8785457",
                 "parameters": [
                     {
                         "name": "filter[name]",
@@ -1094,7 +1369,7 @@
                     "Roles"
                 ],
                 "summary": "Create a new role",
-                "operationId": "4a563842fbfcad237f63da43065fca3d",
+                "operationId": "4131bb39b430bdf2d95b73111d2e126a",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -1142,7 +1417,7 @@
                     "Roles"
                 ],
                 "summary": "Get role by ID",
-                "operationId": "7fb0667a295b7678a30353aa11739683",
+                "operationId": "8a5b4afda2435801400bc26dd37382af",
                 "parameters": [
                     {
                         "name": "id",
@@ -1190,7 +1465,7 @@
                     "Roles"
                 ],
                 "summary": "Update a role",
-                "operationId": "786d6990093a8eb3a56931f19a827e43",
+                "operationId": "67bc0b5e8e67bb2ff1c3fafa84a508d1",
                 "parameters": [
                     {
                         "name": "id",
@@ -1281,7 +1556,7 @@
                     "Suppliers"
                 ],
                 "summary": "Get all suppliers",
-                "operationId": "918f9fb517e5a684df857bb069f14f72",
+                "operationId": "95b1c742f22fb657331eee9d2797af5f",
                 "parameters": [
                     {
                         "name": "page",
@@ -1389,7 +1664,7 @@
                     "Suppliers"
                 ],
                 "summary": "Get a supplier by ID",
-                "operationId": "d1e12bec91a2485ef7a723d2943a33c7",
+                "operationId": "fe4faa508308a35877a16a15ab28dc1d",
                 "parameters": [
                     {
                         "name": "supplier",
@@ -1508,7 +1783,7 @@
                     "Users"
                 ],
                 "summary": "List all users",
-                "operationId": "13082a34260ab03c1f690fafceb34553",
+                "operationId": "f5bafc13cbfe22ee76825efd5a618f2d",
                 "responses": {
                     "200": {
                         "description": "List of users",
@@ -1535,7 +1810,7 @@
                     "Users"
                 ],
                 "summary": "Create a new user",
-                "operationId": "592819a0265360b2014512d6dbfaf0e7",
+                "operationId": "15cb7ac620df8a65f737624b240b8976",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -1583,7 +1858,7 @@
                     "Users"
                 ],
                 "summary": "Get user by ID",
-                "operationId": "36a33ff774d5cba33c039dec2c3e0287",
+                "operationId": "091f86e65ab273c70ab0f2125cae520d",
                 "parameters": [
                     {
                         "name": "id",
@@ -1618,7 +1893,7 @@
                     "Users"
                 ],
                 "summary": "Update a user",
-                "operationId": "b9091397c8b25f12c6adb74be6ce3a5a",
+                "operationId": "1c2c1eb9faac63c5a992039dfc44acec",
                 "parameters": [
                     {
                         "name": "id",
@@ -1914,6 +2189,248 @@
                     "notes": {
                         "type": "string",
                         "example": "Cliente VIP",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "StoreProductRequest": {
+                "required": [
+                    "name",
+                    "sku",
+                    "type",
+                    "unit_of_measure"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Polietileno de Baja Densidad"
+                    },
+                    "sku": {
+                        "type": "string",
+                        "example": "MP-PEBD-001"
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "raw_material",
+                            "compound",
+                            "ingredient",
+                            "service",
+                            "wip"
+                        ],
+                        "example": "raw_material"
+                    },
+                    "unit_of_measure": {
+                        "type": "string",
+                        "example": "kg"
+                    },
+                    "average_cost": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 25.5,
+                        "nullable": true
+                    },
+                    "last_purchase_price": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 30,
+                        "nullable": true
+                    },
+                    "current_stock": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 1000,
+                        "nullable": true
+                    },
+                    "min_stock": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 100,
+                        "nullable": true
+                    },
+                    "max_stock": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 5000,
+                        "nullable": true
+                    },
+                    "track_batches": {
+                        "type": "boolean",
+                        "example": true,
+                        "nullable": true
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true,
+                        "nullable": true
+                    },
+                    "is_sellable": {
+                        "type": "boolean",
+                        "example": false,
+                        "nullable": true
+                    },
+                    "is_purchasable": {
+                        "type": "boolean",
+                        "example": true,
+                        "nullable": true
+                    },
+                    "ingredients": {
+                        "description": "Required if type is 'compuesto'",
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "ingredient_id",
+                                "quantity"
+                            ],
+                            "properties": {
+                                "ingredient_id": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "quantity": {
+                                    "type": "number",
+                                    "format": "float",
+                                    "example": 0.5
+                                },
+                                "wastage_percent": {
+                                    "type": "number",
+                                    "format": "float",
+                                    "example": 2,
+                                    "nullable": true
+                                },
+                                "process_stage": {
+                                    "type": "string",
+                                    "example": "EXTRUSION",
+                                    "nullable": true
+                                },
+                                "is_active": {
+                                    "type": "boolean",
+                                    "example": true,
+                                    "nullable": true
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateProductRequest": {
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Polietileno de Baja Densidad",
+                        "nullable": true
+                    },
+                    "sku": {
+                        "type": "string",
+                        "example": "MP-PEBD-001",
+                        "nullable": true
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "raw_material",
+                            "compound",
+                            "ingredient",
+                            "service",
+                            "wip"
+                        ],
+                        "example": "raw_material",
+                        "nullable": true
+                    },
+                    "unit_of_measure": {
+                        "type": "string",
+                        "example": "kg",
+                        "nullable": true
+                    },
+                    "average_cost": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 25.5,
+                        "nullable": true
+                    },
+                    "last_purchase_price": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 30,
+                        "nullable": true
+                    },
+                    "current_stock": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 1000,
+                        "nullable": true
+                    },
+                    "min_stock": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 100,
+                        "nullable": true
+                    },
+                    "max_stock": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 5000,
+                        "nullable": true
+                    },
+                    "track_batches": {
+                        "type": "boolean",
+                        "example": true,
+                        "nullable": true
+                    },
+                    "is_active": {
+                        "type": "boolean",
+                        "example": true,
+                        "nullable": true
+                    },
+                    "is_sellable": {
+                        "type": "boolean",
+                        "example": false,
+                        "nullable": true
+                    },
+                    "is_purchasable": {
+                        "type": "boolean",
+                        "example": true,
+                        "nullable": true
+                    },
+                    "ingredients": {
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "ingredient_id",
+                                "quantity"
+                            ],
+                            "properties": {
+                                "ingredient_id": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "quantity": {
+                                    "type": "number",
+                                    "format": "float",
+                                    "example": 0.5
+                                },
+                                "wastage_percent": {
+                                    "type": "number",
+                                    "format": "float",
+                                    "example": 2,
+                                    "nullable": true
+                                },
+                                "process_stage": {
+                                    "type": "string",
+                                    "example": "EXTRUSION",
+                                    "nullable": true
+                                },
+                                "is_active": {
+                                    "type": "boolean",
+                                    "example": true,
+                                    "nullable": true
+                                }
+                            },
+                            "type": "object"
+                        },
                         "nullable": true
                     }
                 },
@@ -2480,6 +2997,131 @@
                 },
                 "type": "object"
             },
+            "ProductIngredientResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Polietileno de Baja Densidad"
+                    },
+                    "sku": {
+                        "type": "string",
+                        "example": "MP-PEBD-001"
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "raw_material"
+                    },
+                    "quantity": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 0.5
+                    },
+                    "wastagePercent": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 2
+                    },
+                    "processStage": {
+                        "type": "string",
+                        "example": "EXTRUSION",
+                        "nullable": true
+                    },
+                    "isActive": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "ProductResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Polietileno de Baja Densidad"
+                    },
+                    "sku": {
+                        "type": "string",
+                        "example": "MP-PEBD-001"
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "raw_material"
+                    },
+                    "unitOfMeasure": {
+                        "type": "string",
+                        "example": "kg"
+                    },
+                    "averageCost": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 25.5
+                    },
+                    "lastPurchasePrice": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 30,
+                        "nullable": true
+                    },
+                    "currentStock": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 1000
+                    },
+                    "minStock": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 100
+                    },
+                    "maxStock": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 5000,
+                        "nullable": true
+                    },
+                    "trackBatches": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "isActive": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "isSellable": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "isPurchasable": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T00:00:00Z"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-01-01T00:00:00Z"
+                    },
+                    "ingredients": {
+                        "description": "Only included when requested",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProductIngredientResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
             "RoleResource": {
                 "title": "Role Resource",
                 "description": "Role resource representation",
@@ -2837,6 +3479,9 @@
         },
         {
             "name": "Customers"
+        },
+        {
+            "name": "Products"
         },
         {
             "name": "Suppliers"

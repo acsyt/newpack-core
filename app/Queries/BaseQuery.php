@@ -109,8 +109,6 @@ abstract class BaseQuery
             ->allowedFilters($this->getAllowedFilters())
             ->allowedSorts($this->getAllowedSorts())
             ->allowedIncludes($this->getAllowedIncludes())
-            ->allowedFields($this->getAllowedFields())
-            ->allowedAppends($this->getAllowedAppends())
             ->defaultSort($this->getDefaultSort());
 
         return $this->applyCustomLogic($query);

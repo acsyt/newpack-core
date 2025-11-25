@@ -36,7 +36,7 @@ class SupplierController extends Controller
      *     @OA\Response(response=404, description="Not found")
      * )
      */
-    public function findAll(Request $request)
+    public function findAllSuppliers(Request $request)
     {
         $suppliers = SupplierQuery::make()->paginated();
         return SupplierResource::collection($suppliers);
@@ -71,7 +71,7 @@ class SupplierController extends Controller
      *     @OA\Response(response=404, description="Not found")
      * )
      */
-    public function findOne($id)
+    public function findOneSupplier($id)
     {
         $supplier = SupplierQuery::make()->findById((int) $id);
         return new SupplierResource($supplier);
