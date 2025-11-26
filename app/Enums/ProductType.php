@@ -4,7 +4,7 @@ namespace App\Enums;
 
 enum ProductType: string
 {
-    case RAW_MATERIAL = 'raw_material'; // Materia no
+    case RAW_MATERIAL = 'raw_material'; // Materia Prima
     case COMPOUND = 'compound'; // Compuesto
     case SUPPLY = 'supply'; // Insumo
     case SERVICE = 'service'; // Servicio
