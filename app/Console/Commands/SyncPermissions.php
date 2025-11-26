@@ -39,6 +39,17 @@ class SyncPermissions extends Command
             ['name' => 'users.show',            'description' => 'Ver detalles de usuario',     'roles' => ['admin']],
             ['name' => 'users.edit',            'description' => 'Editar usuario',              'roles' => ['admin']],
             ['name' => 'users.change-password', 'description' => 'Cambiar contraseña de usuario','roles' => ['admin']],
+
+            ['name' => 'customers.index',       'description' => 'Listar clientes',               'roles' => ['admin']],
+            ['name' => 'customers.create',      'description' => 'Crear cliente',               'roles' => ['admin']],
+            ['name' => 'customers.edit',        'description' => 'Editar cliente',              'roles' => ['admin']],
+            ['name' => 'customers.show',        'description' => 'Ver detalles de cliente',     'roles' => ['admin']],
+
+            ['name' => 'suppliers.index',       'description' => 'Listar proveedores',               'roles' => ['admin']],
+            ['name' => 'suppliers.create',      'description' => 'Crear proveedor',               'roles' => ['admin']],
+            ['name' => 'suppliers.edit',        'description' => 'Editar proveedor',              'roles' => ['admin']],
+            ['name' => 'suppliers.show',        'description' => 'Ver detalles de proveedor',     'roles' => ['admin']],
+
         ]);
     }
 
