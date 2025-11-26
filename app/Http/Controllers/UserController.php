@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Resources\UserResource;
+use App\Models\User;
 use App\Queries\UserQuery;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,10 +16,6 @@ use Symfony\Component\HttpFoundation\Response;
 #[OA\Tag(name: 'Users')]
 class UserController extends Controller
 {
-    public function __construct(
-        private readonly UserQuery $userQuery,
-    ) {
-    }
 
     /**
      * @OA\Get(
@@ -38,8 +35,8 @@ class UserController extends Controller
      */
     public function findAllUsers()
     {
-        $query = $this->userQuery->paginated(request());
-        return UserResource::collection($query);
+        $users = UserQuery::make()->paginated();
+        return UserResource::collection($users);
     }
 
     /**
@@ -62,10 +59,9 @@ class UserController extends Controller
      *     @OA\Response(response=404, description="User not found")
      * )
      */
-    public function findOneUser($id)
+    public function findOneUser(User $user)
     {
-        $query = $this->userQuery->findById($id);
-        return new UserResource($query);
+        return new UserResource($user);
     }
 
     /**

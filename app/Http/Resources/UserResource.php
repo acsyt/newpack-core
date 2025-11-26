@@ -16,7 +16,7 @@ use OpenApi\Attributes as OA;
  *     @OA\Property(property="name", type="string", example="John"),
  *     @OA\Property(property="lastName", type="string", example="Doe"),
  *     @OA\Property(property="email", type="string", format="email", example="john@example.com"),
- *     @OA\Property(property="isActive", type="boolean", example=true),
+ *     @OA\Property(property="active", type="boolean", example=true),
  *     @OA\Property(property="language", type="string", example="en"),
  *     @OA\Property(
  *         property="roles",
@@ -48,7 +48,7 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'lastName' => $this->last_name,
             'email' => $this->email,
-            'isActive' => $this->active,
+            'active' => $this->active,
             'language' => $this->language,
             'roles' => $this->whenLoaded('roles', function() {
                 return $this->getRoleNames();
