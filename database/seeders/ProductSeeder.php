@@ -10,13 +10,17 @@ class ProductSeeder extends Seeder
 {
     public function run(): void
     {
+        // Obtener IDs de unidades de medida
+        $kgId = \Illuminate\Support\Facades\DB::table('measure_units')->where('code', 'kg')->value('id');
+        $pzaId = \Illuminate\Support\Facades\DB::table('measure_units')->where('code', 'pza')->value('id');
+
         // 1. CREACIÓN DE MATERIAS PRIMAS (Ingredientes)
 
         $polietileno = Product::factory()->create([
             'name' => 'Polietileno de Baja Densidad (PEBD)',
             'sku' => 'MP-PEBD-001',
             'type' => ProductType::RAW_MATERIAL,
-            'unit_of_measure' => 'kg',
+            'measure_unit_id' => $kgId,
             'average_cost' => 25.50,
             'track_batches' => true,
             'is_purchasable' => true,
@@ -28,7 +32,7 @@ class ProductSeeder extends Seeder
             'name' => 'Pigmento Masterbatch Negro',
             'sku' => 'MP-PIG-BLK',
             'type' => ProductType::RAW_MATERIAL,
-            'unit_of_measure' => 'kg',
+            'measure_unit_id' => $kgId,
             'average_cost' => 150.00,
             'track_batches' => true,
             'is_purchasable' => true,
@@ -40,7 +44,7 @@ class ProductSeeder extends Seeder
             'name' => 'Tinta Flexográfica Blanca',
             'sku' => 'MP-INK-WHT',
             'type' => ProductType::RAW_MATERIAL,
-            'unit_of_measure' => 'kg',
+            'measure_unit_id' => $kgId,
             'average_cost' => 85.00,
             'track_batches' => true,
             'is_purchasable' => true,
@@ -55,7 +59,7 @@ class ProductSeeder extends Seeder
             'name' => 'Bolsa Basura Negra 50x70 Calibre 200',
             'sku' => 'PT-BOL-NEG-5070',
             'type' => ProductType::COMPOUND,
-            'unit_of_measure' => 'pza',
+            'measure_unit_id' => $pzaId,
             'average_cost' => 0,
             'track_batches' => true,
             'is_purchasable' => false,
@@ -81,7 +85,7 @@ class ProductSeeder extends Seeder
             'name' => 'Bolsa Boutique Impresa 30x40',
             'sku' => 'PT-BOL-IMP-3040',
             'type' => ProductType::COMPOUND,
-            'unit_of_measure' => 'pza',
+            'measure_unit_id' => $pzaId,
             'is_purchasable' => false,
             'is_sellable' => true,
         ]);
@@ -101,7 +105,7 @@ class ProductSeeder extends Seeder
         ]);
 
         // 3. DATOS DE RELLENO
-        Product::factory(10)->rawMaterial()->create();
-        Product::factory(5)->compound()->create();
+        Product::factory(10)->rawMaterial()->create(['measure_unit_id' => $kgId]);
+        Product::factory(5)->compound()->create(['measure_unit_id' => $pzaId]);
     }
 }

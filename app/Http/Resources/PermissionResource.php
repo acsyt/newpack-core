@@ -8,7 +8,7 @@ use OpenApi\Attributes as OA;
 /**
  * @OA\Schema(
  *     schema="PermissionResource",
- *     title="Permission Resource",
+ *     title="Permission",
  *     description="Permission resource representation",
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="name", type="string", example="create_users"),

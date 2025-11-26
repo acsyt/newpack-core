@@ -16,7 +16,7 @@ class ProductFactory extends Factory
             'name'                      => $this->faker->words(3, true),
             'sku'                       => strtoupper($this->faker->unique()->bothify('PROD-####')),
             'type'                      => $this->faker->randomElement(ProductType::cases()),
-            'unit_of_measure'           => $this->faker->randomElement(['kg', 'lt', 'pza', 'm']),
+            'measure_unit_id'           => $this->faker->numberBetween(1, 5),
             'average_cost'              => $this->faker->randomFloat(4, 1, 1000),
             'last_purchase_price'       => $this->faker->randomFloat(4, 1, 1000),
             'current_stock'             => $this->faker->randomFloat(4, 0, 1000),

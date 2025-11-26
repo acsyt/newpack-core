@@ -18,7 +18,7 @@ class Product extends Model
         'name',
         'sku',
         'type',
-        'unit_of_measure',
+        'measure_unit_id',
         'average_cost',
         'last_purchase_price',
         'current_stock',
@@ -47,6 +47,11 @@ class Product extends Model
     }
 
     // RELACIONES
+
+    public function measureUnit()
+    {
+        return $this->belongsTo(SatMeasureUnit::class, 'measure_unit_id');
+    }
 
     public function ingredients()
     {

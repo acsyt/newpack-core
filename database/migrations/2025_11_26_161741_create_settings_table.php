@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -19,16 +20,20 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        DB::insert('settings', [
+        DB::table('settings')->insert([
             [
                 'slug'          => 'iva',
                 'value'         => '0.16',
-                'description'   => 'IVA'
+                'description'   => 'IVA',
+                'created_at'    => now(),
+                'updated_at'    => now(),
             ],
             [
                 'slug'          => 'exchange_rate',
                 'value'         => '1',
-                'description'   => 'Tasa de cambio'
+                'description'   => 'Tasa de cambio',
+                'created_at'    => now(),
+                'updated_at'    => now(),
             ]
         ]);
     }

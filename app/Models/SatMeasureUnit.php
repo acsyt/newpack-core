@@ -8,9 +8,11 @@ use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 
-class MeasureUnit extends Model {
+class SatMeasureUnit extends Model {
 
     use HasFactory, LogsActivity;
+
+    protected $table = 'measure_units';
 
     protected $fillable = ['name','code', 'description', 'active', 'created_at', 'updated_at','order'];
 
@@ -28,7 +30,7 @@ class MeasureUnit extends Model {
     public function getActivityLogOptions(): LogOptions {
         return LogOptions::defaults()
             ->logFillable()
-            ->useLogName('MeasureUnit')
+            ->useLogName('SatMeasureUnit')
             ->dontSubmitEmptyLogs()
             ->logOnlyDirty();
     }

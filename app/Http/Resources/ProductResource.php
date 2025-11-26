@@ -8,6 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @OA\Schema(
  *     schema="ProductResource",
+ *     title="Product",
  *     type="object",
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="name", type="string", example="Polietileno de Baja Densidad"),
@@ -42,7 +43,14 @@ class ProductResource extends JsonResource
             'name'                  => $this->name,
             'sku'                   => $this->sku,
             'type'                  => $this->type->value,
-            'unitOfMeasure'         => $this->unit_of_measure,
+            'measureUnit'           => $this->whenLoaded('measureUnit', function () {
+                return [
+                    'id' => $this->measureUnit->id,
+                    'name' => $this->measureUnit->name,
+                    'code' => $this->measureUnit->code,
+                ];
+            }),
+            'measureUnitId'         => $this->measure_unit_id,
             'averageCost'           => (float) $this->average_cost,
             'lastPurchasePrice'     => $this->last_purchase_price ? (float) $this->last_purchase_price : null,
             'currentStock'          => (float) $this->current_stock,

@@ -10,7 +10,7 @@ use OpenApi\Attributes as OA;
 /**
  * @OA\Schema(
  *     schema="UserResource",
- *     title="User Resource",
+ *     title="User",
  *     description="User resource representation",
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="name", type="string", example="John"),

@@ -8,7 +8,7 @@ use OpenApi\Attributes as OA;
 /**
  * @OA\Schema(
  *     schema="RoleResource",
- *     title="Role Resource",
+ *     title="Role",
  *     description="Role resource representation",
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="name", type="string", example="admin"),

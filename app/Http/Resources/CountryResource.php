@@ -10,7 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     schema="CountryResource",
  *     description="Recurso de País para representar los datos de un país.",
  *     type="object",
- *     title="CountryResource",
+ *     title="Country",
  *     @OA\Property(
  *         property="id",
  *         type="integer",

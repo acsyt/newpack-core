@@ -10,7 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     schema="CityResource",
  *     description="Recurso de Ciudad para representar los datos de la ciudad con relaciones.",
  *     type="object",
- *     title="CityResource",
+ *     title="City",
  *     @OA\Property(
  *         property="id",
  *         type="integer",

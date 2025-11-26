@@ -2180,6 +2180,493 @@
                     }
                 ]
             }
+        },
+        "/api/warehouses": {
+            "get": {
+                "tags": [
+                    "Warehouses"
+                ],
+                "summary": "Get all warehouses",
+                "operationId": "9884779c5750072bf033109abfc1d53c",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filter[name]",
+                        "in": "query",
+                        "description": "Filter by name (partial match)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[type]",
+                        "in": "query",
+                        "description": "Filter by type (exact match)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[active]",
+                        "in": "query",
+                        "description": "Filter by active status (exact match)",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "filter[search]",
+                        "in": "query",
+                        "description": "Search across multiple fields",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Warehouses list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WarehouseResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Warehouses"
+                ],
+                "summary": "Create a new warehouse",
+                "operationId": "df200eb91c1305ba67fe79317bb3b0b4",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateWarehouseRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Warehouse created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WarehouseResource"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/warehouses/{warehouse}": {
+            "get": {
+                "tags": [
+                    "Warehouses"
+                ],
+                "summary": "Get a warehouse by ID",
+                "operationId": "a9eaa3d251c1527d05c49251bfeed12a",
+                "parameters": [
+                    {
+                        "name": "warehouse",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Warehouse details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WarehouseResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Warehouses"
+                ],
+                "summary": "Delete a warehouse",
+                "operationId": "8830ac62ba49ff26257205eda177f05a",
+                "parameters": [
+                    {
+                        "name": "warehouse",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Deleted"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Warehouses"
+                ],
+                "summary": "Update a warehouse",
+                "operationId": "7c80d6233b6c8583bc5471f451a709b8",
+                "parameters": [
+                    {
+                        "name": "warehouse",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateWarehouseRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Warehouse updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WarehouseResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/warehouse-locations": {
+            "get": {
+                "tags": [
+                    "Warehouse Locations"
+                ],
+                "summary": "Get all warehouse locations",
+                "operationId": "e5553a5bd3f45809bb730b8578bc4420",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filter[warehouse_id]",
+                        "in": "query",
+                        "description": "Filter by warehouse ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filter[aisle]",
+                        "in": "query",
+                        "description": "Filter by aisle",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[shelf]",
+                        "in": "query",
+                        "description": "Filter by shelf",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[section]",
+                        "in": "query",
+                        "description": "Filter by section",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[search]",
+                        "in": "query",
+                        "description": "Search across multiple fields",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Locations list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WarehouseLocationResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Warehouse Locations"
+                ],
+                "summary": "Create a new warehouse location",
+                "operationId": "1010b6b7f904c3890431686b20cbd14d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateWarehouseLocationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Location created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WarehouseLocationResource"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/warehouse-locations/{location}": {
+            "get": {
+                "tags": [
+                    "Warehouse Locations"
+                ],
+                "summary": "Get a warehouse location by ID",
+                "operationId": "b1297c096464879db0fbc1f03ce7e0cc",
+                "parameters": [
+                    {
+                        "name": "location",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Location details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WarehouseLocationResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Warehouse Locations"
+                ],
+                "summary": "Delete a warehouse location",
+                "operationId": "ad8564a4c1e7140342f848abd26e6415",
+                "parameters": [
+                    {
+                        "name": "location",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Deleted"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Warehouse Locations"
+                ],
+                "summary": "Update a warehouse location",
+                "operationId": "9c78e4a56e9f7f0a8da32cb016243dc1",
+                "parameters": [
+                    {
+                        "name": "location",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateWarehouseLocationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Location updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WarehouseLocationResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -2434,7 +2921,7 @@
                     "name",
                     "sku",
                     "type",
-                    "unit_of_measure"
+                    "measure_unit_id"
                 ],
                 "properties": {
                     "name": {
@@ -2456,9 +2943,9 @@
                         ],
                         "example": "raw_material"
                     },
-                    "unit_of_measure": {
-                        "type": "string",
-                        "example": "kg"
+                    "measure_unit_id": {
+                        "type": "integer",
+                        "example": 1
                     },
                     "average_cost": {
                         "type": "number",
@@ -2469,49 +2956,44 @@
                     "last_purchase_price": {
                         "type": "number",
                         "format": "float",
-                        "example": 30,
+                        "example": 24,
                         "nullable": true
                     },
                     "current_stock": {
                         "type": "number",
                         "format": "float",
-                        "example": 1000,
+                        "example": 100,
                         "nullable": true
                     },
                     "min_stock": {
                         "type": "number",
                         "format": "float",
-                        "example": 100,
+                        "example": 10,
                         "nullable": true
                     },
                     "max_stock": {
                         "type": "number",
                         "format": "float",
-                        "example": 5000,
+                        "example": 500,
                         "nullable": true
                     },
                     "track_batches": {
                         "type": "boolean",
-                        "example": true,
-                        "nullable": true
+                        "example": true
                     },
                     "is_active": {
                         "type": "boolean",
-                        "example": true,
-                        "nullable": true
+                        "example": true
                     },
                     "is_sellable": {
                         "type": "boolean",
-                        "example": false,
-                        "nullable": true
+                        "example": false
                     },
                     "is_purchasable": {
                         "type": "boolean",
-                        "example": true,
-                        "nullable": true
+                        "example": true
                     },
                     "ingredients": {
-                        "description": "Required if type is 'compuesto'",
                         "type": "array",
                         "items": {
                             "required": [
@@ -2521,28 +3003,21 @@
                             "properties": {
                                 "ingredient_id": {
                                     "type": "integer",
-                                    "example": 1
+                                    "example": 5
                                 },
                                 "quantity": {
                                     "type": "number",
                                     "format": "float",
-                                    "example": 0.5
+                                    "example": 1.5
                                 },
                                 "wastage_percent": {
                                     "type": "number",
                                     "format": "float",
-                                    "example": 2,
-                                    "nullable": true
+                                    "example": 0.05
                                 },
                                 "process_stage": {
                                     "type": "string",
-                                    "example": "EXTRUSION",
-                                    "nullable": true
-                                },
-                                "is_active": {
-                                    "type": "boolean",
-                                    "example": true,
-                                    "nullable": true
+                                    "example": "EXTRUSION"
                                 }
                             },
                             "type": "object"
@@ -2575,9 +3050,9 @@
                         "example": "raw_material",
                         "nullable": true
                     },
-                    "unit_of_measure": {
-                        "type": "string",
-                        "example": "kg",
+                    "measure_unit_id": {
+                        "type": "integer",
+                        "example": 1,
                         "nullable": true
                     },
                     "average_cost": {
@@ -2589,25 +3064,25 @@
                     "last_purchase_price": {
                         "type": "number",
                         "format": "float",
-                        "example": 30,
+                        "example": 24,
                         "nullable": true
                     },
                     "current_stock": {
                         "type": "number",
                         "format": "float",
-                        "example": 1000,
+                        "example": 100,
                         "nullable": true
                     },
                     "min_stock": {
                         "type": "number",
                         "format": "float",
-                        "example": 100,
+                        "example": 10,
                         "nullable": true
                     },
                     "max_stock": {
                         "type": "number",
                         "format": "float",
-                        "example": 5000,
+                        "example": 500,
                         "nullable": true
                     },
                     "track_batches": {
@@ -2640,33 +3115,25 @@
                             "properties": {
                                 "ingredient_id": {
                                     "type": "integer",
-                                    "example": 1
+                                    "example": 5
                                 },
                                 "quantity": {
                                     "type": "number",
                                     "format": "float",
-                                    "example": 0.5
+                                    "example": 1.5
                                 },
                                 "wastage_percent": {
                                     "type": "number",
                                     "format": "float",
-                                    "example": 2,
-                                    "nullable": true
+                                    "example": 0.05
                                 },
                                 "process_stage": {
                                     "type": "string",
-                                    "example": "EXTRUSION",
-                                    "nullable": true
-                                },
-                                "is_active": {
-                                    "type": "boolean",
-                                    "example": true,
-                                    "nullable": true
+                                    "example": "EXTRUSION"
                                 }
                             },
                             "type": "object"
-                        },
-                        "nullable": true
+                        }
                     }
                 },
                 "type": "object"
@@ -2993,8 +3460,177 @@
                 },
                 "type": "object"
             },
+            "CreateWarehouseLocationRequest": {
+                "title": "Create Warehouse Location Request",
+                "description": "Request body for creating a warehouse location",
+                "required": [
+                    "warehouse_id"
+                ],
+                "properties": {
+                    "warehouse_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "aisle": {
+                        "type": "string",
+                        "example": "A-01",
+                        "nullable": true
+                    },
+                    "shelf": {
+                        "type": "string",
+                        "example": "S-02",
+                        "nullable": true
+                    },
+                    "section": {
+                        "type": "string",
+                        "example": "L-03",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "CreateWarehouseRequest": {
+                "title": "Create Warehouse Request",
+                "description": "Request body for creating a warehouse",
+                "required": [
+                    "name",
+                    "type",
+                    "active"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Almacén Central"
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "main"
+                    },
+                    "active": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateWarehouseLocationRequest": {
+                "title": "Update Warehouse Location Request",
+                "description": "Request body for updating a warehouse location",
+                "required": [
+                    "id",
+                    "warehouse_id"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "warehouse_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "aisle": {
+                        "type": "string",
+                        "example": "A-01",
+                        "nullable": true
+                    },
+                    "shelf": {
+                        "type": "string",
+                        "example": "S-02",
+                        "nullable": true
+                    },
+                    "section": {
+                        "type": "string",
+                        "example": "L-03",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateWarehouseRequest": {
+                "title": "Update Warehouse Request",
+                "description": "Request body for updating a warehouse",
+                "required": [
+                    "id",
+                    "name",
+                    "type",
+                    "active"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Almacén Central"
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "main"
+                    },
+                    "active": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "AttachmentResource": {
+                "title": "Attachment",
+                "description": "Attachment resource",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "document.pdf"
+                    },
+                    "originalName": {
+                        "type": "string",
+                        "example": "my_document.pdf"
+                    },
+                    "mime": {
+                        "type": "string",
+                        "example": "application/pdf"
+                    },
+                    "extension": {
+                        "type": "string",
+                        "example": "pdf"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "example": 102400
+                    },
+                    "path": {
+                        "type": "string",
+                        "example": "attachments/2023/10/document.pdf"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Documento de identidad",
+                        "nullable": true
+                    },
+                    "alt": {
+                        "type": "string",
+                        "example": "Foto de perfil",
+                        "nullable": true
+                    },
+                    "url": {
+                        "type": "string",
+                        "example": "https://api.example.com/storage/attachments/2023/10/document.pdf"
+                    },
+                    "relativeUrl": {
+                        "type": "string",
+                        "example": "/storage/attachments/2023/10/document.pdf"
+                    }
+                },
+                "type": "object"
+            },
             "CityResource": {
-                "title": "CityResource",
+                "title": "City",
                 "description": "Recurso de Ciudad para representar los datos de la ciudad con relaciones.",
                 "properties": {
                     "id": {
@@ -3021,7 +3657,7 @@
                 "type": "object"
             },
             "CountryResource": {
-                "title": "CountryResource",
+                "title": "Country",
                 "description": "Recurso de País para representar los datos de un país.",
                 "properties": {
                     "id": {
@@ -3206,7 +3842,7 @@
                 "type": "object"
             },
             "PermissionResource": {
-                "title": "Permission Resource",
+                "title": "Permission",
                 "description": "Permission resource representation",
                 "properties": {
                     "id": {
@@ -3233,6 +3869,7 @@
                 "type": "object"
             },
             "ProductIngredientResource": {
+                "title": "ProductIngredient",
                 "properties": {
                     "id": {
                         "type": "integer",
@@ -3273,6 +3910,7 @@
                 "type": "object"
             },
             "ProductResource": {
+                "title": "Product",
                 "properties": {
                     "id": {
                         "type": "integer",
@@ -3358,7 +3996,7 @@
                 "type": "object"
             },
             "RoleResource": {
-                "title": "Role Resource",
+                "title": "Role",
                 "description": "Role resource representation",
                 "properties": {
                     "id": {
@@ -3611,7 +4249,7 @@
                 "type": "object"
             },
             "UserResource": {
-                "title": "User Resource",
+                "title": "User",
                 "description": "User resource representation",
                 "properties": {
                     "id": {
@@ -3660,6 +4298,104 @@
                     "updatedAt": {
                         "type": "string",
                         "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "WarehouseLocationResource": {
+                "title": "Warehouse Location",
+                "description": "Warehouse Location resource",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "uniqueId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "example": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    "warehouseId": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "warehouse": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/WarehouseResource"
+                            }
+                        ],
+                        "nullable": true
+                    },
+                    "aisle": {
+                        "type": "string",
+                        "example": "A-01",
+                        "nullable": true
+                    },
+                    "shelf": {
+                        "type": "string",
+                        "example": "S-02",
+                        "nullable": true
+                    },
+                    "section": {
+                        "type": "string",
+                        "example": "L-03",
+                        "nullable": true
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "WarehouseResource": {
+                "title": "Warehouse",
+                "description": "Warehouse resource",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "main"
+                    },
+                    "typeName": {
+                        "type": "string",
+                        "example": "Principal"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Almacén Central"
+                    },
+                    "active": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "createdBy": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "warehouseLocations": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/WarehouseLocationResource"
+                        },
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -3720,6 +4456,12 @@
         },
         {
             "name": "Suppliers"
+        },
+        {
+            "name": "Warehouses"
+        },
+        {
+            "name": "Warehouse Locations"
         },
         {
             "name": "Password Reset",

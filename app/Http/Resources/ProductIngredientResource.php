@@ -8,6 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @OA\Schema(
  *     schema="ProductIngredientResource",
+ *     title="ProductIngredient",
  *     type="object",
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="name", type="string", example="Polietileno de Baja Densidad"),
@@ -28,7 +29,12 @@ class ProductIngredientResource extends JsonResource
             'name'              => $this->name,
             'sku'               => $this->sku,
             'type'              => $this->type->value,
-            'unitOfMeasure'     => $this->unit_of_measure,
+            'measureUnit'       => $this->measureUnit ? [
+                'id' => $this->measureUnit->id,
+                'name' => $this->measureUnit->name,
+                'code' => $this->measureUnit->code,
+            ] : null,
+            'measureUnitId'     => $this->measure_unit_id,
 
             // Pivot data from product_compounds table
             'quantity'          => $this->pivot->quantity ? (float) $this->pivot->quantity : null,

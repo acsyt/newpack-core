@@ -16,7 +16,6 @@ return new class extends Migration
             $table->date('production_date')->nullable();
             $table->date('expiration_date')->nullable();
 
-                // Origin tracking
             $table->foreignId('supplier_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('production_order_id')->nullable()->constrained()->onDelete('set null');
 

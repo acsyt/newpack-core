@@ -13,12 +13,12 @@ use Illuminate\Validation\Rule;
  *     @OA\Property(property="name", type="string", nullable=true, example="Polietileno de Baja Densidad"),
  *     @OA\Property(property="sku", type="string", nullable=true, example="MP-PEBD-001"),
  *     @OA\Property(property="type", type="string", enum={"raw_material", "compound", "ingredient", "service", "wip"}, nullable=true, example="raw_material"),
- *     @OA\Property(property="unit_of_measure", type="string", nullable=true, example="kg"),
+ *     @OA\Property(property="measure_unit_id", type="integer", nullable=true, example=1),
  *     @OA\Property(property="average_cost", type="number", format="float", nullable=true, example=25.50),
- *     @OA\Property(property="last_purchase_price", type="number", format="float", nullable=true, example=30.00),
- *     @OA\Property(property="current_stock", type="number", format="float", nullable=true, example=1000.00),
- *     @OA\Property(property="min_stock", type="number", format="float", nullable=true, example=100.00),
- *     @OA\Property(property="max_stock", type="number", format="float", nullable=true, example=5000.00),
+ *     @OA\Property(property="last_purchase_price", type="number", format="float", nullable=true, example=24.00),
+ *     @OA\Property(property="current_stock", type="number", format="float", nullable=true, example=100.00),
+ *     @OA\Property(property="min_stock", type="number", format="float", nullable=true, example=10.00),
+ *     @OA\Property(property="max_stock", type="number", format="float", nullable=true, example=500.00),
  *     @OA\Property(property="track_batches", type="boolean", nullable=true, example=true),
  *     @OA\Property(property="is_active", type="boolean", nullable=true, example=true),
  *     @OA\Property(property="is_sellable", type="boolean", nullable=true, example=false),
@@ -26,15 +26,13 @@ use Illuminate\Validation\Rule;
  *     @OA\Property(
  *         property="ingredients",
  *         type="array",
- *         nullable=true,
  *         @OA\Items(
  *             type="object",
  *             required={"ingredient_id", "quantity"},
- *             @OA\Property(property="ingredient_id", type="integer", example=1),
- *             @OA\Property(property="quantity", type="number", format="float", example=0.5),
- *             @OA\Property(property="wastage_percent", type="number", format="float", nullable=true, example=2.0),
- *             @OA\Property(property="process_stage", type="string", nullable=true, example="EXTRUSION"),
- *             @OA\Property(property="is_active", type="boolean", nullable=true, example=true)
+ *             @OA\Property(property="ingredient_id", type="integer", example=5),
+ *             @OA\Property(property="quantity", type="number", format="float", example=1.5),
+ *             @OA\Property(property="wastage_percent", type="number", format="float", example=0.05),
+ *             @OA\Property(property="process_stage", type="string", example="EXTRUSION")
  *         )
  *     )
  * )
@@ -48,35 +46,28 @@ class UpdateProductRequest extends FormRequest
 
     public function rules(): array
     {
-        $productId = $this->route('id');
-
-        $rules = [
+        return [
             'name'                  => ['sometimes', 'string', 'max:255'],
-            'sku'                   => ['sometimes', 'string', 'max:255', Rule::unique('products', 'sku')->ignore($productId)],
+            'sku'                   => ['sometimes', 'string', 'max:100', Rule::unique('products', 'sku')->ignore($this->route('product'))],
             'type'                  => ['sometimes', Rule::enum(ProductType::class)],
-            'unit_of_measure'       => ['sometimes', 'string', 'max:10'],
+            'measure_unit_id'       => ['sometimes', 'integer', 'exists:measure_units,id'],
             'average_cost'          => ['nullable', 'numeric', 'min:0'],
             'last_purchase_price'   => ['nullable', 'numeric', 'min:0'],
             'current_stock'         => ['nullable', 'numeric', 'min:0'],
             'min_stock'             => ['nullable', 'numeric', 'min:0'],
             'max_stock'             => ['nullable', 'numeric', 'min:0'],
-            'track_batches'         => ['nullable', 'boolean'],
-            'is_active'             => ['nullable', 'boolean'],
-            'is_sellable'           => ['nullable', 'boolean'],
-            'is_purchasable'        => ['nullable', 'boolean'],
+            'track_batches'         => ['boolean'],
+            'is_active'             => ['boolean'],
+            'is_sellable'           => ['boolean'],
+            'is_purchasable'        => ['boolean'],
+
+            // Validación para ingredientes
+            'ingredients'                   => ['nullable', 'array'],
+            'ingredients.*.ingredient_id'   => ['required_with:ingredients', 'integer', 'exists:products,id'],
+            'ingredients.*.quantity'        => ['required_with:ingredients', 'numeric', 'min:0.0001'],
+            'ingredients.*.wastage_percent' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'ingredients.*.process_stage'   => ['nullable', 'string', 'max:50'],
         ];
-
-        // If ingredients are provided, validate them
-        if ($this->has('ingredients')) {
-            $rules['ingredients'] = ['array'];
-            $rules['ingredients.*.ingredient_id'] = ['required', 'integer', 'exists:products,id'];
-            $rules['ingredients.*.quantity'] = ['required', 'numeric', 'min:0.0001'];
-            $rules['ingredients.*.wastage_percent'] = ['nullable', 'numeric', 'min:0', 'max:100'];
-            $rules['ingredients.*.process_stage'] = ['nullable', 'string', 'max:50'];
-            $rules['ingredients.*.is_active'] = ['nullable', 'boolean'];
-        }
-
-        return $rules;
     }
 
     public function messages(): array

@@ -13,9 +13,8 @@ return new class extends Migration
             $table->foreignId('compound_id')->constrained('products')->onDelete('cascade');
             $table->foreignId('ingredient_id')->constrained('products')->onDelete('restrict');
 
-            $table->decimal('quantity', 12, 4);
+            $table->decimal('quantity', 12, 6);
 
-            // Porcentaje de merma teórica (ej. 5.00 para 5%)
             $table->decimal('wastage_percent', 5, 2)->default(0);
 
             $table->string('process_stage')->nullable()->index()->comment('Ej: EXTRUSION, IMPRESION, EMPAQUE');
@@ -24,7 +23,7 @@ return new class extends Migration
 
             $table->timestamps();
 
-            $table->unique(['compound_id', 'ingredient_id', 'process_stage'], 'compound_ingredient_unique');
+            $table->unique(['compound_id', 'ingredient_id', 'process_stage'], 'unique_recipe_line');
         });
     }
 
