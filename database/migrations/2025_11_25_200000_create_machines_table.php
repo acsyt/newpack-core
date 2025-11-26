@@ -12,6 +12,12 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('code')->unique();
+            $table->foreignId('process_id')->nullable()->constrained('processes')->nullOnDelete();
+            $table->string('speed_mh')->nullable();
+            $table->string('speed_kgh')->nullable();
+            $table->string('circumference_total')->nullable();
+            $table->string('max_width')->nullable();
+            $table->string('max_center')->nullable();
             $table->enum('status', ['active', 'maintenance', 'inactive'])->default('active');
             $table->timestamps();
         });

@@ -30,15 +30,19 @@ class DatabaseSeeder extends Seeder
 
         $this->createAdminUser();
 
-        if (app()->environment('local')) {
-            $this->createDummyUsers();
-            $this->call([
-            // UserSeeder::class, // Descomentar si existe
-            CustomerSeeder::class,
-            SupplierSeeder::class,
-            WarehouseSeeder::class,
-            ProductSeeder::class,
-        ]);}
+        $this->call([
+            MachineSeeder::class
+        ]);
+
+        // if (app()->environment('local')) {
+        //     $this->createDummyUsers();
+        //     $this->call([
+        //     // UserSeeder::class, // Descomentar si existe
+        //     CustomerSeeder::class,
+        //     SupplierSeeder::class,
+        //     WarehouseSeeder::class,
+        //     ProductSeeder::class,
+        // ]);}
     }
 
     private function createAdminUser(): void
