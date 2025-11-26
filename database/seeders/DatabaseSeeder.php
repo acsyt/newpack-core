@@ -36,6 +36,7 @@ class DatabaseSeeder extends Seeder
             // UserSeeder::class, // Descomentar si existe
             CustomerSeeder::class,
             SupplierSeeder::class,
+            WarehouseSeeder::class,
             ProductSeeder::class,
         ]);}
     }

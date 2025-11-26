@@ -3,9 +3,12 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\WarehouseController;
+use App\Http\Controllers\WarehouseLocationController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -80,6 +83,31 @@ Route::as('api.')
                 Route::get('/', [SupplierController::class, 'findOneSupplier'])->name('suppliers.findOne');
                 Route::patch('/', [SupplierController::class, 'updateSupplier'])->name('suppliers.update');
                 Route::delete('/', [SupplierController::class, 'deleteSupplier'])->name('suppliers.delete');
+            });
+        });
+
+        Route::prefix('settings')->group(function (){
+            Route::get("/", [SettingController::class, 'getSettings'])->name('settings.get_settings');
+            Route::put("/", [SettingController::class, 'updateSettings'])->name('settings.update_settings');
+        });
+
+        Route::prefix('warehouses')->group(function () {
+            Route::get('/', [WarehouseController::class, 'findAllWarehouses'])->name('warehouses.findAll');
+            Route::post('/', [WarehouseController::class, 'createWarehouse'])->name('warehouses.create');
+            Route::prefix('{warehouse}')->group(function () {
+                Route::get('/', [WarehouseController::class, 'findOneWarehouse'])->name('warehouses.findOne');
+                Route::patch('/', [WarehouseController::class, 'updateWarehouse'])->name('warehouses.update');
+                Route::delete('/', [WarehouseController::class, 'deleteWarehouse'])->name('warehouses.delete');
+            });
+        });
+
+        Route::prefix('warehouse-locations')->group(function () {
+            Route::get('/', [WarehouseLocationController::class, 'findAllLocations'])->name('warehouse_locations.findAll');
+            Route::post('/', [WarehouseLocationController::class, 'createLocation'])->name('warehouse_locations.create');
+            Route::prefix('{location}')->group(function () {
+                Route::get('/', [WarehouseLocationController::class, 'findOneLocation'])->name('warehouse_locations.findOne');
+                Route::patch('/', [WarehouseLocationController::class, 'updateLocation'])->name('warehouse_locations.update');
+                Route::delete('/', [WarehouseLocationController::class, 'deleteLocation'])->name('warehouse_locations.delete');
             });
         });
 

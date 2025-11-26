@@ -1,0 +1,43 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('settings', function (Blueprint $table) {
+            $table->id();
+            $table->string('slug')->unique();
+            $table->string('value')->nullable();
+            $table->string('description')->nullable();
+            $table->timestamps();
+        });
+
+        DB::insert('settings', [
+            [
+                'slug'          => 'iva',
+                'value'         => '0.16',
+                'description'   => 'IVA'
+            ],
+            [
+                'slug'          => 'exchange_rate',
+                'value'         => '1',
+                'description'   => 'Tasa de cambio'
+            ]
+        ]);
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('settings');
+    }
+};
