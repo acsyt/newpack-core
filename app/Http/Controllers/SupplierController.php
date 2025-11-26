@@ -29,9 +29,14 @@ class SupplierController extends Controller
      *     security={{"sanctum": {}}},
      *     @OA\Parameter(name="page", in="query", required=false, @OA\Schema(type="integer")),
      *     @OA\Parameter(name="per_page", in="query", required=false, @OA\Schema(type="integer")),
-     *     @OA\Parameter(name="search", in="query", required=false, @OA\Schema(type="string")),
-     *     @OA\Parameter(name="supplier_type", in="query", required=false, @OA\Schema(type="string")),
-     *     @OA\Parameter(name="status", in="query", required=false, @OA\Schema(type="string")),
+     *     @OA\Parameter(name="filter[company_name]", in="query", required=false, @OA\Schema(type="string"), description="Filter by company name (partial match)"),
+     *     @OA\Parameter(name="filter[contact_name]", in="query", required=false, @OA\Schema(type="string"), description="Filter by contact name (partial match)"),
+     *     @OA\Parameter(name="filter[email]", in="query", required=false, @OA\Schema(type="string"), description="Filter by email (partial match)"),
+     *     @OA\Parameter(name="filter[rfc]", in="query", required=false, @OA\Schema(type="string"), description="Filter by RFC (partial match)"),
+     *     @OA\Parameter(name="filter[status]", in="query", required=false, @OA\Schema(type="string"), description="Filter by status (exact match)"),
+     *     @OA\Parameter(name="filter[supplier_type]", in="query", required=false, @OA\Schema(type="string"), description="Filter by supplier type (exact match)"),
+     *     @OA\Parameter(name="filter[suburb_id]", in="query", required=false, @OA\Schema(type="integer"), description="Filter by suburb ID (exact match)"),
+     *     @OA\Parameter(name="filter[search]", in="query", required=false, @OA\Schema(type="string"), description="Search across multiple fields using the search scope"),
      *     @OA\Response(response=200, description="Suppliers list", @OA\JsonContent(ref="#/components/schemas/SupplierResource")),
      *     @OA\Response(response=404, description="Not found")
      * )

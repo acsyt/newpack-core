@@ -73,4 +73,10 @@ class Product extends Model
     {
         return $query->where('type', ProductType::COMPOUND);
     }
+
+    public function scopeSearch($query, $search)
+    {
+        return $query->where('name', 'like', "%{$search}%")
+            ->orWhere('sku', 'like', "%{$search}%");
+    }
 }

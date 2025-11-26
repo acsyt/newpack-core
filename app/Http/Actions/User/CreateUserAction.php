@@ -11,7 +11,7 @@ use Spatie\Permission\Models\Role;
 
 class CreateUserAction
 {
-    public function handle(array $data) {
+    public static function handle(array $data) {
         DB::beginTransaction();
         try {
 

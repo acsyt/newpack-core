@@ -27,27 +27,15 @@ class RoleController extends Controller
      *     summary="List all roles",
      *     tags={"Roles"},
      *     security={{"sanctum": {}}},
-     *     @OA\Parameter(
-     *         name="filter[name]",
-     *         in="query",
-     *         description="Filter by role name (partial match)",
-     *         required=false,
-     *         @OA\Schema(type="string")
-     *     ),
-     *     @OA\Parameter(
-     *         name="filter[description]",
-     *         in="query",
-     *         description="Filter by description (partial match)",
-     *         required=false,
-     *         @OA\Schema(type="string")
-     *     ),
-     *     @OA\Parameter(
-     *         name="filter[active]",
-     *         in="query",
-     *         description="Filter by active status",
-     *         required=false,
-     *         @OA\Schema(type="boolean")
-     *     ),
+     *     @OA\Parameter(name="page", in="query", required=false, @OA\Schema(type="integer")),
+     *     @OA\Parameter(name="per_page", in="query", required=false, @OA\Schema(type="integer")),
+     *     @OA\Parameter(name="filter[id]", in="query", required=false, @OA\Schema(type="integer"), description="Filter by role ID (exact match)"),
+     *     @OA\Parameter(name="filter[name]", in="query", required=false, @OA\Schema(type="string"), description="Filter by role name (partial match)"),
+     *     @OA\Parameter(name="filter[description]", in="query", required=false, @OA\Schema(type="string"), description="Filter by description (partial match)"),
+     *     @OA\Parameter(name="filter[guard_name]", in="query", required=false, @OA\Schema(type="string"), description="Filter by guard name (exact match)"),
+     *     @OA\Parameter(name="filter[active]", in="query", required=false, @OA\Schema(type="boolean"), description="Filter by active status (exact match)"),
+     *     @OA\Parameter(name="filter[created_at]", in="query", required=false, @OA\Schema(type="string"), description="Filter by creation date range (format: YYYY-MM-DD,YYYY-MM-DD)"),
+     *     @OA\Parameter(name="filter[updated_at]", in="query", required=false, @OA\Schema(type="string"), description="Filter by last update date range (format: YYYY-MM-DD,YYYY-MM-DD)"),
      *     @OA\Parameter(
      *         name="sort",
      *         in="query",

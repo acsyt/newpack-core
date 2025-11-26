@@ -23,6 +23,7 @@ class ProductQuery extends BaseQuery
             AllowedFilter::exact('is_purchasable'),
             AllowedFilter::scope('raw_material'),
             AllowedFilter::scope('compound'),
+            AllowedFilter::scope('search'),
         ];
     }
 

@@ -10,13 +10,10 @@ use Spatie\Permission\Models\Role;
 
 class UpdateUserAction
 {
-    public function handle($id, array $data) {
+    public static function handle(User $user, array $data) {
 
         DB::beginTransaction();
         try {
-
-            $user = User::findOrFail($id);
-
             if (isset($data['password'])) {
                 $data['password'] = Hash::make($data['password']);
             }

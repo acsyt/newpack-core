@@ -23,6 +23,18 @@ class UserController extends Controller
      *     summary="List all users",
      *     tags={"Users"},
      *     security={{"sanctum": {}}},
+     *     @OA\Parameter(name="page", in="query", required=false, @OA\Schema(type="integer")),
+     *     @OA\Parameter(name="per_page", in="query", required=false, @OA\Schema(type="integer")),
+     *     @OA\Parameter(name="filter[id]", in="query", required=false, @OA\Schema(type="integer"), description="Filter by user ID (exact match)"),
+     *     @OA\Parameter(name="filter[name]", in="query", required=false, @OA\Schema(type="string"), description="Filter by name (partial match)"),
+     *     @OA\Parameter(name="filter[username]", in="query", required=false, @OA\Schema(type="string"), description="Filter by username (partial match)"),
+     *     @OA\Parameter(name="filter[email]", in="query", required=false, @OA\Schema(type="string"), description="Filter by email (partial match)"),
+     *     @OA\Parameter(name="filter[last_name]", in="query", required=false, @OA\Schema(type="string"), description="Filter by last name (partial match)"),
+     *     @OA\Parameter(name="filter[phone]", in="query", required=false, @OA\Schema(type="string"), description="Filter by phone (partial match)"),
+     *     @OA\Parameter(name="filter[active]", in="query", required=false, @OA\Schema(type="boolean"), description="Filter by active status (exact match)"),
+     *     @OA\Parameter(name="filter[role_id]", in="query", required=false, @OA\Schema(type="integer"), description="Filter by role ID (exact match)"),
+     *     @OA\Parameter(name="filter[created_at]", in="query", required=false, @OA\Schema(type="string"), description="Filter by creation date range (format: YYYY-MM-DD,YYYY-MM-DD)"),
+     *     @OA\Parameter(name="filter[updated_at]", in="query", required=false, @OA\Schema(type="string"), description="Filter by last update date range (format: YYYY-MM-DD,YYYY-MM-DD)"),
      *     @OA\Response(
      *         response=200,
      *         description="List of users",
@@ -59,8 +71,9 @@ class UserController extends Controller
      *     @OA\Response(response=404, description="User not found")
      * )
      */
-    public function findOneUser(User $user)
+    public function findOneUser($id)
     {
+        $user = UserQuery::make()->findByIdOrFail( $id );
         return new UserResource($user);
     }
 
@@ -88,7 +101,7 @@ class UserController extends Controller
     public function createUser(StoreUserRequest $request)
     {
         $data = $request->validated();
-        $user = app(CreateUserAction::class)->handle($data);
+        $user = CreateUserAction::handle($data);
         return response()->json([
             'data'      => new UserResource($user),
             'message'   => 'User created successfully'
@@ -125,9 +138,10 @@ class UserController extends Controller
      */
     public function updateUser(UpdateUserRequest $request, $id): Response
     {
+        /** @var User $user */
+        $user = UserQuery::make()->findByIdOrFail($id);
         $data = $request->validated();
-        $updatedUser = app(UpdateUserAction::class)->handle($id, $data);
-
+        $updatedUser = UpdateUserAction::handle($user, $data);
         return response()->json([
             'data'    => new UserResource($updatedUser),
             'message' => 'User updated successfully'
