@@ -25,7 +25,7 @@ return new class extends Migration
 
             $table->nullableMorphs('reference');
 
-            $table->string('batch_code')->nullable();
+            $table->foreignId('batch_id')->nullable()->constrained('batches')->onDelete('set null');
             $table->string('location')->nullable();
 
             $table->decimal('balance_after', 12, 4);

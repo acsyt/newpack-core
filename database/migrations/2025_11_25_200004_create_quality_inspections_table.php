@@ -16,8 +16,15 @@ return new class extends Migration
             $table->foreignId('inspector_id')->constrained('users');
 
             $table->enum('result', ['passed', 'failed', 'conditional']);
+
+            $table->decimal('quantity_inspected', 12, 4);
+            $table->decimal('quantity_rejected', 12, 4)->default(0);
+            $table->decimal('quantity_approved', 12, 4)->virtualAs('quantity_inspected - quantity_rejected');
+
             $table->json('defects')->nullable();
             $table->text('notes')->nullable();
+
+            $table->enum('action_taken', ['scrap', 'rework', 'conditional_approval', 'quarantine'])->nullable();
 
             $table->timestamp('inspected_at')->useCurrent();
             $table->timestamps();

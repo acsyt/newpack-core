@@ -24,6 +24,7 @@ return new class extends Migration
             $table->decimal('quantity_ordered', 12, 4);
             $table->decimal('quantity_received', 12, 4)->default(0);
             $table->decimal('unit_cost', 12, 4);
+            $table->boolean('is_closed')->default(false);
             $table->timestamps();
         });
     }

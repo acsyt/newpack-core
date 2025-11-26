@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string(column: 'name');
             $table->string(column: 'last_name')->nullable();
+            $table->string('full_name')->virtualAs("CONCAT(name, ' ', last_name)");
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('language')->default('en');
