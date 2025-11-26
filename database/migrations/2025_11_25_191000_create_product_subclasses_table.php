@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('product_class_id')->nullable()->constrained('product_classes');
             $table->string('name');
+            $table->string('code')->unique()->index();
             $table->string('slug')->unique()->index();
             $table->string('description')->nullable();
             $table->timestamps();

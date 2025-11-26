@@ -12,7 +12,7 @@ class ProductClass extends Model
 {
     use HasFactory, LogsActivity, SoftDeletes;
 
-    protected $fillable = ['name', 'description'];
+    protected $fillable = ['name', 'code', 'description', 'slug'];
 
     public function getActivityLogOptions(): LogOptions {
         return LogOptions::defaults()

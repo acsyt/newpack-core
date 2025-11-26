@@ -16,6 +16,7 @@ class Product extends Model
 
     protected $fillable = [
         'name',
+        'slug',
         'sku',
         'type',
         'measure_unit_id',
@@ -30,6 +31,24 @@ class Product extends Model
         'is_active',
         'is_sellable',
         'is_purchasable',
+        'width',
+        'width_min',
+        'width_max',
+        'gusset',
+        'gusset_min',
+        'gusset_max',
+        'length',
+        'length_min',
+        'length_max',
+        'gauge',
+        'gauge_min',
+        'gauge_max',
+        'nominal_weight',
+        'weight_min',
+        'weight_max',
+        'resin_type',
+        'color',
+        'additive',
     ];
 
     protected $casts = [
@@ -52,7 +71,7 @@ class Product extends Model
 
     public function measureUnit()
     {
-        return $this->belongsTo(SatMeasureUnit::class, 'measure_unit_id');
+        return $this->belongsTo(MeasureUnit::class, 'measure_unit_id');
     }
 
     public function productClass()
@@ -63,6 +82,12 @@ class Product extends Model
     public function productSubclass()
     {
         return $this->belongsTo(ProductSubclass::class);
+    }
+
+    public function customers()
+    {
+        return $this->belongsToMany(Customer::class, 'customer_product')
+            ->withTimestamps();
     }
 
     public function ingredients()

@@ -136,4 +136,10 @@ class Customer extends Model
                 ->orWhere('rfc', 'like', "%{$search}%");
         });
     }
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'customer_product')
+            ->withTimestamps();
+    }
 }

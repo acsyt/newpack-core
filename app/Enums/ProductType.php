@@ -4,20 +4,22 @@ namespace App\Enums;
 
 enum ProductType: string
 {
-    case RAW_MATERIAL = 'raw_material'; // Materia Prima
-    case COMPOUND = 'compound'; // Compuesto
-    case SUPPLY = 'supply'; // Insumo
-    case SERVICE = 'service'; // Servicio
-    case WIP = 'wip'; // Work In Progress
+    case RAW_MATERIAL = 'MP'; // Materia Prima
+    case FINISHED_PRODUCT = 'PT'; // Producto Terminado
+    case SERVICE = 'SERV'; // Servicio
+    case SPARE_PART = 'REF'; // Refacciones
+    case COMPOUND = 'COMP'; // Compuesto (Keeping it just in case, or maybe PT is enough)
+    // case SUPPLY = 'supply'; // Removed as not in JSON
+    // case WIP = 'wip'; // Removed as not in JSON
 
     public function label(): string
     {
         return match($this) {
             self::RAW_MATERIAL => 'Materia Prima',
-            self::COMPOUND => 'Compuesto',
-            self::SUPPLY => 'Insumo',
+            self::FINISHED_PRODUCT => 'Producto Terminado',
             self::SERVICE => 'Servicio',
-            self::WIP => 'Work In Progress',
+            self::SPARE_PART => 'Refacciones',
+            self::COMPOUND => 'Compuesto',
         };
     }
 }

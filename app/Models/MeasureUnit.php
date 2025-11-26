@@ -7,23 +7,20 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
-use Illuminate\Database\Eloquent\SoftDeletes;
-
-class ProductSubclass extends Model
+class MeasureUnit extends Model
 {
-    use HasFactory, LogsActivity, SoftDeletes;
+    use HasFactory, LogsActivity;
 
-    protected $fillable = ['product_class_id', 'name', 'code', 'description', 'slug'];
+    protected $fillable = ['name', 'code', 'description', 'active'];
 
-    public function productClass()
-    {
-        return $this->belongsTo(ProductClass::class);
-    }
+    protected $casts = [
+        'active' => 'boolean',
+    ];
 
     public function getActivityLogOptions(): LogOptions {
         return LogOptions::defaults()
             ->logFillable()
-            ->useLogName('ProductSubclass')
+            ->useLogName('MeasureUnit')
             ->dontSubmitEmptyLogs()
             ->logOnlyDirty();
     }

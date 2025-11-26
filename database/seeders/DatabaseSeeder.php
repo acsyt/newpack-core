@@ -32,8 +32,9 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             ProductTypeSeeder::class,
-            // ProductClassificationSeeder::class,
-            // MachineSeeder::class
+            ProductClassificationSeeder::class,
+            RawMaterialSeeder::class,
+            MachineSeeder::class
         ]);
 
         // if (app()->environment('local')) {

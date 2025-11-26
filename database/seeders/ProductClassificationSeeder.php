@@ -15,55 +15,58 @@ class ProductClassificationSeeder extends Seeder
      */
     public function run(): void
     {
-        $classes = [
-            ['id' => 1, 'name' => 'RESINAS'],
-            ['id' => 2, 'name' => 'ADITIVOS'],
-            ['id' => 3, 'name' => 'PIGMENTOS'],
-            ['id' => 4, 'name' => 'BOBINAS'],
-            ['id' => 5, 'name' => 'BOLSA SUELTA TPTE'],
-            ['id' => 6, 'name' => 'BOLSA SUELTA COLOR'],
-            ['id' => 7, 'name' => 'BOLSA EN ROLLO TPTE'],
-            ['id' => 8, 'name' => 'BOLSA EN ROLLO COLOR'],
-            ['id' => 9, 'name' => 'ROLLO CORRIDO TPTE'],
-            ['id' => 10, 'name' => 'ROLLO CORRIDO COLOR'],
-            ['id' => 11, 'name' => 'PELICULA PLANA TPTE'],
-            ['id' => 12, 'name' => 'PELICULA PLANA COLOR'],
-            ['id' => 13, 'name' => 'TINTAS'],
-            ['id' => 14, 'name' => 'DESPERDICIO'],
-            ['id' => 15, 'name' => 'EMBALAJE'],
-            ['id' => 16, 'name' => 'PELETIZADO'],
-            ['id' => 17, 'name' => 'MEZCLAS'],
-        ];
+        // 1. Seed Subclasses from sub-groups.data.json
+        $subGroupsPath = resource_path('json/sub-groups.data.json');
+        $subGroups = json_decode(file_get_contents($subGroupsPath), true);
 
-        foreach ($classes as $class) {
-            ProductClass::firstOrCreate(
-                ['slug' => Str::slug($class['name'])],
-                ['name' => $class['name']]
+        foreach ($subGroups as $subGroup) {
+            ProductSubclass::updateOrCreate(
+                ['code' => $subGroup['code']],
+                [
+                    'name' => $subGroup['name'],
+                    'code' => $subGroup['code'],
+                    'slug' => Str::slug($subGroup['name']),
+                ]
             );
         }
 
-        $subclasses = [
-            ['id' => 1, 'name' => 'LLDPEF1CA'],
-            ['id' => 2, 'name' => 'LLDPEF1SA'],
-            ['id' => 3, 'name' => 'LLDPEF2CA'],
-            ['id' => 4, 'name' => 'LLDPEF2SA'],
-            ['id' => 5, 'name' => 'LDPEF2SA'],
-            ['id' => 6, 'name' => 'LDPEF2CA'],
-            ['id' => 7, 'name' => 'LDPEF0.25SA'],
-            ['id' => 8, 'name' => 'LDPEF0.25CA'],
-            ['id' => 9, 'name' => 'HDPE8000'],
-            ['id' => 10, 'name' => 'HDPEE924'],
-            ['id' => 11, 'name' => 'HDPE0355'],
-            ['id' => 12, 'name' => '3PLGCENTRO'],
-            ['id' => 13, 'name' => '1.5PLGCENTRO'],
-            ['id' => 14, 'name' => 'HDBR'],
-        ];
+        // 2. Seed Classes from raw-materials.data.json (extract unique groupCodes)
+        $rawMaterialsPath = resource_path('json/raw-materials.data.json');
+        $rawMaterials = json_decode(file_get_contents($rawMaterialsPath), true);
 
-        foreach ($subclasses as $subclass) {
-            ProductSubclass::firstOrCreate(
-                ['slug' => Str::slug($subclass['name'])],
-                ['name' => $subclass['name']]
+        $uniqueGroups = [];
+        foreach ($rawMaterials as $material) {
+            $groupCode = $material['groupCode'];
+            if ($groupCode && !isset($uniqueGroups[$groupCode])) {
+                $uniqueGroups[$groupCode] = $groupCode; // Use code as name for now if no other source
+            }
+        }
+
+        foreach ($uniqueGroups as $groupCode => $groupName) {
+            ProductClass::updateOrCreate(
+                ['code' => $groupCode],
+                [
+                    'name' => $groupName, // We use the code as name since we don't have a separate name source
+                    'code' => $groupCode,
+                    'slug' => Str::slug($groupName),
+                ]
             );
+        }
+
+        // 3. Link Subclasses to Classes based on raw-materials.data.json
+        foreach ($rawMaterials as $material) {
+            $groupCode = $material['groupCode'];
+            $subGroupCode = $material['subGroupCode'];
+
+            if ($groupCode && $subGroupCode) {
+                $class = ProductClass::where('code', $groupCode)->first();
+                $subclass = ProductSubclass::where('code', $subGroupCode)->first();
+
+                if ($class && $subclass) {
+                    $subclass->product_class_id = $class->id;
+                    $subclass->save();
+                }
+            }
         }
     }
 }
