@@ -8,6 +8,10 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/', function () {
+    return 'NewPack API v1. By @Acsyt';
+});
+
 Route::as('api.')
 ->group(function () {
 
@@ -31,13 +35,13 @@ Route::as('api.')
         });
     });
 
-    // Route::middleware('auth:sanctum')->group(function (): void {
+    Route::middleware('auth:sanctum')->group(function (): void {
         Route::prefix('users')->group(function () {
             Route::get('/', [UserController::class, 'findAllUsers'])->name('user.findAll');
             Route::post('/', [UserController::class, 'createUser'])->name('user.create');
             Route::prefix('{user}')->group(function (): void {
                 Route::get('/', [UserController::class, 'findOneUser'])->name('user.findOne');
-                Route::put('/', [UserController::class, 'updateUser'])->name('user.update');
+                Route::patch('/', [UserController::class, 'updateUser'])->name('user.update');
                 Route::delete('/', [UserController::class, 'deleteUser'])->name('user.delete');
             });
         });
@@ -46,7 +50,7 @@ Route::as('api.')
             Route::get("/", [RoleController::class, 'findAllRoles'])->name('roles.findAll');
             Route::get("/{role}", [RoleController::class, 'findOneRole'])->name('roles.findOne');
             Route::post('/', [RoleController::class, 'createRole'])->name('roles.create');
-            Route::put("/{role}", [RoleController::class, 'updateRole'])->name('roles.update');
+            Route::patch("/{role}", [RoleController::class, 'updateRole'])->name('roles.update');
         });
 
         Route::prefix('customers')->group(function () {
@@ -54,7 +58,7 @@ Route::as('api.')
             Route::post('/', [CustomerController::class, 'createCustomer'])->name('customers.create');
             Route::prefix('{customer}')->group(function () {
                 Route::get('/', [CustomerController::class, 'findOneCustomer'])->name('customers.findOne');
-                Route::put('/', [CustomerController::class, 'updateCustomer'])->name('customers.update');
+                Route::patch('/', [CustomerController::class, 'updateCustomer'])->name('customers.update');
                 Route::delete('/', [CustomerController::class, 'deleteCustomer'])->name('customers.delete');
             });
         });
@@ -64,7 +68,7 @@ Route::as('api.')
             Route::post('/', [ProductController::class, 'createProduct'])->name('products.create');
             Route::prefix('{product}')->group(function () {
                 Route::get('/', [ProductController::class, 'findOneProduct'])->name('products.findOne');
-                Route::put('/', [ProductController::class, 'updateProduct'])->name('products.update');
+                Route::patch('/', [ProductController::class, 'updateProduct'])->name('products.update');
                 Route::delete('/', [ProductController::class, 'deleteProduct'])->name('products.delete');
             });
         });
@@ -74,10 +78,10 @@ Route::as('api.')
             Route::post('/', [SupplierController::class, 'createSupplier'])->name('suppliers.create');
             Route::prefix('{supplier}')->group(function () {
                 Route::get('/', [SupplierController::class, 'findOneSupplier'])->name('suppliers.findOne');
-                Route::put('/', [SupplierController::class, 'updateSupplier'])->name('suppliers.update');
+                Route::patch('/', [SupplierController::class, 'updateSupplier'])->name('suppliers.update');
                 Route::delete('/', [SupplierController::class, 'deleteSupplier'])->name('suppliers.delete');
             });
         });
 
-    // });
+    });
 });
