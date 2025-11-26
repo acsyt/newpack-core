@@ -31,7 +31,9 @@ class DatabaseSeeder extends Seeder
         $this->createAdminUser();
 
         $this->call([
-            MachineSeeder::class
+            ProductTypeSeeder::class,
+            // ProductClassificationSeeder::class,
+            // MachineSeeder::class
         ]);
 
         // if (app()->environment('local')) {

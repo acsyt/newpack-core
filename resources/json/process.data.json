@@ -1,0 +1,42 @@
+[
+    {
+        "id"                    : 1,
+        "code"                  : "COEX",
+        "name"                  : "Extrusion",
+        "applies_to_pt"         : true,
+        "applies_to_mp"         : false,
+        "applies_to_compounds"  : true
+    },
+    {
+        "id"                    : 2,
+        "code"                  : "IMP",
+        "name"                  : "Impresión",
+        "applies_to_pt"         : true,
+        "applies_to_mp"         : false,
+        "applies_to_compounds"  : true
+    },
+    {
+        "id"                    : 3,
+        "code"                  : "BS",
+        "name"                  : "BOLSA SUELTA",
+        "applies_to_pt"         : true,
+        "applies_to_mp"         : false,
+        "applies_to_compounds"  : false
+    },
+    {
+        "id"                    : 4,
+        "code"                  : "BR",
+        "name"                  : "BOLSA EN ROLLO",
+        "applies_to_pt"         : true,
+        "applies_to_mp"         : false,
+        "applies_to_compounds"  : false
+    },
+    {
+        "id"                    : 5,
+        "code"                  : "PELET",
+        "name"                  : "PELETIZADO",
+        "applies_to_pt"         : true,
+        "applies_to_mp"         : true,
+        "applies_to_compounds"  : false
+    }
+]

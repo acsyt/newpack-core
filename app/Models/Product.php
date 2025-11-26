@@ -19,6 +19,8 @@ class Product extends Model
         'sku',
         'type',
         'measure_unit_id',
+        'product_class_id',
+        'product_subclass_id',
         'average_cost',
         'last_purchase_price',
         'current_stock',
@@ -51,6 +53,16 @@ class Product extends Model
     public function measureUnit()
     {
         return $this->belongsTo(SatMeasureUnit::class, 'measure_unit_id');
+    }
+
+    public function productClass()
+    {
+        return $this->belongsTo(ProductClass::class);
+    }
+
+    public function productSubclass()
+    {
+        return $this->belongsTo(ProductSubclass::class);
     }
 
     public function ingredients()

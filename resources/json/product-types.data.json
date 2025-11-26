@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "name": "Producto Terminado",
+        "code": "PT"
+    },
+    {
+        "id": 2,
+        "name": "Materia Prima",
+        "code": "MP"
+    },
+    {
+        "id": 3,
+        "name": "Servicio",
+        "code": "SERV"
+    },
+    {
+        "id": 4,
+        "name": "Refacciones",
+        "code": "REF"
+    }
+]

@@ -1,0 +1,112 @@
+[
+    {
+        "code": "EXTMONOC",
+        "name": "EXTRUDER MONOCAPA 1",
+        "process_code": "COEX",
+        "speed_mh": "",
+        "speed_kgh": "",
+        "circumference_total": "",
+        "max_width": "",
+        "max_center": ""
+    },
+    {
+        "code": "COEXABA0",
+        "name": "COEXTRUSORA ABA 1",
+        "process_code": "COEX",
+        "speed_mh": "",
+        "speed_kgh": "",
+        "circumference_total": "",
+        "max_width": "",
+        "max_center": ""
+    },
+    {
+        "code": "COEXABC0",
+        "name": "COEXTRUSORA ABC 1",
+        "process_code": "COEX",
+        "speed_mh": "",
+        "speed_kgh": "",
+        "circumference_total": "",
+        "max_width": "",
+        "max_center": ""
+    },
+    {
+        "code": "BS01",
+        "name": "BOLSEADORA SELLO FONDO 2000 MM",
+        "process_code": "BS",
+        "speed_mh": "",
+        "speed_kgh": "",
+        "circumference_total": "",
+        "max_width": "",
+        "max_center": ""
+    },
+    {
+        "code": "BS02",
+        "name": "BOLSEADORA SELLO FONDO Y SELLO LATERAL 1400 MM",
+        "process_code": "BS",
+        "speed_mh": "",
+        "speed_kgh": "",
+        "circumference_total": "",
+        "max_width": "",
+        "max_center": ""
+    },
+    {
+        "code": "BS03",
+        "name": "BOLSEADORA SELLO FONDO Y SELLO LATERAL 600 MM",
+        "process_code": "BS",
+        "speed_mh": "",
+        "speed_kgh": "",
+        "circumference_total": "",
+        "max_width": "",
+        "max_center": ""
+    },
+    {
+        "code": "BS04",
+        "name": "BOLSEADORA SELLO FONDO 1400 MM",
+        "process_code": "BS",
+        "speed_mh": "",
+        "speed_kgh": "",
+        "circumference_total": "",
+        "max_width": "",
+        "max_center": ""
+    },
+    {
+        "code": "BR01",
+        "name": "BOLSA EN ROLLO BOBINA 1.5\" A 900 MM",
+        "process_code": "BR",
+        "speed_mh": "",
+        "speed_kgh": "",
+        "circumference_total": "",
+        "max_width": "",
+        "max_center": ""
+    },
+    {
+        "code": "BR02",
+        "name": "BOLSA EN ROLLO GLOUCESTER BOBINA 3\" A 1400 MM",
+        "process_code": "BR",
+        "speed_mh": "",
+        "speed_kgh": "",
+        "circumference_total": "",
+        "max_width": "",
+        "max_center": ""
+    },
+    {
+        "code": "BR03",
+        "name": "BOLSA EN ROLLO BOBINA 3\" A 1500 MM",
+        "process_code": "BR",
+        "speed_mh": "",
+        "speed_kgh": "",
+        "circumference_total": "",
+        "max_width": "",
+        "max_center": ""
+    },
+    {
+        "code": "PCR01",
+        "name": "PELETIZADORA 01 200 KG/HR",
+        "process_code": "PELET",
+        "speed_mh": "",
+        "speed_kgh": "",
+        "circumference_total": "",
+        "max_width": "",
+        "max_center": ""
+    }
+]

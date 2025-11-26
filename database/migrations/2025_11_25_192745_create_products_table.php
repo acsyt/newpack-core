@@ -13,11 +13,14 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('slug')->unique();
             $table->string('sku')->unique();
 
             $table->string('type')->index();
 
             $table->foreignId('measure_unit_id')->constrained('measure_units');
+            $table->foreignId('product_class_id')->nullable()->constrained('product_classes');
+            $table->foreignId('product_subclass_id')->nullable()->constrained('product_subclasses');
 
             $table->decimal('average_cost', 12, 4)->default(0);
             $table->decimal('last_purchase_price', 12, 4)->nullable();
