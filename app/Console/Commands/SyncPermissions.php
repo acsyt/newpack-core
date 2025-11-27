@@ -100,6 +100,11 @@ class SyncPermissions extends Command
             ['name' => 'warehouses.show',       'description' => 'Ver detalles de almacén',     'roles' => ['admin']],
             ['name' => 'warehouses.edit',       'description' => 'Editar almacén',              'roles' => ['admin']],
 
+            ['name' => 'warehouse-locations.index',  'description' => 'Listar ubicaciones de almacén',  'roles' => ['admin']],
+            ['name' => 'warehouse-locations.create', 'description' => 'Crear ubicación de almacén',     'roles' => ['admin']],
+            ['name' => 'warehouse-locations.edit',   'description' => 'Editar ubicación de almacén',    'roles' => ['admin']],
+            ['name' => 'warehouse-locations.delete', 'description' => 'Eliminar ubicación de almacén',  'roles' => ['admin']],
+
         ]);
     }
 
