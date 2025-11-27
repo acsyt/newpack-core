@@ -105,6 +105,8 @@ class SyncPermissions extends Command
             ['name' => 'warehouse-locations.edit',   'description' => 'Editar ubicación de almacén',    'roles' => ['admin']],
             ['name' => 'warehouse-locations.delete', 'description' => 'Eliminar ubicación de almacén',  'roles' => ['admin']],
 
+            ['name' => 'movements.index', 'descr    iption' => 'Listar movimientos', 'roles' => ['admin']],
+            ['name' => 'stock.index', 'description' => 'Listar inventario', 'roles' => ['admin']],
         ]);
     }
 
