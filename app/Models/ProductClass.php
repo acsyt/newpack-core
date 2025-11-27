@@ -25,4 +25,15 @@ class ProductClass extends Model
     {
         return $this->hasMany(ProductSubclass::class);
     }
+
+    public function scopeSearch($query, ?string $search)
+    {
+        if (!$search) return $query;
+
+        return $query->where(function ($q) use ($search) {
+            $q->where('code', 'like', "%{$search}%")
+                ->orWhere('name', 'like', "%{$search}%")
+                ->orWhere('description', 'like', "%{$search}%");
+        });
+    }
 }

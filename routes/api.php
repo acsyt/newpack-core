@@ -6,6 +6,10 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ProcessController;
+use App\Http\Controllers\ProductClassController;
+use App\Http\Controllers\ProductSubclassController;
+use App\Http\Controllers\MachineController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\WarehouseLocationController;
@@ -63,6 +67,46 @@ Route::as('api.')
                 Route::get('/', [CustomerController::class, 'findOneCustomer'])->name('customers.findOne');
                 Route::patch('/', [CustomerController::class, 'updateCustomer'])->name('customers.update');
                 Route::delete('/', [CustomerController::class, 'deleteCustomer'])->name('customers.delete');
+            });
+        });
+
+        Route::prefix('processes')->group(function () {
+            Route::get('/', [ProcessController::class, 'findAllProcesses'])->name('processes.findAll');
+            Route::post('/', [ProcessController::class, 'createProcess'])->name('processes.create');
+            Route::prefix('{process}')->group(function () {
+                Route::get('/', [ProcessController::class, 'findOneProcess'])->name('processes.findOne');
+                // Route::patch('/', [ProcessController::class, 'updateProcess'])->name('processes.update');
+                // Route::delete('/', [ProcessController::class, 'deleteProcess'])->name('processes.delete');
+            });
+        });
+
+        Route::prefix('product-classes')->group(function () {
+            Route::get('/', [ProductClassController::class, 'findAllProductClasses'])->name('product_classes.findAll');
+            Route::post('/', [ProductClassController::class, 'createProductClass'])->name('product_classes.create');
+            Route::prefix('{productClass}')->group(function () {
+                Route::get('/', [ProductClassController::class, 'findOneProductClass'])->name('product_classes.findOne');
+                Route::patch('/', [ProductClassController::class, 'updateProductClass'])->name('product_classes.update');
+                Route::delete('/', [ProductClassController::class, 'deleteProductClass'])->name('product_classes.delete');
+            });
+        });
+
+        Route::prefix('product-subclasses')->group(function () {
+            Route::get('/', [ProductSubclassController::class, 'findAllProductSubclasses'])->name('product_subclasses.findAll');
+            Route::post('/', [ProductSubclassController::class, 'createProductSubclass'])->name('product_subclasses.create');
+            Route::prefix('{productSubclass}')->group(function () {
+                Route::get('/', [ProductSubclassController::class, 'findOneProductSubclass'])->name('product_subclasses.findOne');
+                Route::patch('/', [ProductSubclassController::class, 'updateProductSubclass'])->name('product_subclasses.update');
+                Route::delete('/', [ProductSubclassController::class, 'deleteProductSubclass'])->name('product_subclasses.delete');
+            });
+        });
+
+        Route::prefix('machines')->group(function () {
+            Route::get('/', [MachineController::class, 'findAllMachines'])->name('machines.findAll');
+            Route::post('/', [MachineController::class, 'createMachine'])->name('machines.create');
+            Route::prefix('{machine}')->group(function () {
+                Route::get('/', [MachineController::class, 'findOneMachine'])->name('machines.findOne');
+                Route::patch('/', [MachineController::class, 'updateMachine'])->name('machines.update');
+                Route::delete('/', [MachineController::class, 'deleteMachine'])->name('machines.delete');
             });
         });
 

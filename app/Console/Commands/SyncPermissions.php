@@ -28,27 +28,34 @@ class SyncPermissions extends Command
 
         $this->roles = collect([
             ['name' => 'admin', 'description' => 'Administrator'],
+            ['name' => 'service-customer', 'description' => 'Servicio al cliente'],
+            ['name' => 'billing', 'description' => 'Facturación'],
+            ['name' => 'inventory', 'description' => 'Almacén'],
+            ['name' => 'production', 'description' => 'Producción'],
+            ['name' => 'quality', 'description' => 'Calidad'],
         ]);
 
         $this->allPermissions = collect([
             ['name' => 'dashboard.index',       'description' => 'Ingresar a módulo',           'roles' => ['admin']],
 
-            ['name' => 'users.index',           'description' => 'Listar usuarios',             'roles' => ['admin']],
-            ['name' => 'users.create',          'description' => 'Crear usuario',               'roles' => ['admin']],
-            ['name' => 'users.export',          'description' => 'Exportar listado de usuarios','roles' => ['admin']],
-            ['name' => 'users.show',            'description' => 'Ver detalles de usuario',     'roles' => ['admin']],
-            ['name' => 'users.edit',            'description' => 'Editar usuario',              'roles' => ['admin']],
-            ['name' => 'users.change-password', 'description' => 'Cambiar contraseña de usuario','roles' => ['admin']],
+            ['name' => 'users.index',           'description' => 'Listar usuarios',              'roles' => ['admin']],
+            ['name' => 'users.create',          'description' => 'Crear usuario',                'roles' => ['admin']],
+            ['name' => 'users.export',          'description' => 'Exportar listado de usuarios', 'roles' => ['admin']],
+            ['name' => 'users.show',            'description' => 'Ver detalles de usuario',      'roles' => ['admin']],
+            ['name' => 'users.edit',            'description' => 'Editar usuario',               'roles' => ['admin']],
+            // ['name' => 'users.change-password', 'description' => 'Cambiar contraseña de usuario','roles' => ['admin']],
 
             ['name' => 'customers.index',       'description' => 'Listar clientes',               'roles' => ['admin']],
-            ['name' => 'customers.create',      'description' => 'Crear cliente',               'roles' => ['admin']],
-            ['name' => 'customers.edit',        'description' => 'Editar cliente',              'roles' => ['admin']],
-            ['name' => 'customers.show',        'description' => 'Ver detalles de cliente',     'roles' => ['admin']],
+            ['name' => 'customers.create',      'description' => 'Crear cliente',                 'roles' => ['admin']],
+            ['name' => 'customers.edit',        'description' => 'Editar cliente',                'roles' => ['admin']],
+            ['name' => 'customers.show',        'description' => 'Ver detalles de cliente',       'roles' => ['admin']],
+            ['name' => 'customers.export',      'description' => 'Exportar listado de clientes',  'roles' => ['admin']],
 
             ['name' => 'suppliers.index',       'description' => 'Listar proveedores',               'roles' => ['admin']],
-            ['name' => 'suppliers.create',      'description' => 'Crear proveedor',               'roles' => ['admin']],
-            ['name' => 'suppliers.edit',        'description' => 'Editar proveedor',              'roles' => ['admin']],
-            ['name' => 'suppliers.show',        'description' => 'Ver detalles de proveedor',     'roles' => ['admin']],
+            ['name' => 'suppliers.create',      'description' => 'Crear proveedor',                 'roles' => ['admin']],
+            ['name' => 'suppliers.edit',        'description' => 'Editar proveedor',                'roles' => ['admin']],
+            ['name' => 'suppliers.show',        'description' => 'Ver detalles de proveedor',       'roles' => ['admin']],
+            ['name' => 'suppliers.export',      'description' => 'Exportar listado de proveedores', 'roles' => ['admin']],
 
         ]);
     }

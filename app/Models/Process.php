@@ -22,4 +22,14 @@ class Process extends Model
         'applies_to_mp' => 'boolean',
         'applies_to_compounds' => 'boolean',
     ];
+
+    public function scopeSearch($query, ?string $search)
+    {
+        if (!$search) return $query;
+
+        return $query->where(function ($q) use ($search) {
+            $q->where('code', 'like', "%{$search}%")
+                ->orWhere('name', 'like', "%{$search}%");
+        });
+    }
 }

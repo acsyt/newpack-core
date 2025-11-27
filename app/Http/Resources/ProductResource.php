@@ -60,8 +60,8 @@ class ProductResource extends JsonResource
             'isActive'              => (bool) $this->is_active,
             'isSellable'            => (bool) $this->is_sellable,
             'isPurchasable'         => (bool) $this->is_purchasable,
-            'createdAt'             => $this->created_at?->toISOString(),
-            'updatedAt'             => $this->updated_at?->toISOString(),
+            'createdAt'             => $this->created_at,
+            'updatedAt'             => $this->updated_at,
 
             // Conditional includes
             'ingredients'           => ProductIngredientResource::collection($this->whenLoaded('ingredients')),
