@@ -47,7 +47,7 @@ class UpdateCustomerAction
             ]);
 
             throw new CustomException(
-                'The system was unable to update the customer. Please try again.',
+                'El sistema no pudo actualizar el cliente. Por favor, intente nuevamente.',
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
         }
