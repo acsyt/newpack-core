@@ -25,8 +25,6 @@ class CustomerFactory extends Factory
             'email'                     => fake()->unique()->safeEmail(),
             'phone'                     => '55' . fake()->numerify('########'),
             'phone_secondary'           => fake()->boolean(30) ? '55' . fake()->numerify('########') : null,
-            'mobile'                    => fake()->boolean(70) ? '55' . fake()->numerify('########') : null,
-            'whatsapp'                  => fake()->boolean(60) ? '55' . fake()->numerify('########') : null,
             'suburb_id'                 => Suburb::inRandomOrder()->first()?->id,
             'street'                    => fake()->streetName(),
             'exterior_number'           => fake()->buildingNumber(),

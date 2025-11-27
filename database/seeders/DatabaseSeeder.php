@@ -34,7 +34,8 @@ class DatabaseSeeder extends Seeder
             ProductTypeSeeder::class,
             ProductClassificationSeeder::class,
             RawMaterialSeeder::class,
-            MachineSeeder::class
+            MachineSeeder::class,
+            CustomerSeeder::class,
         ]);
 
         // if (app()->environment('local')) {
