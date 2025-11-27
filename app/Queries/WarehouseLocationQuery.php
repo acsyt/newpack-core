@@ -4,6 +4,7 @@ namespace App\Queries;
 
 use App\Models\WarehouseLocation;
 use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\AllowedSort;
 
 class WarehouseLocationQuery extends BaseQuery
 {
@@ -27,12 +28,13 @@ class WarehouseLocationQuery extends BaseQuery
     protected function getAllowedSorts(): array
     {
         return [
-            'warehouse_id',
-            'aisle',
-            'shelf',
-            'section',
-            'created_at',
-            'updated_at',
+            AllowedSort::field('id'),
+            AllowedSort::field('warehouse_id'),
+            AllowedSort::field('aisle'),
+            AllowedSort::field('shelf'),
+            AllowedSort::field('section'),
+            AllowedSort::field('created_at'),
+            AllowedSort::field('updated_at'),
         ];
     }
 

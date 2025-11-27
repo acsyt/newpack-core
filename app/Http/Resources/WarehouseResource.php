@@ -20,6 +20,7 @@ use OpenApi\Attributes as OA;
  *   @OA\Property(property="createdAt", type="string", format="date-time"),
  *   @OA\Property(property="updatedAt", type="string", format="date-time"),
  *   @OA\Property(property="warehouseLocations", type="array", @OA\Items(ref="#/components/schemas/WarehouseLocationResource"), nullable=true),
+ *   @OA\Property(property="warehouseLocationsCount", type="integer", example=0),
  * )
  */
 class WarehouseResource extends JsonResource
@@ -32,15 +33,16 @@ class WarehouseResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'            => $this->id,
-            'type'          => $this->type,
-            'typeName'      => WarehouseType::humanReadableType($this->type),
-            'name'          => $this->name,
-            'active'        => $this->active,
-            'createdBy'     => $this->created_by,
-            'createdAt'     => $this->created_at,
-            'updatedAt'     => $this->updated_at,
-            'warehouseLocations' => WarehouseLocationResource::collection($this->whenLoaded('warehouseLocations')),
+            'id'                        => $this->id,
+            'type'                      => $this->type,
+            'typeName'                  => WarehouseType::humanReadableType($this->type),
+            'name'                      => $this->name,
+            'active'                    => $this->active,
+            'createdBy'                 => $this->created_by,
+            'createdAt'                 => $this->created_at,
+            'updatedAt'                 => $this->updated_at,
+            'warehouseLocations'        => WarehouseLocationResource::collection($this->whenLoaded('warehouseLocations')),
+            'warehouseLocationsCount'   => $this->warehouse_locations_count,
         ];
     }
 }

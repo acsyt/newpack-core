@@ -5,6 +5,7 @@ namespace App\Queries;
 use App\Helpers\FilterHelper;
 use App\Models\Role;
 use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\AllowedSort;
 
 class RoleQuery extends BaseQuery
 {
@@ -29,11 +30,11 @@ class RoleQuery extends BaseQuery
     protected function getAllowedSorts(): array
     {
         return [
-            'id',
-            'name',
-            'guard_name',
-            'created_at',
-            'updated_at',
+            AllowedSort::field('id'),
+            AllowedSort::field('name'),
+            AllowedSort::field('guard_name'),
+            AllowedSort::field('created_at'),
+            AllowedSort::field('updated_at'),
         ];
     }
 

@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Collection;
 abstract class BaseQuery
 {
     protected $request;
+    protected array $withCountRelations = [];
 
     public function __construct(?Request $request = null)
     {
@@ -45,6 +46,15 @@ abstract class BaseQuery
     protected function getDefaultSort(): string
     {
         return '-created_at';
+    }
+
+    public function withCount(string|array $relations): static
+    {
+        $this->withCountRelations = array_merge(
+            $this->withCountRelations,
+            is_array($relations) ? $relations : [$relations]
+        );
+        return $this;
     }
 
     public function paginated(?Closure $extraQuery = null): LengthAwarePaginator|Collection
@@ -110,6 +120,10 @@ abstract class BaseQuery
             ->allowedSorts($this->getAllowedSorts())
             ->allowedIncludes($this->getAllowedIncludes())
             ->defaultSort($this->getDefaultSort());
+
+        if (!empty($this->withCountRelations)) {
+            $query->withCount($this->withCountRelations);
+        }
 
         return $this->applyCustomLogic($query);
     }
