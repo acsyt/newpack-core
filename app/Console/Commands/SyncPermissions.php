@@ -94,6 +94,12 @@ class SyncPermissions extends Command
             ['name' => 'customers.show',        'description' => 'Ver detalles de cliente',     'roles' => ['admin']],
             ['name' => 'customers.edit',        'description' => 'Editar cliente',              'roles' => ['admin']],
 
+            ['name' => 'warehouses.index',      'description' => 'Listar almacenes',            'roles' => ['admin']],
+            ['name' => 'warehouses.create',     'description' => 'Crear almacén',               'roles' => ['admin']],
+            ['name' => 'warehouses.export',     'description' => 'Exportar listado de almacenes','roles' => ['admin']],
+            ['name' => 'warehouses.show',       'description' => 'Ver detalles de almacén',     'roles' => ['admin']],
+            ['name' => 'warehouses.edit',       'description' => 'Editar almacén',              'roles' => ['admin']],
+
         ]);
     }
 
