@@ -33,6 +33,7 @@ class CustomerQuery extends BaseQuery
     protected function getAllowedSorts(): array
     {
         return [
+            'id',
             'name',
             'last_name',
             'email',
