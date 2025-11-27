@@ -22,7 +22,6 @@ class ProductFactory extends Factory
             'current_stock'             => $this->faker->randomFloat(4, 0, 1000),
             'min_stock'                 => $this->faker->randomFloat(4, 10, 50),
             'max_stock'                 => $this->faker->randomFloat(4, 100, 500),
-            'track_batches'             => $this->faker->boolean(20),
             'is_active'                 => true,
             'is_sellable'               => $this->faker->boolean(50),
             'is_purchasable'            => $this->faker->boolean(50),
@@ -35,7 +34,6 @@ class ProductFactory extends Factory
             'type'              => ProductType::RAW_MATERIAL,
             'is_purchasable'    => true,
             'is_sellable'       => false,
-            'track_batches'     => true, // MP crítica suele llevar lotes
         ]);
     }
 

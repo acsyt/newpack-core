@@ -30,7 +30,6 @@ return new class extends Migration
             $table->decimal('min_stock', 12, 4)->default(0);
             $table->decimal('max_stock', 12, 4)->nullable();
 
-            $table->boolean('track_batches')->default(false);
             $table->boolean('is_active')->default(true);
             $table->boolean('is_sellable')->default(false);
             $table->boolean('is_purchasable')->default(false);

@@ -16,8 +16,6 @@ return new class extends Migration {
 
             $table->string('phone', 20)->nullable();
             $table->string('phone_secondary', 20)->nullable();
-            $table->string('mobile', 20)->nullable();
-            $table->string('whatsapp', 20)->nullable();
 
             $table->foreignId('suburb_id')->nullable()->constrained()->onDelete('set null');
             $table->string('street')->nullable();
@@ -31,8 +29,6 @@ return new class extends Migration {
             $table->string('use_cfdi', 10)->nullable()->default('G03');
 
             $table->enum('supplier_type', ['product', 'service', 'both'])->default('product');
-            $table->string('payment_terms', 100)->nullable();
-            $table->decimal('credit_limit', 15, 2)->nullable();
 
             $table->enum('status', ['active', 'inactive', 'suspended', 'blacklisted'])->default('active');
 

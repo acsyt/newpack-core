@@ -13,8 +13,6 @@ use Illuminate\Foundation\Http\FormRequest;
  *     @OA\Property(property="email", type="string", format="email", nullable=true, example="contacto@proveedora.com"),
  *     @OA\Property(property="phone", type="string", nullable=true, example="5512345678"),
  *     @OA\Property(property="phone_secondary", type="string", nullable=true, example="5587654321"),
- *     @OA\Property(property="mobile", type="string", nullable=true, example="5511223344"),
- *     @OA\Property(property="whatsapp", type="string", nullable=true, example="5511223344"),
  *     @OA\Property(property="suburb_id", type="integer", nullable=true, example=1),
  *     @OA\Property(property="street", type="string", nullable=true, example="Av. Industrial"),
  *     @OA\Property(property="exterior_number", type="string", nullable=true, example="500"),
@@ -25,8 +23,6 @@ use Illuminate\Foundation\Http\FormRequest;
  *     @OA\Property(property="tax_system", type="string", nullable=true, example="601"),
  *     @OA\Property(property="use_cfdi", type="string", nullable=true, example="G03"),
  *     @OA\Property(property="supplier_type", type="string", enum={"product", "service", "both"}, example="product"),
- *     @OA\Property(property="payment_terms", type="string", nullable=true, example="30 días"),
- *     @OA\Property(property="credit_limit", type="number", format="float", nullable=true, example=100000.00),
  *     @OA\Property(property="status", type="string", enum={"active", "inactive", "suspended", "blacklisted"}, example="active"),
  *     @OA\Property(property="notes", type="string", nullable=true, example="Proveedor confiable")
  * )
@@ -48,8 +44,6 @@ class UpdateSupplierRequest extends FormRequest
             'email' => ['nullable', 'email', 'unique:suppliers,email,' . $supplierId, 'max:255'],
             'phone' => ['nullable', 'string', 'max:20'],
             'phone_secondary' => ['nullable', 'string', 'max:20'],
-            'mobile' => ['nullable', 'string', 'max:20'],
-            'whatsapp' => ['nullable', 'string', 'max:20'],
             'suburb_id' => ['nullable', 'integer', 'exists:suburbs,id'],
             'street' => ['nullable', 'string', 'max:255'],
             'exterior_number' => ['nullable', 'string', 'max:20'],
@@ -60,8 +54,6 @@ class UpdateSupplierRequest extends FormRequest
             'tax_system' => ['nullable', 'string', 'max:10'],
             'use_cfdi' => ['nullable', 'string', 'max:10'],
             'supplier_type' => ['nullable', 'string', 'in:product,service,both'],
-            'payment_terms' => ['nullable', 'string', 'max:100'],
-            'credit_limit' => ['nullable', 'numeric', 'min:0'],
             'status' => ['nullable', 'string', 'in:active,inactive,suspended,blacklisted'],
             'notes' => ['nullable', 'string'],
         ];
@@ -77,7 +69,6 @@ class UpdateSupplierRequest extends FormRequest
             'rfc.unique' => 'Este RFC ya está registrado',
             'suburb_id.exists' => 'La colonia seleccionada no existe',
             'supplier_type.in' => 'El tipo de proveedor debe ser product, service o both',
-            'credit_limit.min' => 'El límite de crédito debe ser mayor o igual a 0',
         ];
     }
 }

@@ -22,8 +22,6 @@ class Supplier extends Model
 
         'phone',
         'phone_secondary',
-        'mobile',
-        'whatsapp',
 
         'suburb_id',
         'street',
@@ -37,8 +35,6 @@ class Supplier extends Model
         'use_cfdi',
 
         'supplier_type',
-        'payment_terms',
-        'credit_limit',
 
         'status',
 
@@ -50,7 +46,6 @@ class Supplier extends Model
     ];
 
     protected $casts = [
-        'credit_limit' => 'decimal:2',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
