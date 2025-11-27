@@ -19,8 +19,6 @@ return new class extends Migration {
 
             $table->string('phone', 20)->nullable();
             $table->string('phone_secondary', 20)->nullable();
-            $table->string('mobile', 20)->nullable();
-            $table->string('whatsapp', 20)->nullable();
 
             $table->foreignId('suburb_id')->nullable()->constrained()->onDelete('set null');
             $table->string('street')->nullable();

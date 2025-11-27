@@ -15,8 +15,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *   @OA\Property(property="email", type="string", format="email", nullable=true, example="contacto@proveedora.com"),
  *   @OA\Property(property="phone", type="string", nullable=true, example="5512345678"),
  *   @OA\Property(property="phoneSecondary", type="string", nullable=true, example="5587654321"),
- *   @OA\Property(property="mobile", type="string", nullable=true, example="5511223344"),
- *   @OA\Property(property="whatsapp", type="string", nullable=true, example="5511223344"),
  *   @OA\Property(property="suburbId", type="integer", nullable=true, example=1),
  *   @OA\Property(property="street", type="string", nullable=true, example="Av. Industrial"),
  *   @OA\Property(property="exteriorNumber", type="string", nullable=true, example="500"),
@@ -28,8 +26,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *   @OA\Property(property="taxSystem", type="string", nullable=true, example="601"),
  *   @OA\Property(property="useCfdi", type="string", nullable=true, example="G03"),
  *   @OA\Property(property="supplierType", type="string", enum={"product","service","both"}, example="product"),
- *   @OA\Property(property="paymentTerms", type="string", nullable=true, example="30 días"),
- *   @OA\Property(property="creditLimit", type="number", format="float", nullable=true, example=100000.00),
  *   @OA\Property(property="status", type="string", enum={"active","inactive","suspended","blacklisted"}, example="active"),
  *   @OA\Property(property="notes", type="string", nullable=true, example="Proveedor confiable"),
  *   @OA\Property(property="createdBy", type="integer", nullable=true, example=1),
@@ -53,8 +49,6 @@ class SupplierResource extends JsonResource
             'email'             => $this->email,
             'phone'             => $this->phone,
             'phoneSecondary'    => $this->phone_secondary,
-            'mobile'            => $this->mobile,
-            'whatsapp'          => $this->whatsapp,
 
             'suburbId'          => $this->suburb_id,
             'street'            => $this->street,
@@ -69,8 +63,6 @@ class SupplierResource extends JsonResource
             'useCfdi'           => $this->use_cfdi,
 
             'supplierType'      => $this->supplier_type,
-            'paymentTerms'      => $this->payment_terms,
-            'creditLimit'       => $this->credit_limit,
 
             'status'            => $this->status,
 

@@ -20,8 +20,6 @@ class Customer extends Model
 
         'phone',
         'phone_secondary',
-        'mobile',
-        'whatsapp',
 
         'suburb_id',
         'street',

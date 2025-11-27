@@ -17,8 +17,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *   @OA\Property(property="emailVerifiedAt", type="string", format="date-time", nullable=true),
  *   @OA\Property(property="phone", type="string", nullable=true, example="5512345678"),
  *   @OA\Property(property="phoneSecondary", type="string", nullable=true, example="5587654321"),
- *   @OA\Property(property="mobile", type="string", nullable=true, example="5511223344"),
- *   @OA\Property(property="whatsapp", type="string", nullable=true, example="5511223344"),
  *   @OA\Property(property="suburbId", type="integer", nullable=true, example=1),
  *   @OA\Property(property="street", type="string", nullable=true, example="Av. Insurgentes"),
  *   @OA\Property(property="exteriorNumber", type="string", nullable=true, example="123"),
@@ -61,8 +59,6 @@ class CustomerResource extends JsonResource
             'emailVerifiedAt'    => $this->email_verified_at,
             'phone'             => $this->phone,
             'phoneSecondary'    => $this->phone_secondary,
-            'mobile'            => $this->mobile,
-            'whatsapp'          => $this->whatsapp,
 
             'suburbId'          => $this->suburb_id,
             'street'            => $this->street,

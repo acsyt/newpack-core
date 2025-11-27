@@ -22,8 +22,6 @@ class SupplierFactory extends Factory
             'email'             => $this->faker->unique()->companyEmail(),
             'phone'             => $this->faker->phoneNumber(),
             'phone_secondary'   => $this->faker->optional()->phoneNumber(),
-            'mobile'            => $this->faker->optional()->phoneNumber(),
-            'whatsapp'          => $this->faker->optional()->phoneNumber(),
             'street'            => $this->faker->streetName(),
             'exterior_number'   => $this->faker->buildingNumber(),
             'interior_number'   => $this->faker->optional()->secondaryAddress(),
@@ -33,8 +31,6 @@ class SupplierFactory extends Factory
             'tax_system'        => '601', // General de Ley Personas Morales
             'use_cfdi'          => 'G03', // Gastos en general
             'supplier_type'     => $this->faker->randomElement(['product', 'service', 'both']),
-            'payment_terms'     => $this->faker->randomElement(['Contado', 'Crédito 30 días', 'Crédito 60 días']),
-            'credit_limit'      => $this->faker->optional()->randomFloat(2, 10000, 500000),
             'status'            => 'active',
             'notes'             => $this->faker->optional()->paragraph(),
         ];
