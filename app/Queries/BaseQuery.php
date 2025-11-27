@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Spatie\QueryBuilder\QueryBuilder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
@@ -59,7 +60,9 @@ abstract class BaseQuery
 
     public function paginated(?Closure $extraQuery = null): LengthAwarePaginator|Collection
     {
-        $hasPagination = $this->request->boolean('has_pagination', true);
+        $hasPaginationValue = $this->request->input('has_pagination', true);
+        $hasPagination = filter_var($hasPaginationValue, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? true;
+
         $perPage = $this->request->integer('per_page', 10);
 
         $query = $this->buildQuery();
