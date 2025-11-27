@@ -40,7 +40,7 @@ class CreateCustomerAction
             ]);
 
             throw new CustomException(
-                'The system was unable to create the customer. Please try again.',
+                'El sistema no pudo crear el cliente. Por favor, intente nuevamente.',
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
         }

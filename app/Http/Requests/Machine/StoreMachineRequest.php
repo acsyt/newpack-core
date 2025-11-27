@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Machine;
 
 use Illuminate\Foundation\Http\FormRequest;
-
 class StoreMachineRequest extends FormRequest
 {
     public function authorize(): bool
@@ -40,6 +39,17 @@ class StoreMachineRequest extends FormRequest
             'max_width' => $validated['maxWidth'] ?? null,
             'max_center' => $validated['maxCenter'] ?? null,
             'status' => $validated['status'] ?? 'active',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'code.required' => 'The machine code is required.',
+            'code.unique' => 'A machine with this code already exists.',
+            'name.required' => 'The machine name is required.',
+            'processId.required' => 'The process is required.',
+            'processId.exists' => 'The selected process does not exist.',
         ];
     }
 }

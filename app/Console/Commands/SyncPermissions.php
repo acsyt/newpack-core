@@ -28,6 +28,11 @@ class SyncPermissions extends Command
 
         $this->roles = collect([
             ['name' => 'admin', 'description' => 'Administrator'],
+            ['name' => 'service-customer', 'description' => 'Servicio al cliente'],
+            ['name' => 'billing', 'description' => 'Facturación'],
+            ['name' => 'inventory', 'description' => 'Almacén'],
+            ['name' => 'production', 'description' => 'Producción'],
+            ['name' => 'quality', 'description' => 'Calidad'],
         ]);
 
         $this->allPermissions = collect([

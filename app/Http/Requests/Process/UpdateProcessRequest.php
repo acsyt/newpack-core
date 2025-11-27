@@ -4,7 +4,19 @@ namespace App\Http\Requests\Process;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use OpenApi\Attributes as OA;
 
+/**
+ * @OA\Schema(
+ *     schema="UpdateProcessRequest",
+ *     type="object",
+ *     @OA\Property(property="code", type="string", example="PROC-001", description="Unique process code"),
+ *     @OA\Property(property="name", type="string", example="Molding", description="Process name"),
+ *     @OA\Property(property="appliesToPt", type="boolean", example=true, description="Applies to PT (Producto Terminado)"),
+ *     @OA\Property(property="appliesToMp", type="boolean", example=false, description="Applies to MP (Materia Prima)"),
+ *     @OA\Property(property="appliesToCompounds", type="boolean", example=true, description="Applies to Compounds")
+ * )
+ */
 class UpdateProcessRequest extends FormRequest
 {
     public function authorize(): bool
@@ -51,5 +63,12 @@ class UpdateProcessRequest extends FormRequest
         }
 
         return $mapped;
+    }
+
+    public function messages(): array
+    {
+        return [
+            'code.unique' => 'A process with this code already exists.',
+        ];
     }
 }

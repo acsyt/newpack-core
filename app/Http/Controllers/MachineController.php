@@ -51,7 +51,6 @@ class MachineController extends Controller
     {
         $machine = MachineQuery::make()->findByIdOrFail((int) $id);
         $machine->delete();
-
         return response()->noContent();
     }
 }

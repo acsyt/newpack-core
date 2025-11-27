@@ -4,7 +4,6 @@ namespace App\Http\Requests\Machine;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-
 class UpdateMachineRequest extends FormRequest
 {
     public function authorize(): bool
@@ -71,5 +70,13 @@ class UpdateMachineRequest extends FormRequest
         }
 
         return $mapped;
+    }
+
+    public function messages(): array
+    {
+        return [
+            'code.unique' => 'A machine with this code already exists.',
+            'processId.exists' => 'The selected process does not exist.',
+        ];
     }
 }

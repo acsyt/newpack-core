@@ -27,7 +27,6 @@ class Product extends Model
         'current_stock',
         'min_stock',
         'max_stock',
-        'track_batches',
         'is_active',
         'is_sellable',
         'is_purchasable',
@@ -56,7 +55,6 @@ class Product extends Model
         'average_cost' => 'decimal:4',
         'current_stock' => 'decimal:4',
         'is_active' => 'boolean',
-        'track_batches' => 'boolean',
     ];
 
     public function getActivityLogOptions(): LogOptions {
@@ -67,7 +65,7 @@ class Product extends Model
             ->logOnlyDirty();
     }
 
-    // RELACIONES
+    // RELACIONES   
 
     public function measureUnit()
     {

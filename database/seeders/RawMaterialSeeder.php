@@ -39,7 +39,6 @@ class RawMaterialSeeder extends Seeder
                     'measure_unit_id'       => $measureUnit ? $measureUnit->id : $defaultUnitId,
                     'product_class_id'      => $productClass ? $productClass->id : null,
                     'product_subclass_id'   => $productSubclass ? $productSubclass->id : null,
-                    'track_batches'         => $productData['batch'] ?? false,
                     'is_purchasable'        => true,
                     'is_sellable'           => false,
                     'current_stock'         => 0,
