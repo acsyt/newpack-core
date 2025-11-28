@@ -9,15 +9,20 @@ class ProductType extends Model
 {
     use HasFactory;
 
-    const PRODUCT_TYPE_FINISHED = 'PT'; // Producto terminado
-    const PRODUCT_TYPE_RAW = 'MP'; // Materia prima
-    const PRODUCT_TYPE_SERVICE = 'SERV'; // Servicio
-
-    const PRODUCT_TYPE_REFACEMENT = 'REF'; // Refacciones
-
+    const PRODUCT_TYPE_FINISHED = 'PT';
+    const PRODUCT_TYPE_RAW = 'MP';
+    const PRODUCT_TYPE_SERVICE = 'SERV';
+    const PRODUCT_TYPE_COMPOUND = 'COMP';
+    const PRODUCT_TYPE_REFACEMENT = 'REF';
 
     protected $fillable = [
         'name',
+        'code',
         'slug',
     ];
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 }

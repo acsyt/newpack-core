@@ -2,12 +2,10 @@
 
 namespace App\Models;
 
-use App\Enums\ProductType;
 use App\Models\ProductType as ProductTypeModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-// Asegúrate de tener instalado: composer require spatie/laravel-activitylog
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -31,24 +29,6 @@ class Product extends Model
         'is_active',
         'is_sellable',
         'is_purchasable',
-        'width',
-        'width_min',
-        'width_max',
-        'gusset',
-        'gusset_min',
-        'gusset_max',
-        'length',
-        'length_min',
-        'length_max',
-        'gauge',
-        'gauge_min',
-        'gauge_max',
-        'nominal_weight',
-        'weight_min',
-        'weight_max',
-        'resin_type',
-        'color',
-        'additive',
     ];
 
     protected $casts = [
@@ -65,11 +45,19 @@ class Product extends Model
             ->logOnlyDirty();
     }
 
-    // RELACIONES
-
     public function productType()
     {
         return $this->belongsTo(ProductTypeModel::class, 'product_type_id');
+    }
+
+    public function specs()
+    {
+        return $this->hasOne(ProductSpec::class);
+    }
+
+    public function productType()
+    {
+        return $this->belongsTo(ProductType::class);
     }
 
     public function measureUnit()
@@ -127,5 +115,10 @@ class Product extends Model
     {
         return $query->where('name', 'like', "%{$search}%")
             ->orWhere('sku', 'like', "%{$search}%");
+    }
+
+    public function scopeWithSpecs($query)
+    {
+        return $query->with('specs');
     }
 }
