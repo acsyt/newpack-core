@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Inventory\CreateInventoryTransferAction;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Inventory\StoreInventoryMovementRequest;
+use App\Http\Requests\Inventory\StoreInventoryTransferRequest;
 use App\Http\Resources\InventoryMovementResource;
 use App\Queries\InventoryMovementQuery;
 use OpenApi\Attributes as OA;
@@ -93,7 +96,7 @@ class InventoryMovementController extends Controller
      *     )
      * )
      */
-    public function store(\App\Http\Requests\Inventory\StoreInventoryMovementRequest $request)
+    public function store(StoreInventoryMovementRequest $request)
     {
         $data = $request->validated();
         $data['user_id'] = \Illuminate\Support\Facades\Auth::id();
@@ -137,10 +140,9 @@ class InventoryMovementController extends Controller
      *     )
      * )
      */
-    public function transfer(\App\Http\Requests\Inventory\StoreInventoryTransferRequest $request, \App\Actions\Inventory\CreateInventoryTransferAction $action)
+    public function transfer(StoreInventoryTransferRequest $request, CreateInventoryTransferAction $action)
     {
         $action->execute($request->validated());
-
         return response()->json(['message' => 'Transfer created successfully'], 201);
     }
 }
