@@ -56,6 +56,7 @@ class InventoryStockQuery extends BaseQuery
         return [
             'product',
             'product.measureUnit',
+            'product.productType',
             'warehouse',
             'warehouseLocation',
             'batch',
