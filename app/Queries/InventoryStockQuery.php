@@ -27,6 +27,12 @@ class InventoryStockQuery extends BaseQuery
 
             AllowedFilter::callback('created_at', FilterHelper::dateRange('created_at')),
             AllowedFilter::callback('updated_at', FilterHelper::dateRange('updated_at')),
+            AllowedFilter::callback('search', function ($query, $value) {
+                $query->whereHas('product', function ($q) use ($value) {
+                    $q->where('name', 'like', "%{$value}%")
+                      ->orWhere('sku', 'like', "%{$value}%");
+                });
+            }),
         ];
     }
 

@@ -51,7 +51,7 @@ class ZipCodeResource extends JsonResource
             'name'      => $this->name,
             'cityId'    => $this->city_id,
             'city'      => new CityResource($this->whenLoaded('city')),
-            // 'suburbs'   => new SuburbCollection($this->whenLoaded('suburbs')),
+            'suburbs'   => SuburbResource::collection($this->whenLoaded('suburbs')),
         ];
     }
 }

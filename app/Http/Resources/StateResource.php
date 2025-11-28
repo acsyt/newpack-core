@@ -52,6 +52,7 @@ class StateResource extends JsonResource
             'code'      => $this->code,
             'active'    => $this->active,
             'cities'    => CityResource::collection($this->whenLoaded('cities')),
+            'country'   => new CountryResource($this->whenLoaded('country')),
         ];
     }
 }

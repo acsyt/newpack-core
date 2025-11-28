@@ -67,4 +67,80 @@ class InventoryMovementController extends Controller
         $movement = InventoryMovementQuery::make()->findByIdOrFail($id);
         return new InventoryMovementResource($movement);
     }
+    /**
+     * @OA\Post(
+     *     path="/api/inventory/movements",
+     *     summary="Create a new inventory movement (Entry/Exit)",
+     *     tags={"Inventory Movements"},
+     *     security={{"sanctum": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"warehouse_id", "product_id", "type", "quantity"},
+     *             @OA\Property(property="warehouse_id", type="integer"),
+     *             @OA\Property(property="warehouse_location_id", type="integer", nullable=true),
+     *             @OA\Property(property="product_id", type="integer"),
+     *             @OA\Property(property="type", type="string", enum={"entry", "exit"}),
+     *             @OA\Property(property="quantity", type="number"),
+     *             @OA\Property(property="batch_id", type="integer", nullable=true),
+     *             @OA\Property(property="notes", type="string", nullable=true)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Movement created",
+     *         @OA\JsonContent(ref="#/components/schemas/InventoryMovementResource")
+     *     )
+     * )
+     */
+    public function store(\App\Http\Requests\Inventory\StoreInventoryMovementRequest $request)
+    {
+        $data = $request->validated();
+        $data['user_id'] = \Illuminate\Support\Facades\Auth::id();
+        $data['balance_after'] = 0; // Placeholder
+
+        $movement = \App\Models\InventoryMovement::create($data);
+
+        return new InventoryMovementResource($movement);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/inventory/movements/transfer",
+     *     summary="Create a new inventory transfer",
+     *     tags={"Inventory Movements"},
+     *     security={{"sanctum": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"source_warehouse_id", "destination_warehouse_id", "products"},
+     *             @OA\Property(property="source_warehouse_id", type="integer"),
+     *             @OA\Property(property="destination_warehouse_id", type="integer"),
+     *             @OA\Property(property="notes", type="string", nullable=true),
+     *             @OA\Property(
+     *                 property="products",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     required={"product_id", "quantity"},
+     *                     @OA\Property(property="product_id", type="integer"),
+     *                     @OA\Property(property="quantity", type="number"),
+     *                     @OA\Property(property="source_location_id", type="integer", nullable=true),
+     *                     @OA\Property(property="destination_location_id", type="integer", nullable=true),
+     *                     @OA\Property(property="batch_id", type="integer", nullable=true)
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Transfer created successfully"
+     *     )
+     * )
+     */
+    public function transfer(\App\Http\Requests\Inventory\StoreInventoryTransferRequest $request, \App\Actions\Inventory\CreateInventoryTransferAction $action)
+    {
+        $action->execute($request->validated());
+
+        return response()->json(['message' => 'Transfer created successfully'], 201);
+    }
 }

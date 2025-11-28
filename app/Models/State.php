@@ -20,6 +20,11 @@ class State extends Model
         return $this->hasMany(City::class);
     }
 
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(Country::class);
+    }
+
 
     public function scopeActive(Builder $query): Builder
     {

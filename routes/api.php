@@ -15,6 +15,12 @@ use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\WarehouseLocationController;
 use App\Http\Controllers\InventoryStockController;
 use App\Http\Controllers\InventoryMovementController;
+use App\Http\Controllers\ZipCodeController;
+use App\Http\Controllers\StateController;
+use App\Http\Controllers\CityController;
+use App\Http\Controllers\CountryController;
+use App\Http\Controllers\SuburbController;
+use App\Http\Controllers\AddressController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -71,6 +77,14 @@ Route::as('api.')
                 Route::delete('/', [CustomerController::class, 'deleteCustomer'])->name('customers.delete');
             });
         });
+
+        Route::get('zip-codes/{zipCode}', [ZipCodeController::class, 'show'])->name('zip_codes.show');
+
+        Route::get('states', [StateController::class, 'index'])->name('states.index');
+        Route::get('cities', [CityController::class, 'index'])->name('cities.index');
+        Route::get('countries', [CountryController::class, 'index'])->name('countries.index');
+        Route::get('suburbs', [SuburbController::class, 'index'])->name('suburbs.index');
+        Route::get('addresses/lookup/{zipCode}', [AddressController::class, 'lookup'])->name('addresses.lookup');
 
         Route::prefix('processes')->group(function () {
             Route::get('/', [ProcessController::class, 'findAllProcesses'])->name('processes.findAll');
@@ -167,6 +181,8 @@ Route::as('api.')
 
             Route::prefix('movements')->group(function () {
                 Route::get('/', [InventoryMovementController::class, 'findAllMovements'])->name('inventory_movements.findAll');
+                Route::post('/', [InventoryMovementController::class, 'store'])->name('inventory_movements.store');
+                Route::post('/transfer', [InventoryMovementController::class, 'transfer'])->name('inventory_movements.transfer');
                 Route::prefix('{movement}')->group(function () {
                     Route::get('/', [InventoryMovementController::class, 'findOneMovement'])->name('inventory_movements.findOne');
                 });

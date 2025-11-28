@@ -12,6 +12,111 @@
         }
     ],
     "paths": {
+        "/api/addresses/lookup/{zipCode}": {
+            "get": {
+                "tags": [
+                    "Addresses"
+                ],
+                "summary": "Lookup address details by Zip Code",
+                "operationId": "14336d505a433a6cf47bb8925a3423ad",
+                "parameters": [
+                    {
+                        "name": "zipCode",
+                        "in": "path",
+                        "description": "Zip Code",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Address details including hierarchy and suburbs",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "zip_code": {
+                                                    "type": "string",
+                                                    "example": "64000"
+                                                },
+                                                "country": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer"
+                                                        },
+                                                        "name": {
+                                                            "type": "string"
+                                                        },
+                                                        "code": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "state": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer"
+                                                        },
+                                                        "name": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "city": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer"
+                                                        },
+                                                        "name": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "suburbs": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "name": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Zip Code not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/auth/login": {
             "post": {
                 "tags": [
@@ -737,6 +842,94 @@
                 }
             }
         },
+        "/api/cities": {
+            "get": {
+                "tags": [
+                    "Cities"
+                ],
+                "summary": "Get all cities",
+                "operationId": "37ad6fa2c33aa2ddbd0d175431a243a7",
+                "parameters": [
+                    {
+                        "name": "filter[name]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[state_id]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cities list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CityResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/countries": {
+            "get": {
+                "tags": [
+                    "Countries"
+                ],
+                "summary": "Get all countries",
+                "operationId": "edaabf3348bf71d9cf65b87f44ec29ce",
+                "parameters": [
+                    {
+                        "name": "filter[name]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[code]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Countries list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CountryResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/customers": {
             "get": {
                 "tags": [
@@ -1003,6 +1196,971 @@
                     },
                     "404": {
                         "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/inventory/movements": {
+            "get": {
+                "tags": [
+                    "Inventory Movements"
+                ],
+                "summary": "List all inventory movements (Kardex)",
+                "operationId": "8a7df6d142466c493a0b935ad4fdfcb4",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filter[product_id]",
+                        "in": "query",
+                        "description": "Filter by product ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filter[warehouse_id]",
+                        "in": "query",
+                        "description": "Filter by warehouse ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filter[warehouse_location_id]",
+                        "in": "query",
+                        "description": "Filter by warehouse location ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filter[type]",
+                        "in": "query",
+                        "description": "Filter by movement type",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "purchase_entry",
+                                "production_output",
+                                "production_consumption",
+                                "sales_shipment",
+                                "adjustment",
+                                "transfer"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "filter[user_id]",
+                        "in": "query",
+                        "description": "Filter by user ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filter[created_at]",
+                        "in": "query",
+                        "description": "Filter by date range (format: YYYY-MM-DD,YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "description": "Include related resources (product,warehouse,warehouseLocation,batch,user,reference)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Sort by field (prefix with - for descending)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of inventory movements",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/InventoryMovementResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Inventory Movements"
+                ],
+                "summary": "Create a new inventory movement (Entry/Exit)",
+                "operationId": "db0b087f88fc78987d1ebc64c778db63",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "warehouse_id",
+                                    "product_id",
+                                    "type",
+                                    "quantity"
+                                ],
+                                "properties": {
+                                    "warehouse_id": {
+                                        "type": "integer"
+                                    },
+                                    "warehouse_location_id": {
+                                        "type": "integer",
+                                        "nullable": true
+                                    },
+                                    "product_id": {
+                                        "type": "integer"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "entry",
+                                            "exit"
+                                        ]
+                                    },
+                                    "quantity": {
+                                        "type": "number"
+                                    },
+                                    "batch_id": {
+                                        "type": "integer",
+                                        "nullable": true
+                                    },
+                                    "notes": {
+                                        "type": "string",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Movement created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InventoryMovementResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/inventory/movements/{id}": {
+            "get": {
+                "tags": [
+                    "Inventory Movements"
+                ],
+                "summary": "Get inventory movement by ID",
+                "operationId": "f8547f59b8396c352f40011317d47b08",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Movement ID",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Movement details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InventoryMovementResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Movement not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/inventory/movements/transfer": {
+            "post": {
+                "tags": [
+                    "Inventory Movements"
+                ],
+                "summary": "Create a new inventory transfer",
+                "operationId": "278961350bce7af47cda7de589a4859a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "source_warehouse_id",
+                                    "destination_warehouse_id",
+                                    "products"
+                                ],
+                                "properties": {
+                                    "source_warehouse_id": {
+                                        "type": "integer"
+                                    },
+                                    "destination_warehouse_id": {
+                                        "type": "integer"
+                                    },
+                                    "notes": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "products": {
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "product_id",
+                                                "quantity"
+                                            ],
+                                            "properties": {
+                                                "product_id": {
+                                                    "type": "integer"
+                                                },
+                                                "quantity": {
+                                                    "type": "number"
+                                                },
+                                                "source_location_id": {
+                                                    "type": "integer",
+                                                    "nullable": true
+                                                },
+                                                "destination_location_id": {
+                                                    "type": "integer",
+                                                    "nullable": true
+                                                },
+                                                "batch_id": {
+                                                    "type": "integer",
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Transfer created successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/inventory/stocks": {
+            "get": {
+                "tags": [
+                    "Inventory Stocks"
+                ],
+                "summary": "List all inventory stocks",
+                "operationId": "8ebc7326d1913f5e694fcdbe643d3cc7",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filter[product_id]",
+                        "in": "query",
+                        "description": "Filter by product ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filter[warehouse_id]",
+                        "in": "query",
+                        "description": "Filter by warehouse ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filter[warehouse_location_id]",
+                        "in": "query",
+                        "description": "Filter by warehouse location ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filter[batch_id]",
+                        "in": "query",
+                        "description": "Filter by batch ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filter[status]",
+                        "in": "query",
+                        "description": "Filter by status",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "available",
+                                "reserved",
+                                "damaged"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "description": "Include related resources (product,warehouse,warehouseLocation,batch)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Sort by field (prefix with - for descending)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of inventory stocks",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/InventoryStockResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/inventory/stocks/{id}": {
+            "get": {
+                "tags": [
+                    "Inventory Stocks"
+                ],
+                "summary": "Get inventory stock by ID",
+                "operationId": "ee5f58d6d32b5e090725b97098e8f0d3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Stock ID",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Stock details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InventoryStockResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Stock not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/processes": {
+            "get": {
+                "tags": [
+                    "Processes"
+                ],
+                "summary": "Get all processes",
+                "operationId": "2559e9d085c16d0ebf432470fe4bc2f9",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filter[code]",
+                        "in": "query",
+                        "description": "Filter by process code (partial match)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[name]",
+                        "in": "query",
+                        "description": "Filter by process name (partial match)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[applies_to_pt]",
+                        "in": "query",
+                        "description": "Filter by applies to PT",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "filter[applies_to_mp]",
+                        "in": "query",
+                        "description": "Filter by applies to MP",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "filter[applies_to_compounds]",
+                        "in": "query",
+                        "description": "Filter by applies to compounds",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "filter[search]",
+                        "in": "query",
+                        "description": "Search across code and name fields",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Sort by field (prefix with - for descending)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Processes list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProcessResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Processes"
+                ],
+                "summary": "Create a new process",
+                "operationId": "5690eb95be7f5c449610408763d79259",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreProcessRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Process created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProcessResource"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/processes/{process}": {
+            "get": {
+                "tags": [
+                    "Processes"
+                ],
+                "summary": "Get a process by ID",
+                "operationId": "7a08a48cf09eff4edce28e3e1ac729b4",
+                "parameters": [
+                    {
+                        "name": "process",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Process details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProcessResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Processes"
+                ],
+                "summary": "Delete a process",
+                "operationId": "e8d0311c5490b05ad8258a37a3fae45f",
+                "parameters": [
+                    {
+                        "name": "process",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Deleted"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Processes"
+                ],
+                "summary": "Update a process",
+                "operationId": "4b7f5bb7dc65b2fbd6585f4180fe11f8",
+                "parameters": [
+                    {
+                        "name": "process",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateProcessRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Process updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProcessResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/product-classes": {
+            "get": {
+                "tags": [
+                    "Product Classes"
+                ],
+                "summary": "Get all product classes",
+                "operationId": "cb0d62d37f46fc1b51da84890454e93e",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filter[code]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[name]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[search]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Classes list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductClassResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Product Classes"
+                ],
+                "summary": "Create a new product class",
+                "operationId": "735081d1b2c866fac0fa9141ca20a9c4",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreProductClassRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Class created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductClassResource"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/product-classes/{productClass}": {
+            "get": {
+                "tags": [
+                    "Product Classes"
+                ],
+                "summary": "Get a product class by ID",
+                "operationId": "5b144bccac88a4a6135416a6aaceb430",
+                "parameters": [
+                    {
+                        "name": "productClass",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Class details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductClassResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Product Classes"
+                ],
+                "summary": "Delete a product class",
+                "operationId": "41fae84eb7d424e231ce3ce616f71f1b",
+                "parameters": [
+                    {
+                        "name": "productClass",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Deleted"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Product Classes"
+                ],
+                "summary": "Update a product class",
+                "operationId": "986d3249bdc8c26fef740f887855e3c3",
+                "parameters": [
+                    {
+                        "name": "productClass",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateProductClassRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Class updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductClassResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
                     }
                 },
                 "security": [
@@ -1305,6 +2463,250 @@
                     },
                     "404": {
                         "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/product-subclasses": {
+            "get": {
+                "tags": [
+                    "Product Subclasses"
+                ],
+                "summary": "Get all product subclasses",
+                "operationId": "c4f5611a7809b20693a94746145f5b05",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filter[code]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[name]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[product_class_id]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filter[search]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "description": "Include productClass relationship",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Subclasses list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductSubclassResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Product Subclasses"
+                ],
+                "summary": "Create a new product subclass",
+                "operationId": "00bd2bde36819c94154fff75fea7cb69",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreProductSubclassRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Subclass created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductSubclassResource"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/product-subclasses/{productSubclass}": {
+            "get": {
+                "tags": [
+                    "Product Subclasses"
+                ],
+                "summary": "Get a product subclass by ID",
+                "operationId": "f180e81c01ad2b41e1e4a6c57da8a446",
+                "parameters": [
+                    {
+                        "name": "productSubclass",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Subclass details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductSubclassResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Product Subclasses"
+                ],
+                "summary": "Delete a product subclass",
+                "operationId": "e55a68931a4285ac6ccc9f1e60767247",
+                "parameters": [
+                    {
+                        "name": "productSubclass",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Deleted"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "Product Subclasses"
+                ],
+                "summary": "Update a product subclass",
+                "operationId": "feb5ff5b6a2c3ff4bc5965adfd04942a",
+                "parameters": [
+                    {
+                        "name": "productSubclass",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateProductSubclassRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Subclass updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductSubclassResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
                     }
                 },
                 "security": [
@@ -1617,6 +3019,102 @@
                                     "items": {
                                         "$ref": "#/components/schemas/PermissionResource"
                                     }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/states": {
+            "get": {
+                "tags": [
+                    "States"
+                ],
+                "summary": "Get all states",
+                "operationId": "4136acf478452d9e777d0a2ef5ef82ef",
+                "parameters": [
+                    {
+                        "name": "filter[name]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[code]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[country_id]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "States list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StateResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/suburbs": {
+            "get": {
+                "tags": [
+                    "Suburbs"
+                ],
+                "summary": "Get all suburbs",
+                "operationId": "a4f283931a15d30b74167023d3d50336",
+                "parameters": [
+                    {
+                        "name": "filter[name]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[zip_code_id]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Suburbs list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SuburbResource"
                                 }
                             }
                         }
@@ -2667,6 +4165,46 @@
                     }
                 ]
             }
+        },
+        "/api/zip-codes/{zipCode}": {
+            "get": {
+                "tags": [
+                    "Zip Codes"
+                ],
+                "summary": "Get Zip Code details",
+                "operationId": "12d5158cdb4c861702ebde141578f6f8",
+                "parameters": [
+                    {
+                        "name": "zipCode",
+                        "in": "path",
+                        "description": "Zip Code string",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ZipCodeResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Zip Code not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -2718,16 +4256,6 @@
                     "phone_secondary": {
                         "type": "string",
                         "example": "5587654321",
-                        "nullable": true
-                    },
-                    "mobile": {
-                        "type": "string",
-                        "example": "5511223344",
-                        "nullable": true
-                    },
-                    "whatsapp": {
-                        "type": "string",
-                        "example": "5511223344",
                         "nullable": true
                     },
                     "suburb_id": {
@@ -2831,16 +4359,6 @@
                         "example": "5587654321",
                         "nullable": true
                     },
-                    "mobile": {
-                        "type": "string",
-                        "example": "5511223344",
-                        "nullable": true
-                    },
-                    "whatsapp": {
-                        "type": "string",
-                        "example": "5511223344",
-                        "nullable": true
-                    },
                     "suburb_id": {
                         "type": "integer",
                         "example": 1,
@@ -2916,6 +4434,70 @@
                 },
                 "type": "object"
             },
+            "StoreProcessRequest": {
+                "required": [
+                    "code",
+                    "name"
+                ],
+                "properties": {
+                    "code": {
+                        "description": "Unique process code",
+                        "type": "string",
+                        "example": "PROC-001"
+                    },
+                    "name": {
+                        "description": "Process name",
+                        "type": "string",
+                        "example": "Molding"
+                    },
+                    "appliesToPt": {
+                        "description": "Applies to PT (Producto Terminado)",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "appliesToMp": {
+                        "description": "Applies to MP (Materia Prima)",
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "appliesToCompounds": {
+                        "description": "Applies to Compounds",
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateProcessRequest": {
+                "properties": {
+                    "code": {
+                        "description": "Unique process code",
+                        "type": "string",
+                        "example": "PROC-001"
+                    },
+                    "name": {
+                        "description": "Process name",
+                        "type": "string",
+                        "example": "Molding"
+                    },
+                    "appliesToPt": {
+                        "description": "Applies to PT (Producto Terminado)",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "appliesToMp": {
+                        "description": "Applies to MP (Materia Prima)",
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "appliesToCompounds": {
+                        "description": "Applies to Compounds",
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
             "StoreProductRequest": {
                 "required": [
                     "name",
@@ -2976,10 +4558,6 @@
                         "format": "float",
                         "example": 500,
                         "nullable": true
-                    },
-                    "track_batches": {
-                        "type": "boolean",
-                        "example": true
                     },
                     "is_active": {
                         "type": "boolean",
@@ -3085,11 +4663,6 @@
                         "example": 500,
                         "nullable": true
                     },
-                    "track_batches": {
-                        "type": "boolean",
-                        "example": true,
-                        "nullable": true
-                    },
                     "is_active": {
                         "type": "boolean",
                         "example": true,
@@ -3134,6 +4707,125 @@
                             },
                             "type": "object"
                         }
+                    }
+                },
+                "type": "object"
+            },
+            "StoreProductClassRequest": {
+                "required": [
+                    "code",
+                    "name"
+                ],
+                "properties": {
+                    "code": {
+                        "description": "Unique class code",
+                        "type": "string",
+                        "example": "CL-001"
+                    },
+                    "name": {
+                        "description": "Class name",
+                        "type": "string",
+                        "example": "Plastics"
+                    },
+                    "description": {
+                        "description": "Class description",
+                        "type": "string",
+                        "example": "Plastic materials"
+                    },
+                    "slug": {
+                        "description": "URL-friendly slug",
+                        "type": "string",
+                        "example": "plastics"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateProductClassRequest": {
+                "properties": {
+                    "code": {
+                        "description": "Unique class code",
+                        "type": "string",
+                        "example": "CL-001"
+                    },
+                    "name": {
+                        "description": "Class name",
+                        "type": "string",
+                        "example": "Plastics"
+                    },
+                    "description": {
+                        "description": "Class description",
+                        "type": "string",
+                        "example": "Plastic materials"
+                    },
+                    "slug": {
+                        "description": "URL-friendly slug",
+                        "type": "string",
+                        "example": "plastics"
+                    }
+                },
+                "type": "object"
+            },
+            "StoreProductSubclassRequest": {
+                "required": [
+                    "code",
+                    "name",
+                    "productClassId"
+                ],
+                "properties": {
+                    "code": {
+                        "description": "Unique subclass code",
+                        "type": "string",
+                        "example": "SC-001"
+                    },
+                    "name": {
+                        "description": "Subclass name",
+                        "type": "string",
+                        "example": "HDPE"
+                    },
+                    "productClassId": {
+                        "description": "Product class ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "description": {
+                        "description": "Subclass description",
+                        "type": "string",
+                        "example": "High-density polyethylene"
+                    },
+                    "slug": {
+                        "description": "URL-friendly slug",
+                        "type": "string",
+                        "example": "hdpe"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateProductSubclassRequest": {
+                "properties": {
+                    "code": {
+                        "description": "Unique subclass code",
+                        "type": "string",
+                        "example": "SC-001"
+                    },
+                    "name": {
+                        "description": "Subclass name",
+                        "type": "string",
+                        "example": "HDPE"
+                    },
+                    "productClassId": {
+                        "description": "Product class ID",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "description": {
+                        "description": "Subclass description",
+                        "type": "string",
+                        "example": "High-density polyethylene"
+                    },
+                    "slug": {
+                        "description": "URL-friendly slug",
+                        "type": "string",
+                        "example": "hdpe"
                     }
                 },
                 "type": "object"
@@ -3202,16 +4894,6 @@
                         "example": "5587654321",
                         "nullable": true
                     },
-                    "mobile": {
-                        "type": "string",
-                        "example": "5511223344",
-                        "nullable": true
-                    },
-                    "whatsapp": {
-                        "type": "string",
-                        "example": "5511223344",
-                        "nullable": true
-                    },
                     "suburb_id": {
                         "type": "integer",
                         "example": 1,
@@ -3265,17 +4947,6 @@
                             "both"
                         ],
                         "example": "product"
-                    },
-                    "payment_terms": {
-                        "type": "string",
-                        "example": "30 días",
-                        "nullable": true
-                    },
-                    "credit_limit": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 100000,
-                        "nullable": true
                     },
                     "status": {
                         "type": "string",
@@ -3322,16 +4993,6 @@
                         "example": "5587654321",
                         "nullable": true
                     },
-                    "mobile": {
-                        "type": "string",
-                        "example": "5511223344",
-                        "nullable": true
-                    },
-                    "whatsapp": {
-                        "type": "string",
-                        "example": "5511223344",
-                        "nullable": true
-                    },
                     "suburb_id": {
                         "type": "integer",
                         "example": 1,
@@ -3385,17 +5046,6 @@
                             "both"
                         ],
                         "example": "product"
-                    },
-                    "payment_terms": {
-                        "type": "string",
-                        "example": "30 días",
-                        "nullable": true
-                    },
-                    "credit_limit": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 100000,
-                        "nullable": true
                     },
                     "status": {
                         "type": "string",
@@ -3719,16 +5369,6 @@
                         "example": "5587654321",
                         "nullable": true
                     },
-                    "mobile": {
-                        "type": "string",
-                        "example": "5511223344",
-                        "nullable": true
-                    },
-                    "whatsapp": {
-                        "type": "string",
-                        "example": "5511223344",
-                        "nullable": true
-                    },
                     "suburbId": {
                         "type": "integer",
                         "example": 1,
@@ -3841,6 +5481,238 @@
                 },
                 "type": "object"
             },
+            "InventoryMovementResource": {
+                "title": "Inventory Movement",
+                "description": "Inventory movement (transaction) resource representation",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "productId": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "warehouseId": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "warehouseLocationId": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "purchase_entry",
+                            "production_output",
+                            "production_consumption",
+                            "sales_shipment",
+                            "adjustment",
+                            "transfer"
+                        ],
+                        "example": "purchase_entry"
+                    },
+                    "quantity": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 50
+                    },
+                    "balanceAfter": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 150
+                    },
+                    "batchId": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "userId": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "referenceType": {
+                        "type": "string",
+                        "example": "App\\\\Models\\\\Purchase",
+                        "nullable": true
+                    },
+                    "referenceId": {
+                        "type": "integer",
+                        "example": 123,
+                        "nullable": true
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Initial stock",
+                        "nullable": true
+                    },
+                    "product": {
+                        "$ref": "#/components/schemas/ProductResource"
+                    },
+                    "warehouse": {
+                        "$ref": "#/components/schemas/WarehouseResource"
+                    },
+                    "warehouseLocation": {
+                        "$ref": "#/components/schemas/WarehouseLocationResource"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/UserResource"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "InventoryStockResource": {
+                "title": "Inventory Stock",
+                "description": "Inventory stock resource representation",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "productId": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "warehouseId": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "warehouseLocationId": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "batchId": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "quantity": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 100.5
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "available",
+                            "reserved",
+                            "damaged"
+                        ],
+                        "example": "available"
+                    },
+                    "product": {
+                        "$ref": "#/components/schemas/ProductResource"
+                    },
+                    "warehouse": {
+                        "$ref": "#/components/schemas/WarehouseResource"
+                    },
+                    "warehouseLocation": {
+                        "$ref": "#/components/schemas/WarehouseLocationResource"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "MachineResource": {
+                "title": "Machine Resource",
+                "description": "Machine resource representation",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "code": {
+                        "type": "string",
+                        "example": "M-001"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Extruder 1"
+                    },
+                    "processId": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "process": {
+                        "type": "object"
+                    },
+                    "speedMh": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 100.5
+                    },
+                    "speedKgh": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 150.75
+                    },
+                    "circumferenceTotal": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 300
+                    },
+                    "maxWidth": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 200
+                    },
+                    "maxCenter": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 180
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "active"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "MeasureUnitResource": {
+                "title": "Measure Unit",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Kilogramo"
+                    },
+                    "code": {
+                        "type": "string",
+                        "example": "kg"
+                    }
+                },
+                "type": "object"
+            },
             "PermissionResource": {
                 "title": "Permission",
                 "description": "Permission resource representation",
@@ -3856,6 +5728,80 @@
                     "description": {
                         "type": "string",
                         "example": "Create new users"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "ProcessResource": {
+                "title": "Process Resource",
+                "description": "Process resource representation",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "code": {
+                        "type": "string",
+                        "example": "PROC-001"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Molding"
+                    },
+                    "appliesToPt": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "appliesToMp": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "appliesToCompounds": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "ProductClassResource": {
+                "title": "Product Class Resource",
+                "description": "Product class resource representation",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "code": {
+                        "type": "string",
+                        "example": "CL-001"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Plastics"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Plastic materials"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "plastics"
                     },
                     "createdAt": {
                         "type": "string",
@@ -3924,13 +5870,19 @@
                         "type": "string",
                         "example": "MP-PEBD-001"
                     },
-                    "type": {
-                        "type": "string",
-                        "example": "raw_material"
+                    "productType": {
+                        "$ref": "#/components/schemas/ProductTypeResource"
                     },
-                    "unitOfMeasure": {
-                        "type": "string",
-                        "example": "kg"
+                    "productTypeId": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "measureUnit": {
+                        "$ref": "#/components/schemas/MeasureUnitResource"
+                    },
+                    "measureUnitId": {
+                        "type": "integer",
+                        "example": 1
                     },
                     "averageCost": {
                         "type": "number",
@@ -3958,10 +5910,6 @@
                         "format": "float",
                         "example": 5000,
                         "nullable": true
-                    },
-                    "trackBatches": {
-                        "type": "boolean",
-                        "example": true
                     },
                     "isActive": {
                         "type": "boolean",
@@ -3991,6 +5939,70 @@
                         "items": {
                             "$ref": "#/components/schemas/ProductIngredientResource"
                         }
+                    }
+                },
+                "type": "object"
+            },
+            "ProductSubclassResource": {
+                "title": "Product Subclass Resource",
+                "description": "Product subclass resource representation",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "code": {
+                        "type": "string",
+                        "example": "SC-001"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "HDPE"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "High-density polyethylene"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "hdpe"
+                    },
+                    "productClassId": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "productClass": {
+                        "$ref": "#/components/schemas/ProductClassResource"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "ProductTypeResource": {
+                "title": "Product Type",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Materia Prima"
+                    },
+                    "code": {
+                        "type": "string",
+                        "example": "MP"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "materia-prima"
                     }
                 },
                 "type": "object"
@@ -4114,16 +6126,6 @@
                         "example": "5587654321",
                         "nullable": true
                     },
-                    "mobile": {
-                        "type": "string",
-                        "example": "5511223344",
-                        "nullable": true
-                    },
-                    "whatsapp": {
-                        "type": "string",
-                        "example": "5511223344",
-                        "nullable": true
-                    },
                     "suburbId": {
                         "type": "integer",
                         "example": 1,
@@ -4182,17 +6184,6 @@
                             "both"
                         ],
                         "example": "product"
-                    },
-                    "paymentTerms": {
-                        "type": "string",
-                        "example": "30 días",
-                        "nullable": true
-                    },
-                    "creditLimit": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 100000,
-                        "nullable": true
                     },
                     "status": {
                         "type": "string",
@@ -4396,6 +6387,10 @@
                             "$ref": "#/components/schemas/WarehouseLocationResource"
                         },
                         "nullable": true
+                    },
+                    "warehouseLocationsCount": {
+                        "type": "integer",
+                        "example": 0
                     }
                 },
                 "type": "object"
@@ -4439,6 +6434,12 @@
     },
     "tags": [
         {
+            "name": "Addresses"
+        },
+        {
+            "name": "Cities"
+        },
+        {
             "name": "Authentication",
             "description": "Endpoints de autenticación de usuarios"
         },
@@ -4449,10 +6450,34 @@
             "name": "Roles"
         },
         {
+            "name": "Countries"
+        },
+        {
             "name": "Customers"
         },
         {
+            "name": "Inventory Movements"
+        },
+        {
+            "name": "Inventory Stocks"
+        },
+        {
+            "name": "Processes"
+        },
+        {
+            "name": "Product Classes"
+        },
+        {
             "name": "Products"
+        },
+        {
+            "name": "Product Subclasses"
+        },
+        {
+            "name": "States"
+        },
+        {
+            "name": "Suburbs"
         },
         {
             "name": "Suppliers"
@@ -4462,6 +6487,9 @@
         },
         {
             "name": "Warehouse Locations"
+        },
+        {
+            "name": "Zip Codes"
         },
         {
             "name": "Password Reset",
