@@ -74,14 +74,22 @@ class CustomerController extends Controller
      *     tags={"Customers"},
      *     security={{"sanctum": {}}},
      *     @OA\Parameter(name="customer", in="path", required=true, @OA\Schema(type="integer")),
-     *     @OA\Response(response=200, description="Customer details", @OA\JsonContent(ref="#/components/schemas/CustomerResource")),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Customer details",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", ref="#/components/schemas/CustomerResource")
+     *         )
+     *     ),
      *     @OA\Response(response=404, description="Not found")
      * )
      */
     public function findOneCustomer($id)
     {
         $customer = CustomerQuery::make()->findById((int) $id);
-        return new CustomerResource($customer);
+        return response()->json([
+            'data' => new CustomerResource($customer),
+        ]);
     }
 
     /**
