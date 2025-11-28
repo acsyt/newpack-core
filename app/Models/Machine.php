@@ -22,6 +22,14 @@ class Machine extends Model
         'status',
     ];
 
+    protected $casts = [
+        'speed_mh'              => 'float',
+        'speed_kgh'             => 'float',
+        'circumference_total'   => 'float',
+        'max_width'             => 'float',
+        'max_center'            => 'float',
+    ];
+
     public function process(): BelongsTo
     {
         return $this->belongsTo(Process::class);

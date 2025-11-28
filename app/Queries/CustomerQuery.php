@@ -6,6 +6,7 @@ use App\Models\Customer;
 use App\Queries\BaseQuery;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedSort;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
 
@@ -33,12 +34,12 @@ class CustomerQuery extends BaseQuery
     protected function getAllowedSorts(): array
     {
         return [
-            'id',
-            'name',
-            'last_name',
-            'email',
-            'created_at',
-            'updated_at',
+            AllowedSort::field('id'),
+            AllowedSort::field('name'),
+            AllowedSort::field('last_name'),
+            AllowedSort::field('email'),
+            AllowedSort::field('created_at'),
+            AllowedSort::field('updated_at'),
         ];
     }
 

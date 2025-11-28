@@ -4,6 +4,7 @@ namespace App\Queries;
 
 use App\Models\Product;
 use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\AllowedSort;
 
 class ProductQuery extends BaseQuery
 {
@@ -30,13 +31,14 @@ class ProductQuery extends BaseQuery
     protected function getAllowedSorts(): array
     {
         return [
-            'name',
-            'sku',
-            'type',
-            'current_stock',
-            'average_cost',
-            'created_at',
-            'updated_at',
+            AllowedSort::field('id'),
+            AllowedSort::field('name'),
+            AllowedSort::field('sku'),
+            AllowedSort::field('type'),
+            AllowedSort::field('current_stock'),
+            AllowedSort::field('average_cost'),
+            AllowedSort::field('created_at'),
+            AllowedSort::field('updated_at'),
         ];
     }
 

@@ -19,7 +19,6 @@ class SupplierSeeder extends Seeder
             'email' => 'ventas@polimerosnacionales.com',
             'supplier_type' => 'product',
             'rfc' => 'PNA900101XYZ',
-            'payment_terms' => 'Crédito 30 días',
         ]);
 
         // Proveedor de Insumos (Tintas)
@@ -29,7 +28,6 @@ class SupplierSeeder extends Seeder
             'email' => 'contacto@tintasmex.com',
             'supplier_type' => 'product',
             'rfc' => 'TSM850505ABC',
-            'payment_terms' => 'Contado',
         ]);
 
         // Proveedor de Servicios (Mantenimiento)
@@ -39,7 +37,6 @@ class SupplierSeeder extends Seeder
             'email' => 'servicios@mie.com.mx',
             'supplier_type' => 'service',
             'rfc' => 'MIE101010LMN',
-            'payment_terms' => 'Crédito 15 días',
         ]);
 
         // Generar 10 proveedores aleatorios adicionales

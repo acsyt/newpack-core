@@ -6,6 +6,7 @@ use App\Helpers\FilterHelper;
 use App\Models\User;
 use App\Queries\BaseQuery;
 use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\AllowedSort;
 
 class UserQuery extends BaseQuery
 {
@@ -34,11 +35,11 @@ class UserQuery extends BaseQuery
     protected function getAllowedSorts(): array
     {
         return [
-            'id',
-            'name',
-            'email',
-            'created_at',
-            'updated_at',
+            AllowedSort::field('id'),
+            AllowedSort::field('name'),
+            AllowedSort::field('email'),
+            AllowedSort::field('created_at'),
+            AllowedSort::field('updated_at'),
         ];
     }
 

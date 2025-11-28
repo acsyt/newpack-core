@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Spatie\QueryBuilder\QueryBuilder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Collection;
 abstract class BaseQuery
 {
     protected $request;
+    protected array $withCountRelations = [];
 
     public function __construct(?Request $request = null)
     {
@@ -47,9 +49,20 @@ abstract class BaseQuery
         return '-created_at';
     }
 
+    public function withCount(string|array $relations): static
+    {
+        $this->withCountRelations = array_merge(
+            $this->withCountRelations,
+            is_array($relations) ? $relations : [$relations]
+        );
+        return $this;
+    }
+
     public function paginated(?Closure $extraQuery = null): LengthAwarePaginator|Collection
     {
-        $hasPagination = $this->request->boolean('has_pagination', true);
+        $hasPaginationValue = $this->request->input('has_pagination', true);
+        $hasPagination = filter_var($hasPaginationValue, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? true;
+
         $perPage = $this->request->integer('per_page', 10);
 
         $query = $this->buildQuery();
@@ -110,6 +123,10 @@ abstract class BaseQuery
             ->allowedSorts($this->getAllowedSorts())
             ->allowedIncludes($this->getAllowedIncludes())
             ->defaultSort($this->getDefaultSort());
+
+        if (!empty($this->withCountRelations)) {
+            $query->withCount($this->withCountRelations);
+        }
 
         return $this->applyCustomLogic($query);
     }

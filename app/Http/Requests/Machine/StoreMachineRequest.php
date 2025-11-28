@@ -13,32 +13,15 @@ class StoreMachineRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'code' => ['required', 'string', 'max:50', 'unique:machines,code'],
-            'name' => ['required', 'string', 'max:255'],
-            'processId' => ['required', 'integer', 'exists:processes,id'],
-            'speedMh' => ['nullable', 'numeric'],
-            'speedKgh' => ['nullable', 'numeric'],
-            'circumferenceTotal' => ['nullable', 'numeric'],
-            'maxWidth' => ['nullable', 'numeric'],
-            'maxCenter' => ['nullable', 'numeric'],
-            'status' => ['nullable', 'string', 'max:50'],
-        ];
-    }
-
-    public function validated($key = null, $default = null): array
-    {
-        $validated = parent::validated();
-
-        return [
-            'code' => $validated['code'],
-            'name' => $validated['name'],
-            'process_id' => $validated['processId'],
-            'speed_mh' => $validated['speedMh'] ?? null,
-            'speed_kgh' => $validated['speedKgh'] ?? null,
-            'circumference_total' => $validated['circumferenceTotal'] ?? null,
-            'max_width' => $validated['maxWidth'] ?? null,
-            'max_center' => $validated['maxCenter'] ?? null,
-            'status' => $validated['status'] ?? 'active',
+            'code'                  => ['required', 'string', 'max:50', 'unique:machines,code'],
+            'name'                  => ['required', 'string', 'max:255'],
+            'process_id'            => ['required', 'integer', 'exists:processes,id'],
+            'speed_mh'              => ['nullable', 'numeric'],
+            'speed_kgh'             => ['nullable', 'numeric'],
+            'circumference_total'   => ['nullable', 'numeric'],
+            'max_width'             => ['nullable', 'numeric'],
+            'max_center'            => ['nullable', 'numeric'],
+            'status'                => ['nullable', 'string', 'max:50'],
         ];
     }
 
@@ -48,8 +31,8 @@ class StoreMachineRequest extends FormRequest
             'code.required' => 'The machine code is required.',
             'code.unique' => 'A machine with this code already exists.',
             'name.required' => 'The machine name is required.',
-            'processId.required' => 'The process is required.',
-            'processId.exists' => 'The selected process does not exist.',
+            'process_id.required' => 'The process is required.',
+            'process_id.exists' => 'The selected process does not exist.',
         ];
     }
 }

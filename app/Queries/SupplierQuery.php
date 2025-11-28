@@ -5,6 +5,7 @@ namespace App\Queries;
 use App\Models\Supplier;
 use App\Queries\BaseQuery;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedSort;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
 
@@ -32,11 +33,12 @@ class SupplierQuery extends BaseQuery
     protected function getAllowedSorts(): array
     {
         return [
-            'company_name',
-            'contact_name',
-            'email',
-            'created_at',
-            'updated_at',
+            AllowedSort::field('id'),
+            AllowedSort::field('company_name'),
+            AllowedSort::field('contact_name'),
+            AllowedSort::field('email'),
+            AllowedSort::field('created_at'),
+            AllowedSort::field('updated_at'),
         ];
     }
 
