@@ -55,11 +55,6 @@ class Product extends Model
         return $this->hasOne(ProductSpec::class);
     }
 
-    public function productType()
-    {
-        return $this->belongsTo(ProductType::class);
-    }
-
     public function measureUnit()
     {
         return $this->belongsTo(MeasureUnit::class, 'measure_unit_id');
@@ -100,14 +95,14 @@ class Product extends Model
     public function scopeRawMaterial($query)
     {
         return $query->whereHas('productType', function ($q) {
-            $q->where('code', ProductType::RAW_MATERIAL->value);
+            $q->where('code', ProductType::PRODUCT_TYPE_RAW);
         });
     }
 
     public function scopeCompound($query)
     {
         return $query->whereHas('productType', function ($q) {
-            $q->where('code', ProductType::COMPOUND->value);
+            $q->where('code', ProductType::PRODUCT_TYPE_COMPOUND);
         });
     }
 
