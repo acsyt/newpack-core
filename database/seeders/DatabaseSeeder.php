@@ -32,7 +32,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             ProductTypeSeeder::class,
-            ProductClassificationSeeder::class,
+            ProductClassSeeder::class,
             RawMaterialSeeder::class,
             MachineSeeder::class,
             CustomerSeeder::class,
@@ -44,7 +44,10 @@ class DatabaseSeeder extends Seeder
                 CustomerSeeder::class,
                 SupplierSeeder::class,
                 WarehouseSeeder::class,
-            ]);}
+                InventoryMovementSeeder::class, // Primero los movimientos
+                InventoryStockSeeder::class, // Luego calculamos los stocks
+            ]);
+        }
     }
 
     private function createAdminUser(): void

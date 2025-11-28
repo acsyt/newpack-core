@@ -13,6 +13,8 @@ use App\Http\Controllers\MachineController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\WarehouseLocationController;
+use App\Http\Controllers\InventoryStockController;
+use App\Http\Controllers\InventoryMovementController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -152,6 +154,22 @@ Route::as('api.')
                 Route::get('/', [WarehouseLocationController::class, 'findOneLocation'])->name('warehouse_locations.findOne');
                 Route::patch('/', [WarehouseLocationController::class, 'updateLocation'])->name('warehouse_locations.update');
                 Route::delete('/', [WarehouseLocationController::class, 'deleteLocation'])->name('warehouse_locations.delete');
+            });
+        });
+
+        Route::prefix('inventory')->group(function () {
+            Route::prefix('stocks')->group(function () {
+                Route::get('/', [InventoryStockController::class, 'findAllStocks'])->name('inventory_stocks.findAll');
+                Route::prefix('{stock}')->group(function () {
+                    Route::get('/', [InventoryStockController::class, 'findOneStock'])->name('inventory_stocks.findOne');
+                });
+            });
+
+            Route::prefix('movements')->group(function () {
+                Route::get('/', [InventoryMovementController::class, 'findAllMovements'])->name('inventory_movements.findAll');
+                Route::prefix('{movement}')->group(function () {
+                    Route::get('/', [InventoryMovementController::class, 'findOneMovement'])->name('inventory_movements.findOne');
+                });
             });
         });
 
