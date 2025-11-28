@@ -52,6 +52,10 @@ class ProductQuery extends BaseQuery
         return [
             'ingredients',
             'usedInCompounds',
+            'productClass',
+            'productSubclass',
+            'measureUnit',
+            'productType',
         ];
     }
 }

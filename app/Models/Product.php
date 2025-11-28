@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ProductType;
+use App\Models\ProductType as ProductTypeModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -18,7 +19,7 @@ class Product extends Model
         'name',
         'slug',
         'sku',
-        'type',
+        'product_type_id',
         'measure_unit_id',
         'product_class_id',
         'product_subclass_id',
@@ -51,7 +52,6 @@ class Product extends Model
     ];
 
     protected $casts = [
-        'type' => ProductType::class,
         'average_cost' => 'decimal:4',
         'current_stock' => 'decimal:4',
         'is_active' => 'boolean',
@@ -65,7 +65,12 @@ class Product extends Model
             ->logOnlyDirty();
     }
 
-    // RELACIONES   
+    // RELACIONES
+
+    public function productType()
+    {
+        return $this->belongsTo(ProductTypeModel::class, 'product_type_id');
+    }
 
     public function measureUnit()
     {
@@ -106,12 +111,16 @@ class Product extends Model
 
     public function scopeRawMaterial($query)
     {
-        return $query->where('type', ProductType::RAW_MATERIAL);
+        return $query->whereHas('productType', function ($q) {
+            $q->where('code', ProductType::RAW_MATERIAL->value);
+        });
     }
 
     public function scopeCompound($query)
     {
-        return $query->where('type', ProductType::COMPOUND);
+        return $query->whereHas('productType', function ($q) {
+            $q->where('code', ProductType::COMPOUND->value);
+        });
     }
 
     public function scopeSearch($query, $search)

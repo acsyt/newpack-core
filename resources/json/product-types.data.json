@@ -18,5 +18,10 @@
         "id": 4,
         "name": "Refacciones",
         "code": "REF"
+    },
+    {
+        "id": 5,
+        "name": "Compuesto",
+        "code": "COMP"
     }
 ]

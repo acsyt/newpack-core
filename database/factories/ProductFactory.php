@@ -15,7 +15,7 @@ class ProductFactory extends Factory
         return [
             'name'                      => $this->faker->words(3, true),
             'sku'                       => strtoupper($this->faker->unique()->bothify('PROD-####')),
-            'type'                      => $this->faker->randomElement(ProductType::cases()),
+            'product_type_id'           => \App\Models\ProductType::inRandomOrder()->first()?->id ?? 1,
             'measure_unit_id'           => $this->faker->numberBetween(1, 5),
             'average_cost'              => $this->faker->randomFloat(4, 1, 1000),
             'last_purchase_price'       => $this->faker->randomFloat(4, 1, 1000),
@@ -31,7 +31,7 @@ class ProductFactory extends Factory
     public function rawMaterial(): static
     {
         return $this->state(fn (array $attributes) => [
-            'type'              => ProductType::RAW_MATERIAL,
+            'product_type_id'   => \App\Models\ProductType::where('code', ProductType::RAW_MATERIAL->value)->first()?->id,
             'is_purchasable'    => true,
             'is_sellable'       => false,
         ]);
@@ -40,7 +40,7 @@ class ProductFactory extends Factory
     public function compound(): static
     {
         return $this->state(fn (array $attributes) => [
-            'type'              => ProductType::COMPOUND,
+            'product_type_id'   => \App\Models\ProductType::where('code', ProductType::COMPOUND->value)->first()?->id,
             'is_purchasable'    => false,
             'is_sellable'       => true,
             'average_cost'      => 0, // El costo depende de la receta

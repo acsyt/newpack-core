@@ -13,7 +13,7 @@ class InventoryStockSeeder extends Seeder
      * Run the database seeds.
      *
      * Este seeder calcula y crea los registros de inventory_stocks
-     * basándose en los movimientos registrados en inventory_transactions.
+     * basándose en los movimientos registrados en inventory_movements.
      *
      * El stock actual se calcula sumando todos los movimientos agrupados por:
      * - product_id
@@ -29,7 +29,7 @@ class InventoryStockSeeder extends Seeder
         DB::table('inventory_stocks')->truncate();
 
         // Calculamos los stocks agrupados desde los movimientos
-        $stocks = DB::table('inventory_transactions')
+        $stocks = DB::table('inventory_movements')
             ->select(
                 'product_id',
                 'warehouse_id',

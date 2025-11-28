@@ -58,7 +58,7 @@ class InventoryMovementSeeder extends Seeder
                 'product_id' => $product->id,
                 'warehouse_id' => $warehouse->id,
                 'warehouse_location_id' => $location?->id,
-                'type' => 'purchase_entry',
+                'type' => \App\Enums\InventoryMovementType::ENTRY->value,
                 'quantity' => $quantity,
                 'balance_after' => $balance,
                 'user_id' => $user->id,
@@ -77,7 +77,7 @@ class InventoryMovementSeeder extends Seeder
                 'product_id' => $product->id,
                 'warehouse_id' => $warehouse->id,
                 'warehouse_location_id' => $location?->id,
-                'type' => 'purchase_entry',
+                'type' => \App\Enums\InventoryMovementType::ENTRY->value,
                 'quantity' => $quantity,
                 'balance_after' => $balance,
                 'user_id' => $user->id,
@@ -96,7 +96,7 @@ class InventoryMovementSeeder extends Seeder
                 'product_id' => $product->id,
                 'warehouse_id' => $warehouse->id,
                 'warehouse_location_id' => $location?->id,
-                'type' => 'production_consumption',
+                'type' => \App\Enums\InventoryMovementType::EXIT->value,
                 'quantity' => -$quantity,
                 'balance_after' => $balance,
                 'user_id' => $user->id,
@@ -115,7 +115,7 @@ class InventoryMovementSeeder extends Seeder
                 'product_id' => $product->id,
                 'warehouse_id' => $warehouse->id,
                 'warehouse_location_id' => $location?->id,
-                'type' => 'sales_shipment',
+                'type' => \App\Enums\InventoryMovementType::EXIT->value,
                 'quantity' => -$quantity,
                 'balance_after' => $balance,
                 'user_id' => $user->id,
@@ -134,7 +134,7 @@ class InventoryMovementSeeder extends Seeder
                 'product_id' => $product->id,
                 'warehouse_id' => $warehouse->id,
                 'warehouse_location_id' => $location?->id,
-                'type' => 'production_output',
+                'type' => \App\Enums\InventoryMovementType::ENTRY->value,
                 'quantity' => $quantity,
                 'balance_after' => $balance,
                 'user_id' => $user->id,
@@ -153,7 +153,7 @@ class InventoryMovementSeeder extends Seeder
                 'product_id' => $product->id,
                 'warehouse_id' => $warehouse->id,
                 'warehouse_location_id' => $location?->id,
-                'type' => 'adjustment',
+                'type' => \App\Enums\InventoryMovementType::ENTRY->value, // Ajuste positivo es entrada
                 'quantity' => $quantity,
                 'balance_after' => $balance,
                 'user_id' => $user->id,
@@ -172,7 +172,7 @@ class InventoryMovementSeeder extends Seeder
                 'product_id' => $product->id,
                 'warehouse_id' => $warehouse->id,
                 'warehouse_location_id' => $location?->id,
-                'type' => 'sales_shipment',
+                'type' => \App\Enums\InventoryMovementType::EXIT->value,
                 'quantity' => -$quantity,
                 'balance_after' => $balance,
                 'user_id' => $user->id,
@@ -186,7 +186,7 @@ class InventoryMovementSeeder extends Seeder
         }
 
         // Insertar todos los movimientos
-        DB::table('inventory_transactions')->insert($movements);
+        DB::table('inventory_movements')->insert($movements);
 
         $this->command->info('✅ Se crearon ' . count($movements) . ' movimientos de inventario');
         $this->command->info('📊 Saldo final aproximado por producto: 1100 unidades');

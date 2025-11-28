@@ -105,8 +105,15 @@ class SyncPermissions extends Command
             ['name' => 'warehouse-locations.edit',   'description' => 'Editar ubicación de almacén',    'roles' => ['admin']],
             ['name' => 'warehouse-locations.delete', 'description' => 'Eliminar ubicación de almacén',  'roles' => ['admin']],
 
-            ['name' => 'movements.index', 'descr    iption' => 'Listar movimientos', 'roles' => ['admin']],
-            ['name' => 'stock.index', 'description' => 'Listar inventario', 'roles' => ['admin']],
+            ['name' => 'inventory-movements.index',             'description' => 'Listar movimientos de inventario', 'roles' => ['admin']],
+            ['name' => 'inventory-movements.create-entry',      'description' => 'Registrar entrada de inventario',  'roles' => ['admin']],
+            ['name' => 'inventory-movements.create-exit',       'description' => 'Registrar salida de inventario',   'roles' => ['admin']],
+            ['name' => 'inventory-movements.create-transfer',   'description' => 'Registrar transferencia de inventario',   'roles' => ['admin']],
+            ['name' => 'inventory-movements.show',              'description' => 'Ver detalle de movimiento',        'roles' => ['admin']],
+            ['name' => 'inventory-movements.export',            'description' => 'Exportar movimientos',             'roles' => ['admin']],
+
+            ['name' => 'inventory-stocks.index',     'description' => 'Listar existencias (Stock)',      'roles' => ['admin']],
+            ['name' => 'inventory-stocks.export',    'description' => 'Exportar existencias',            'roles' => ['admin']],
         ]);
     }
 

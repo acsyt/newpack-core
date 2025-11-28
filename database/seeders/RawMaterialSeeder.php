@@ -35,7 +35,7 @@ class RawMaterialSeeder extends Seeder
                     'name'                  => $productData['name'],
                     'slug'                  => Str::slug($productData['name']),
                     'sku'                   => $productData['code'],
-                    'type'                  => $productType ? $productType->code : ($productData['productTypeCode'] ?? 'MP'),
+                    'product_type_id'       => $productType ? $productType->id : 1,
                     'measure_unit_id'       => $measureUnit ? $measureUnit->id : $defaultUnitId,
                     'product_class_id'      => $productClass ? $productClass->id : null,
                     'product_subclass_id'   => $productSubclass ? $productSubclass->id : null,

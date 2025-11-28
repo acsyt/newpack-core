@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('sku')->unique();
 
-            $table->string('type')->index();
+            $table->foreignId('product_type_id')->constrained('product_types');
 
             $table->foreignId('measure_unit_id')->constrained('measure_units');
             $table->foreignId('product_class_id')->nullable()->constrained('product_classes');

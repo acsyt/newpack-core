@@ -8,18 +8,15 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('inventory_transactions', function (Blueprint $table) {
+        Schema::create('inventory_movements', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
             $table->foreignId('warehouse_id')->constrained('warehouses')->onDelete('cascade');
             $table->foreignId('warehouse_location_id')->nullable()->constrained('warehouse_locations')->onDelete('set null');
 
             $table->enum('type', [
-                'purchase_entry',
-                'production_output',
-                'production_consumption',
-                'sales_shipment',
-                'adjustment',
+                'entry',
+                'exit',
                 'transfer'
             ]);
 
@@ -33,6 +30,8 @@ return new class extends Migration
 
             $table->text('notes')->nullable();
 
+            $table->foreignId('related_movement_id')->nullable()->constrained('inventory_movements')->onDelete('set null');
+
             $table->timestamps();
 
             // Índices para mejorar el rendimiento
@@ -44,6 +43,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('inventory_transactions');
+        Schema::dropIfExists('inventory_movements');
     }
 };

@@ -11,7 +11,7 @@ class InventoryMovement extends Model
 {
     use HasFactory;
 
-    protected $table = 'inventory_transactions';
+    protected $table = 'inventory_movements';
 
     protected $fillable = [
         'product_id',
@@ -25,9 +25,11 @@ class InventoryMovement extends Model
         'reference_id',
         'user_id',
         'notes',
+        'related_movement_id',
     ];
 
     protected $casts = [
+        'type' => \App\Enums\InventoryMovementType::class,
         'quantity' => 'decimal:4',
         'balance_after' => 'decimal:4',
     ];
@@ -60,5 +62,10 @@ class InventoryMovement extends Model
     public function reference(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    public function relatedMovement(): BelongsTo
+    {
+        return $this->belongsTo(InventoryMovement::class, 'related_movement_id');
     }
 }

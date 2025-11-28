@@ -13,8 +13,10 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="name", type="string", example="Polietileno de Baja Densidad"),
  *     @OA\Property(property="sku", type="string", example="MP-PEBD-001"),
- *     @OA\Property(property="type", type="string", example="raw_material"),
- *     @OA\Property(property="unitOfMeasure", type="string", example="kg"),
+ *     @OA\Property(property="productType", ref="#/components/schemas/ProductTypeResource"),
+ *     @OA\Property(property="productTypeId", type="integer", example=1),
+ *     @OA\Property(property="measureUnit", ref="#/components/schemas/MeasureUnitResource"),
+ *     @OA\Property(property="measureUnitId", type="integer", example=1),
  *     @OA\Property(property="averageCost", type="number", format="float", example=25.50),
  *     @OA\Property(property="lastPurchasePrice", type="number", format="float", nullable=true, example=30.00),
  *     @OA\Property(property="currentStock", type="number", format="float", example=1000.00),
@@ -41,28 +43,30 @@ class ProductResource extends JsonResource
             'id'                    => $this->id,
             'name'                  => $this->name,
             'sku'                   => $this->sku,
-            'type'                  => $this->type->value,
-            'measureUnit'           => $this->whenLoaded('measureUnit', function () {
-                return [
-                    'id' => $this->measureUnit->id,
-                    'name' => $this->measureUnit->name,
-                    'code' => $this->measureUnit->code,
-                ];
-            }),
+
+            'productType'           => new ProductTypeResource($this->whenLoaded('productType')),
+            'productTypeId'         => $this->product_type_id,
+
+            'measureUnit'           => new MeasureUnitResource($this->whenLoaded('measureUnit')),
             'measureUnitId'         => $this->measure_unit_id,
-            'averageCost'           => (float) $this->average_cost,
-            'lastPurchasePrice'     => $this->last_purchase_price ? (float) $this->last_purchase_price : null,
-            'currentStock'          => (float) $this->current_stock,
-            'minStock'              => (float) $this->min_stock,
-            'maxStock'              => $this->max_stock ? (float) $this->max_stock : null,
-            'isActive'              => (bool) $this->is_active,
-            'isSellable'            => (bool) $this->is_sellable,
-            'isPurchasable'         => (bool) $this->is_purchasable,
+
+            'averageCost'           => $this->average_cost,
+            'lastPurchasePrice'     => $this->last_purchase_price,
+            'currentStock'          => $this->current_stock,
+            'minStock'              => $this->min_stock,
+            'maxStock'              => $this->max_stock,
+
+            'isActive'              => $this->is_active,
+            'isSellable'            => $this->is_sellable,
+            'isPurchasable'         => $this->is_purchasable,
+
             'createdAt'             => $this->created_at,
             'updatedAt'             => $this->updated_at,
 
             // Conditional includes
             'ingredients'           => ProductIngredientResource::collection($this->whenLoaded('ingredients')),
+            'productClass'          => new ProductClassResource($this->whenLoaded('productClass')),
+            'productSubclass'       => new ProductSubclassResource($this->whenLoaded('productSubclass')),
         ];
     }
 }
