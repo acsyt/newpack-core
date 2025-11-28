@@ -2,11 +2,9 @@
 
 namespace App\Models;
 
-use App\Enums\ProductType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-// Asegúrate de tener instalado: composer require spatie/laravel-activitylog
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -18,7 +16,7 @@ class Product extends Model
         'name',
         'slug',
         'sku',
-        'type',
+        'product_type_id',
         'measure_unit_id',
         'product_class_id',
         'product_subclass_id',
@@ -30,28 +28,9 @@ class Product extends Model
         'is_active',
         'is_sellable',
         'is_purchasable',
-        'width',
-        'width_min',
-        'width_max',
-        'gusset',
-        'gusset_min',
-        'gusset_max',
-        'length',
-        'length_min',
-        'length_max',
-        'gauge',
-        'gauge_min',
-        'gauge_max',
-        'nominal_weight',
-        'weight_min',
-        'weight_max',
-        'resin_type',
-        'color',
-        'additive',
     ];
 
     protected $casts = [
-        'type' => ProductType::class,
         'average_cost' => 'decimal:4',
         'current_stock' => 'decimal:4',
         'is_active' => 'boolean',
@@ -65,7 +44,15 @@ class Product extends Model
             ->logOnlyDirty();
     }
 
-    // RELACIONES   
+    public function specs()
+    {
+        return $this->hasOne(ProductSpec::class);
+    }
+
+    public function productType()
+    {
+        return $this->belongsTo(ProductType::class);
+    }
 
     public function measureUnit()
     {
@@ -106,17 +93,27 @@ class Product extends Model
 
     public function scopeRawMaterial($query)
     {
-        return $query->where('type', ProductType::RAW_MATERIAL);
+        return $query->whereHas('productType', fn($q) => $q->where('code', ProductType::PRODUCT_TYPE_RAW));
     }
 
     public function scopeCompound($query)
     {
-        return $query->where('type', ProductType::COMPOUND);
+        return $query->whereHas('productType', fn($q) => $q->where('code', ProductType::PRODUCT_TYPE_COMPOUND));
+    }
+
+    public function scopeFinishedProduct($query)
+    {
+        return $query->whereHas('productType', fn($q) => $q->where('code', ProductType::PRODUCT_TYPE_FINISHED));
     }
 
     public function scopeSearch($query, $search)
     {
         return $query->where('name', 'like', "%{$search}%")
             ->orWhere('sku', 'like', "%{$search}%");
+    }
+
+    public function scopeWithSpecs($query)
+    {
+        return $query->with('specs');
     }
 }
