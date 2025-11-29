@@ -18,11 +18,44 @@ class StoreInventoryTransferRequest extends FormRequest
             'destination_warehouse_id' => ['required', 'exists:warehouses,id', 'different:source_warehouse_id'],
             'notes' => ['nullable', 'string'],
             'products' => ['required', 'array', 'min:1'],
+
             'products.*.product_id' => ['required', 'exists:products,id'],
             'products.*.quantity' => ['required', 'numeric', 'min:0.0001'],
-            'products.*.source_location_id' => ['nullable', 'exists:warehouse_locations,id'],
-            'products.*.destination_location_id' => ['nullable', 'exists:warehouse_locations,id'],
             'products.*.batch_id' => ['nullable', 'exists:batches,id'],
+
+            'products.*.source_location_id' => [
+                'required',
+                'exists:warehouse_locations,id',
+                function ($attribute, $value, $fail) {
+                    if (!$value) return;
+
+                    $exists = \Illuminate\Support\Facades\DB::table('warehouse_locations')
+                        ->where('id', $value)
+                        ->where('warehouse_id', $this->source_warehouse_id)
+                        ->exists();
+
+                    if (!$exists) {
+                        $fail("La ubicación de origen no pertenece al almacén de origen seleccionado.");
+                    }
+                },
+            ],
+
+            'products.*.destination_location_id' => [
+                'required',
+                'exists:warehouse_locations,id',
+                function ($attribute, $value, $fail) {
+                    if (!$value) return;
+
+                    $exists = \Illuminate\Support\Facades\DB::table('warehouse_locations')
+                        ->where('id', $value)
+                        ->where('warehouse_id', $this->destination_warehouse_id)
+                        ->exists();
+
+                    if (!$exists) {
+                        $fail("La ubicación destino no pertenece al almacén destino seleccionado.");
+                    }
+                },
+            ],
         ];
     }
 

@@ -140,9 +140,9 @@ class InventoryMovementController extends Controller
      *     )
      * )
      */
-    public function transfer(StoreInventoryTransferRequest $request, CreateInventoryTransferAction $action)
+    public function transfer(StoreInventoryTransferRequest $request)
     {
-        $action->execute($request->validated());
+        CreateInventoryTransferAction::handle($request->validated());
         return response()->json(['message' => 'Transfer created successfully'], 201);
     }
 }
