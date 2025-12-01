@@ -28,7 +28,9 @@ class ZipCodeController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
-     *         @OA\JsonContent(ref="#/components/schemas/ZipCodeResource")
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", ref="#/components/schemas/ZipCodeResource")
+     *         )
      *     ),
      *     @OA\Response(
      *         response=404,
@@ -42,6 +44,6 @@ class ZipCodeController extends Controller
             ->where('name', $zipCode)
             ->firstOrFail();
 
-        return new ZipCodeResource($zipCodeModel);
+        return response()->json(new ZipCodeResource($zipCodeModel));
     }
 }

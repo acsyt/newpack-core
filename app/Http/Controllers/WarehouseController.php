@@ -69,14 +69,20 @@ class WarehouseController extends Controller
      *     tags={"Warehouses"},
      *     security={{"sanctum": {}}},
      *     @OA\Parameter(name="warehouse", in="path", required=true, @OA\Schema(type="integer")),
-     *     @OA\Response(response=200, description="Warehouse details", @OA\JsonContent(ref="#/components/schemas/WarehouseResource")),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Warehouse details",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", ref="#/components/schemas/WarehouseResource")
+     *         )
+     *     ),
      *     @OA\Response(response=404, description="Not found")
      * )
      */
     public function findOneWarehouse($id)
     {
         $warehouse = WarehouseQuery::make()->findById((int) $id);
-        return new WarehouseResource($warehouse);
+        return response()->json(new WarehouseResource($warehouse));
     }
 
     /**

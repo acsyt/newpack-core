@@ -68,7 +68,7 @@ class InventoryMovementController extends Controller
     public function findOneMovement($id)
     {
         $movement = InventoryMovementQuery::make()->findByIdOrFail($id);
-        return new InventoryMovementResource($movement);
+        return response()->json(new InventoryMovementResource($movement));
     }
     /**
      * @OA\Post(
@@ -92,7 +92,10 @@ class InventoryMovementController extends Controller
      *     @OA\Response(
      *         response=201,
      *         description="Movement created",
-     *         @OA\JsonContent(ref="#/components/schemas/InventoryMovementResource")
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", ref="#/components/schemas/InventoryMovementResource"),
+     *             @OA\Property(property="message", type="string", example="Movement created successfully")
+     *         )
      *     )
      * )
      */
@@ -104,7 +107,10 @@ class InventoryMovementController extends Controller
 
         $movement = \App\Models\InventoryMovement::create($data);
 
-        return new InventoryMovementResource($movement);
+        return response()->json([
+            'data'      => new InventoryMovementResource($movement),
+            'message'   => 'Movement created successfully',
+        ], 201);
     }
 
     /**

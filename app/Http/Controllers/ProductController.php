@@ -74,14 +74,20 @@ class ProductController extends Controller
      *     security={{"sanctum": {}}},
      *     @OA\Parameter(name="product", in="path", required=true, @OA\Schema(type="integer")),
      *     @OA\Parameter(name="include", in="query", required=false, @OA\Schema(type="string"), description="Include relationships: ingredients, usedInCompounds"),
-     *     @OA\Response(response=200, description="Product details", @OA\JsonContent(ref="#/components/schemas/ProductResource")),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Product details",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", ref="#/components/schemas/ProductResource")
+     *         )
+     *     ),
      *     @OA\Response(response=404, description="Not found")
      * )
      */
     public function findOneProduct($id)
     {
         $product = ProductQuery::make()->findById((int) $id);
-        return new ProductResource($product);
+        return response()->json(new ProductResource($product));
     }
 
     /**

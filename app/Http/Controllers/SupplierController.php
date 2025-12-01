@@ -75,7 +75,13 @@ class SupplierController extends Controller
      *     tags={"Suppliers"},
      *     security={{"sanctum": {}}},
      *     @OA\Parameter(name="supplier", in="path", required=true, @OA\Schema(type="integer")),
-     *     @OA\Response(response=200, description="Supplier details", @OA\JsonContent(ref="#/components/schemas/SupplierResource")),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Supplier details",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", ref="#/components/schemas/SupplierResource")
+     *         )
+     *     ),
      *     @OA\Response(response=404, description="Not found")
      * )
      */

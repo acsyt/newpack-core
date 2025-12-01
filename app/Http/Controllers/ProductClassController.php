@@ -66,14 +66,20 @@ class ProductClassController extends Controller
      *     tags={"Product Classes"},
      *     security={{"sanctum": {}}},
      *     @OA\Parameter(name="productClass", in="path", required=true, @OA\Schema(type="integer")),
-     *     @OA\Response(response=200, description="Class details", @OA\JsonContent(ref="#/components/schemas/ProductClassResource")),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Class details",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", ref="#/components/schemas/ProductClassResource")
+     *         )
+     *     ),
      *     @OA\Response(response=404, description="Not found")
      * )
      */
     public function findOneProductClass($id)
     {
         $class = ProductClassQuery::make()->findByIdOrFail((int) $id);
-        return new ProductClassResource($class);
+        return response()->json(new ProductClassResource($class));
     }
 
     /**

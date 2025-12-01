@@ -64,6 +64,6 @@ class InventoryStockController extends Controller
     public function findOneStock($id)
     {
         $stock = InventoryStockQuery::make()->findByIdOrFail($id);
-        return new InventoryStockResource($stock);
+        return response()->json(new InventoryStockResource($stock));
     }
 }

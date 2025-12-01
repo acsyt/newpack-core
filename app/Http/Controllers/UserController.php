@@ -74,7 +74,7 @@ class UserController extends Controller
     public function findOneUser($id)
     {
         $user = UserQuery::make()->findByIdOrFail( $id );
-        return new UserResource($user);
+        return response()->json(new UserResource($user));
     }
 
     /**

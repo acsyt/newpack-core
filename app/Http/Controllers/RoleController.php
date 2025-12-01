@@ -89,14 +89,16 @@ class RoleController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="Role details",
-     *         @OA\JsonContent(ref="#/components/schemas/RoleResource")
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", ref="#/components/schemas/RoleResource")
+     *         )
      *     ),
      *     @OA\Response(response=404, description="Role not found")
      * )
      */
     public function findOneRole(Role $role)
     {
-        return new RoleResource($role);
+        return response()->json(new RoleResource($role));
     }
 
     /**

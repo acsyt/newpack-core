@@ -29,10 +29,27 @@ class MachineController extends Controller
         ], Response::HTTP_CREATED);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/machines/{machine}",
+     *     summary="Get a machine by ID",
+     *     tags={"Machines"},
+     *     security={{"sanctum": {}}},
+     *     @OA\Parameter(name="machine", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Machine details",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", ref="#/components/schemas/MachineResource")
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="Not found")
+     * )
+     */
     public function findOneMachine($id)
     {
         $machine = MachineQuery::make()->findByIdOrFail((int) $id);
-        return new MachineResource($machine);
+        return response()->json(new MachineResource($machine));
     }
 
     public function updateMachine(UpdateMachineRequest $request, $id)

@@ -70,14 +70,20 @@ class ProcessController extends Controller
      *     tags={"Processes"},
      *     security={{"sanctum": {}}},
      *     @OA\Parameter(name="process", in="path", required=true, @OA\Schema(type="integer")),
-     *     @OA\Response(response=200, description="Process details", @OA\JsonContent(ref="#/components/schemas/ProcessResource")),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Process details",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", ref="#/components/schemas/ProcessResource")
+     *         )
+     *     ),
      *     @OA\Response(response=404, description="Not found")
      * )
      */
     public function findOneProcess($id)
     {
         $process = ProcessQuery::make()->findByIdOrFail((int) $id);
-        return new ProcessResource($process);
+        return response()->json(new ProcessResource($process));
     }
 
     /**

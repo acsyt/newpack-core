@@ -1399,7 +1399,16 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/InventoryMovementResource"
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/InventoryMovementResource"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Movement created successfully"
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -1682,6 +1691,50 @@
                 ]
             }
         },
+        "/api/machines/{machine}": {
+            "get": {
+                "tags": [
+                    "Machines"
+                ],
+                "summary": "Get a machine by ID",
+                "operationId": "14282939e593ea5f2aecc6090ee2c1ad",
+                "parameters": [
+                    {
+                        "name": "machine",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Machine details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/MachineResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/processes": {
             "get": {
                 "tags": [
@@ -1852,7 +1905,12 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ProcessResource"
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/ProcessResource"
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -2079,7 +2137,12 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ProductClassResource"
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/ProductClassResource"
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -2381,7 +2444,12 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ProductResource"
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/ProductResource"
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -2625,7 +2693,12 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ProductSubclassResource"
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/ProductSubclassResource"
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -2931,7 +3004,12 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/RoleResource"
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/RoleResource"
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -3311,7 +3389,12 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/SupplierResource"
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/SupplierResource"
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -3827,7 +3910,12 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/WarehouseResource"
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/WarehouseResource"
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -4075,7 +4163,12 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/WarehouseLocationResource"
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/WarehouseLocationResource"
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -4195,7 +4288,12 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ZipCodeResource"
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/ZipCodeResource"
+                                        }
+                                    },
+                                    "type": "object"
                                 }
                             }
                         }
@@ -6503,6 +6601,10 @@
         {
             "name": "Email Verification",
             "description": "Email Verification"
+        },
+        {
+            "name": "Machines",
+            "description": "Machines"
         }
     ]
 }

@@ -68,14 +68,20 @@ class ProductSubclassController extends Controller
      *     tags={"Product Subclasses"},
      *     security={{"sanctum": {}}},
      *     @OA\Parameter(name="productSubclass", in="path", required=true, @OA\Schema(type="integer")),
-     *     @OA\Response(response=200, description="Subclass details", @OA\JsonContent(ref="#/components/schemas/ProductSubclassResource")),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Subclass details",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", ref="#/components/schemas/ProductSubclassResource")
+     *         )
+     *     ),
      *     @OA\Response(response=404, description="Not found")
      * )
      */
     public function findOneProductSubclass($id)
     {
         $subclass = ProductSubclassQuery::make()->findByIdOrFail((int) $id);
-        return new ProductSubclassResource($subclass);
+        return response()->json(new ProductSubclassResource($subclass));
     }
 
     /**

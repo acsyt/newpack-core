@@ -68,14 +68,20 @@ class WarehouseLocationController extends Controller
      *     tags={"Warehouse Locations"},
      *     security={{"sanctum": {}}},
      *     @OA\Parameter(name="location", in="path", required=true, @OA\Schema(type="integer")),
-     *     @OA\Response(response=200, description="Location details", @OA\JsonContent(ref="#/components/schemas/WarehouseLocationResource")),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Location details",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", ref="#/components/schemas/WarehouseLocationResource")
+     *         )
+     *     ),
      *     @OA\Response(response=404, description="Not found")
      * )
      */
     public function findOneLocation($id)
     {
         $location = WarehouseLocationQuery::make()->findById((int) $id);
-        return new WarehouseLocationResource($location);
+        return response()->json(new WarehouseLocationResource($location));
     }
 
     /**
