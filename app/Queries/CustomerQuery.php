@@ -51,6 +51,7 @@ class CustomerQuery extends BaseQuery
     protected function getAllowedIncludes(): array
     {
         return [
+            'suburb.zipCode',
             'suburb.zipCode.city.state',
         ];
     }
