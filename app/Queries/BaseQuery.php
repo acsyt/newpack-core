@@ -96,6 +96,7 @@ abstract class BaseQuery
         return $query->get();
     }
 
+
     public function first(): ?Model
     {
         return $this->buildQuery()->first();

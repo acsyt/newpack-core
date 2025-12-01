@@ -24,7 +24,7 @@ class SuburbController extends Controller
      */
     public function index()
     {
-        $suburbs = SuburbQuery::make()->get();
+        $suburbs = SuburbQuery::make()->paginated();
         return SuburbResource::collection($suburbs);
     }
 }
