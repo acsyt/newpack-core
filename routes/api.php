@@ -189,5 +189,9 @@ Route::as('api.')
             });
         });
 
+        Route::prefix('product-types')->group(function () {
+            Route::get('/', [App\Http\Controllers\ProductTypeController::class, 'findAllProductTypes'])->name('product_types.findAll');
+        });
+
     // });
 });

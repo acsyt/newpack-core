@@ -19,17 +19,39 @@ class InventoryStockQuery extends BaseQuery
     {
         return [
             AllowedFilter::exact('id'),
-            AllowedFilter::exact('product_id'),
-            AllowedFilter::exact('warehouse_id'),
-            AllowedFilter::exact('warehouse_location_id'),
-            AllowedFilter::exact('batch_id'),
             AllowedFilter::exact('status'),
 
-            AllowedFilter::partial('sku'),
-
-            AllowedFilter::callback('product_type_id', function ($query, $value) {
+            // Product filters
+            AllowedFilter::callback('product.sku', function ($query, $value) {
+                $query->whereHas('product', function ($q) use ($value) {
+                    $q->where('sku', 'like', "%{$value}%");
+                });
+            }),
+            AllowedFilter::callback('product.name', function ($query, $value) {
+                $query->whereHas('product', function ($q) use ($value) {
+                    $q->where('name', 'like', "%{$value}%");
+                });
+            }),
+            AllowedFilter::callback('product.product_type_id', function ($query, $value) {
                 $query->whereHas('product', function ($q) use ($value) {
                     $q->where('product_type_id', $value);
+                });
+            }),
+
+            // Warehouse filters
+            AllowedFilter::exact('warehouse.id', 'warehouse_id'),
+
+            // Warehouse Location filters
+            AllowedFilter::callback('warehouseLocation.search', function ($query, $value) {
+                $query->whereHas('warehouseLocation', function ($q) use ($value) {
+                    $q->whereRaw("CONCAT(aisle, ' - ', shelf, ' - ', section) LIKE ?", ["%{$value}%"]);
+                });
+            }),
+
+            // Batch filters
+            AllowedFilter::callback('batch.code', function ($query, $value) {
+                $query->whereHas('batch', function ($q) use ($value) {
+                    $q->where('code', 'like', "%{$value}%");
                 });
             }),
 
