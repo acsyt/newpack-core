@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ZipCode;
+use App\Http\Resources\ZipCodeResource;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
 
@@ -78,27 +79,6 @@ class AddressController extends Controller
             ->where('name', $zipCodeStr)
             ->firstOrFail();
 
-        $city = $zipCode->city;
-        $state = $city->state;
-
-        return response()->json([
-            'data' => [
-                'zipCode' => $zipCode->name,
-                'state' => [
-                    'id' => $state->id,
-                    'name' => $state->name,
-                ],
-                'city' => [
-                    'id' => $city->id,
-                    'name' => $city->name,
-                ],
-                'suburbs' => $zipCode->suburbs->map(function ($suburb) {
-                    return [
-                        'id' => $suburb->id,
-                        'name' => $suburb->name,
-                    ];
-                }),
-            ],
-        ]);
+        return response()->json(new ZipCodeResource($zipCode));
     }
 }

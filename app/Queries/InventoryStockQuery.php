@@ -25,6 +25,8 @@ class InventoryStockQuery extends BaseQuery
             AllowedFilter::exact('batch_id'),
             AllowedFilter::exact('status'),
 
+            AllowedFilter::partial('sku'),
+
             AllowedFilter::callback('product_type_id', function ($query, $value) {
                 $query->whereHas('product', function ($q) use ($value) {
                     $q->where('product_type_id', $value);
@@ -36,7 +38,7 @@ class InventoryStockQuery extends BaseQuery
             AllowedFilter::callback('search', function ($query, $value) {
                 $query->whereHas('product', function ($q) use ($value) {
                     $q->where('name', 'like', "%{$value}%")
-                      ->orWhere('sku', 'like', "%{$value}%");
+                        ->orWhere('sku', 'like', "%{$value}%");
                 });
             }),
         ];

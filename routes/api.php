@@ -50,7 +50,7 @@ Route::as('api.')
         });
     });
 
-    Route::middleware('auth:sanctum')->group(function (): void {
+    // Route::middleware('auth:sanctum')->group(function (): void {
         Route::prefix('users')->group(function () {
             Route::get('/', [UserController::class, 'findAllUsers'])->name('user.findAll');
             Route::post('/', [UserController::class, 'createUser'])->name('user.create');
@@ -189,5 +189,5 @@ Route::as('api.')
             });
         });
 
-    });
+    // });
 });

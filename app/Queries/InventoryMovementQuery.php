@@ -28,6 +28,8 @@ class InventoryMovementQuery extends BaseQuery
             AllowedFilter::exact('reference_type'),
             AllowedFilter::exact('reference_id'),
 
+            AllowedFilter::partial('sku'),
+
             AllowedFilter::callback('created_at', FilterHelper::dateRange('created_at')),
             AllowedFilter::callback('updated_at', FilterHelper::dateRange('updated_at')),
         ];
