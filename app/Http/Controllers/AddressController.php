@@ -68,7 +68,7 @@ class AddressController extends Controller
      *     @OA\Response(response=404, description="Zip Code not found")
      * )
      */
-    public function lookup(string $zipCode): JsonResponse
+    public function lookup(string $zipCode)
     {
         $zipCodeStr = preg_replace('/[^a-zA-Z0-9]/', '', $zipCode);
 
@@ -80,17 +80,10 @@ class AddressController extends Controller
 
         $city = $zipCode->city;
         $state = $city->state;
-        $country = $state->country;
 
         return response()->json([
-            'status' => 'success',
             'data' => [
-                'zip_code' => $zipCode->name,
-                'country' => [
-                    'id' => $country->id,
-                    'name' => $country->name,
-                    'code' => $country->code,
-                ],
+                'zipCode' => $zipCode->name,
                 'state' => [
                     'id' => $state->id,
                     'name' => $state->name,
