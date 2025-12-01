@@ -25,6 +25,12 @@ class InventoryStockQuery extends BaseQuery
             AllowedFilter::exact('batch_id'),
             AllowedFilter::exact('status'),
 
+            AllowedFilter::callback('product_type_id', function ($query, $value) {
+                $query->whereHas('product', function ($q) use ($value) {
+                    $q->where('product_type_id', $value);
+                });
+            }),
+
             AllowedFilter::callback('created_at', FilterHelper::dateRange('created_at')),
             AllowedFilter::callback('updated_at', FilterHelper::dateRange('updated_at')),
             AllowedFilter::callback('search', function ($query, $value) {

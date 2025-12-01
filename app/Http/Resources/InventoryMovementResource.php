@@ -55,6 +55,7 @@ class InventoryMovementResource extends JsonResource
             'referenceType' => $this->reference_type,
             'referenceId' => $this->reference_id,
             'notes' => $this->notes,
+            'relatedMovementId' => $this->related_movement_id,
 
             'product' => $this->whenLoaded('product', function() {
                 return new ProductResource($this->product);
@@ -73,6 +74,9 @@ class InventoryMovementResource extends JsonResource
             }),
             'reference' => $this->whenLoaded('reference', function() {
                 return $this->reference;
+            }),
+            'relatedMovement' => $this->whenLoaded('relatedMovement', function() {
+                return new InventoryMovementResource($this->relatedMovement);
             }),
 
             'createdAt' => $this->created_at,

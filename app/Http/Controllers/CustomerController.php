@@ -87,9 +87,7 @@ class CustomerController extends Controller
     public function findOneCustomer($id)
     {
         $customer = CustomerQuery::make()->findById((int) $id);
-        return response()->json([
-            'data' => new CustomerResource($customer),
-        ]);
+        return response()->json(new CustomerResource($customer));
     }
 
     /**

@@ -62,7 +62,10 @@ class SupplierController extends Controller
     {
         $data = $request->validated();
         $supplier = app(CreateSupplierAction::class)->handle($data);
-        return response()->json(new SupplierResource($supplier), Response::HTTP_CREATED);
+        return response()->json([
+            'data' => new SupplierResource($supplier),
+            'message' => 'El proveedor se ha creado exitosamente',
+        ], Response::HTTP_CREATED);
     }
 
     /**
@@ -79,7 +82,7 @@ class SupplierController extends Controller
     public function findOneSupplier($id)
     {
         $supplier = SupplierQuery::make()->findById((int) $id);
-        return new SupplierResource($supplier);
+        return response()->json(new SupplierResource($supplier));
     }
 
     /**
@@ -100,7 +103,10 @@ class SupplierController extends Controller
         $data = $request->validated();
         $supplier = SupplierQuery::make()->findById((int) $id);
         $supplier->update($data);
-        return new SupplierResource($supplier);
+        return response()->json([
+            'data' => new SupplierResource($supplier),
+            'message' => 'Supplier updated successfully',
+        ]);
     }
 
     /**

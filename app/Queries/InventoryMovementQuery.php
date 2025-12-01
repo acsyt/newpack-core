@@ -59,6 +59,8 @@ class InventoryMovementQuery extends BaseQuery
             'batch',
             'user',
             'reference',
+            'relatedMovement',
+            'relatedMovement.warehouse',
         ];
     }
 }
