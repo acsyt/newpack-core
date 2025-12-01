@@ -82,7 +82,7 @@ class SupplierController extends Controller
     public function findOneSupplier($id)
     {
         $supplier = SupplierQuery::make()->findById((int) $id);
-        return response()->json(new SupplierResource($supplier));
+        return new SupplierResource($supplier);
     }
 
     /**
