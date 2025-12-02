@@ -2,21 +2,22 @@
 
 namespace App\Enums;
 
-class ProductType
+enum ProductType: string
 {
-    const PRODUCT_TYPE_FINISHED = 'PT';
-    const PRODUCT_TYPE_RAW = 'MP'; // Materia Prima
-    const PRODUCT_TYPE_SERVICE = 'SERV'; // Servicio
-    const PRODUCT_TYPE_COMPOUND = 'COMP'; // Compuesto
-    const PRODUCT_TYPE_REFACEMENT = 'REF'; // Refacciones
+    case FINISHED = 'PT';
+    case RAW = 'MP';
+    case SERVICE = 'SERV';
+    case COMPOUND = 'COMP';
+    case REFACEMENT = 'REF';
 
-    public static function humanReadableType($type): string {
-        return match ($type) {
-            self::PRODUCT_TYPE_FINISHED => 'Producto Terminado',
-            self::PRODUCT_TYPE_RAW => 'Materia Prima',
-            self::PRODUCT_TYPE_SERVICE => 'Servicio',
-            self::PRODUCT_TYPE_COMPOUND => 'Compuesto',
-            self::PRODUCT_TYPE_REFACEMENT => 'Refacciones',
+    public function humanReadable(): string
+    {
+        return match ($this) {
+            self::FINISHED => 'Producto Terminado',
+            self::RAW => 'Materia Prima',
+            self::SERVICE => 'Servicio',
+            self::COMPOUND => 'Compuesto',
+            self::REFACEMENT => 'Refacciones',
         };
     }
 }

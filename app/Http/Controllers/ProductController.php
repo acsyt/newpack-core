@@ -7,6 +7,7 @@ use App\Http\Actions\Product\UpdateProductAction;
 use App\Http\Resources\ProductResource;
 use App\Http\Requests\Product\StoreProductRequest;
 use App\Http\Requests\Product\UpdateProductRequest;
+use App\Models\Product;
 use App\Queries\ProductQuery;
 use Symfony\Component\HttpFoundation\Response;
 use OpenApi\Attributes as OA;
@@ -51,14 +52,14 @@ class ProductController extends Controller
      *     @OA\Response(response=422, description="Validation error")
      * )
      */
-    public function createProduct(StoreProductRequest $request)
+    public function createProduct(StoreProductRequest $request, CreateProductAction $createProductAction)
     {
         $data = $request->validated();
-        $product = app(CreateProductAction::class)->handle($data);
+        $product = $createProductAction->handle($data);
 
         return response()->json([
             'data'      => new ProductResource($product),
-            'message'   => 'Product created successfully',
+            'message'   => 'Registro creado exitosamente',
         ], Response::HTTP_CREATED);
     }
 
@@ -99,15 +100,14 @@ class ProductController extends Controller
      *     @OA\Response(response=422, description="Validation error")
      * )
      */
-    public function updateProduct(UpdateProductRequest $request, $id)
+    public function updateProduct(UpdateProductRequest $request, Product $product, UpdateProductAction $updateProductAction)
     {
-        $product = ProductQuery::make()->findById((int) $id);
         $data = $request->validated();
-        $product = app(UpdateProductAction::class)->handle($product, $data);
+        $product = $updateProductAction->handle($product, $data);
 
         return response()->json([
             'data'      => new ProductResource($product),
-            'message'   => 'Product updated successfully',
+            'message'   => 'Registro actualizado exitosamente',
         ], Response::HTTP_OK);
     }
 

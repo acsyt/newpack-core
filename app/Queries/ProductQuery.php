@@ -18,7 +18,11 @@ class ProductQuery extends BaseQuery
         return [
             AllowedFilter::partial('name'),
             AllowedFilter::partial('sku'),
-            AllowedFilter::exact('type'),
+            AllowedFilter::callback('type', function ($query, $value) {
+                $query->whereHas('productType', function ($query) use ($value) {
+                    $query->where('code', $value);
+                });
+            }),
             AllowedFilter::exact('is_active'),
             AllowedFilter::scope('search'),
         ];

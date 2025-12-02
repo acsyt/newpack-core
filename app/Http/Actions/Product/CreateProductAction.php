@@ -2,13 +2,13 @@
 
 namespace App\Http\Actions\Product;
 
-use App\Enums\ProductType;
 use App\Exceptions\CustomException;
 use App\Models\Product;
+use App\Models\ProductType as ModelsProductType;
 use Exception;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 class CreateProductAction
@@ -25,11 +25,24 @@ class CreateProductAction
             $ingredients = $data['ingredients'] ?? [];
             unset($data['ingredients']);
 
+            $productType = ModelsProductType::where('code', $data['type'])->first();
+            
+            if (!$productType) {
+                throw new CustomException(
+                    'El tipo de producto no existe.',
+                    Response::HTTP_NOT_FOUND
+                );
+            }
+
+            $data['product_type_id'] = $productType->id;
+            $data['slug'] = Str::slug($data['name']);
+
             $product = Product::create($data);
 
-            DB::commit();
             $product->load('ingredients');
-
+            
+            DB::commit();
+            
             return $product;
 
         } catch (CustomException $e) {

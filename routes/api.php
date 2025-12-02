@@ -21,6 +21,7 @@ use App\Http\Controllers\CityController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\SuburbController;
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\MeasureUnitController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -189,5 +190,5 @@ Route::as('api.')
             });
         });
 
-    // });
+        Route::get('measure-units', [MeasureUnitController::class, 'findAllMeasureUnits'])->name('measure_units.findAll');
 });

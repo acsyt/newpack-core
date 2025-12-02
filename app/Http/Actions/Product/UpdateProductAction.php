@@ -6,9 +6,9 @@ use App\Enums\ProductType;
 use App\Exceptions\CustomException;
 use App\Models\Product;
 use Exception;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 class UpdateProductAction
@@ -24,6 +24,8 @@ class UpdateProductAction
         try {
             $ingredients = $data['ingredients'] ?? null;
             unset($data['ingredients']);
+
+            $data['slug'] = Str::slug($data['name'] ?? $product->name);
 
             $product->update($data);
 
