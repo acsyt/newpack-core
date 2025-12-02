@@ -35,6 +35,10 @@ class Warehouse extends Model
         return $this->hasMany(WarehouseLocation::class);
     }
 
+    public function stocks() {
+        return $this->hasMany(InventoryStock::class);
+    }
+
     public function scopeSearch($query, $search)
     {
         return $query->where('name', 'like', "%{$search}%");

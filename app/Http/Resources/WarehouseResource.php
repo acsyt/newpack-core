@@ -43,6 +43,7 @@ class WarehouseResource extends JsonResource
             'updatedAt'                 => $this->updated_at,
             'warehouseLocations'        => WarehouseLocationResource::collection($this->whenLoaded('warehouseLocations')),
             'warehouseLocationsCount'   => $this->warehouse_locations_count,
+            'stocksCount'               => $this->stocks_count,
         ];
     }
 }

@@ -14,7 +14,6 @@ class ReceiveTransferRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'transfer_id' => ['required', 'exists:transfers,id'],
             'receiving_notes' => ['nullable', 'string'],
             'items' => ['required', 'array', 'min:1'],
             'items.*.transfer_item_id' => ['required', 'exists:transfer_items,id'],
@@ -27,7 +26,6 @@ class ReceiveTransferRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'transfer_id' => 'transferencia',
             'receiving_notes' => 'notas de recepción',
             'items' => 'items',
             'items.*.transfer_item_id' => 'item de transferencia',

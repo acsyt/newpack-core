@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\Inventory\ReceiveTransferAction;
+use App\Http\Actions\Inventory\ReceiveTransferAction;
 use App\Http\Requests\Inventory\ReceiveTransferRequest;
 use App\Http\Resources\TransferResource;
 use App\Queries\TransferQuery;
@@ -101,7 +101,6 @@ class TransferController extends Controller
     public function receive($id, ReceiveTransferRequest $request)
     {
         $data = $request->validated();
-        $data['transfer_id'] = $id;
 
         $transfer = ReceiveTransferAction::handle($id, $data);
 

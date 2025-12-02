@@ -36,7 +36,7 @@ class WarehouseController extends Controller
     public function findAllWarehouses()
     {
         $warehouses = WarehouseQuery::make()
-            ->withCount('warehouseLocations')
+            ->withCount(['warehouseLocations', 'stocks'])
             ->paginated();
         return WarehouseResource::collection($warehouses);
     }
