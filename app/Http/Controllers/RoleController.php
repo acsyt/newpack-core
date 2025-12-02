@@ -62,7 +62,7 @@ class RoleController extends Controller
      */
     public function findAllRoles()
     {
-        $query = $this->roleQuery->paginated(request());
+        $query = $this->roleQuery->paginated();
         return RoleResource::collection($query);
     }
 

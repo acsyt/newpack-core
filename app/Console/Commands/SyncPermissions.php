@@ -20,6 +20,7 @@ class SyncPermissions extends Command
         'dashboard',
         'users',
         'roles',
+        'currencies',
     ];
 
     public function __construct()
@@ -50,6 +51,12 @@ class SyncPermissions extends Command
             ['name' => 'roles.export',          'description' => 'Exportar listado de roles',   'roles' => ['admin']],
             ['name' => 'roles.show',            'description' => 'Ver detalles de rol',         'roles' => ['admin']],
             ['name' => 'roles.edit',            'description' => 'Editar rol',                  'roles' => ['admin']],
+
+            ['name' => 'currencies.index',      'description' => 'Listar monedas',              'roles' => ['admin']],
+            ['name' => 'currencies.create',     'description' => 'Crear moneda',                'roles' => ['admin']],
+            ['name' => 'currencies.export',     'description' => 'Exportar listado de monedas', 'roles' => ['admin']],
+            ['name' => 'currencies.show',       'description' => 'Ver detalles de moneda',      'roles' => ['admin']],
+            ['name' => 'currencies.edit',       'description' => 'Editar moneda',               'roles' => ['admin']],
 
             ['name' => 'classes.index',         'description' => 'Listar clases',               'roles' => ['admin']],
             ['name' => 'classes.create',        'description' => 'Crear clase',                 'roles' => ['admin']],

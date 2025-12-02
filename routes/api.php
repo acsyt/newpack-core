@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductTypeController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UserController;
@@ -51,6 +53,16 @@ Route::as('api.')
     });
 
     // Route::middleware('auth:sanctum')->group(function (): void {
+
+        Route::prefix('roles')->group(function () {
+            Route::get("/", [RoleController::class, 'findAll'])->name('roles.findAll');
+            Route::get("/{role}", [RoleController::class, 'findById'])->name('roles.findById');
+            Route::post('/', [RoleController::class, 'createRole'])->name('roles.createRole');
+            Route::put("/{role}", [RoleController::class, 'updateRole'])->name('roles.updateRole');
+        });
+
+        Route::get('/permissions', [RoleController::class, 'getPermissions'])->name('roles.permissions');
+
         Route::prefix('users')->group(function () {
             Route::get('/', [UserController::class, 'findAllUsers'])->name('user.findAll');
             Route::post('/', [UserController::class, 'createUser'])->name('user.create');
@@ -190,8 +202,11 @@ Route::as('api.')
         });
 
         Route::prefix('product-types')->group(function () {
-            Route::get('/', [App\Http\Controllers\ProductTypeController::class, 'findAllProductTypes'])->name('product_types.findAll');
+            Route::get('/', [ProductTypeController::class, 'findAllProductTypes'])->name('product_types.findAll');
         });
 
+        Route::prefix('currencies')->group(function () {
+            Route::get('/', [CurrencyController::class, 'findAllCurrencies'])->name('currencies.findAll');
+        });
     // });
 });

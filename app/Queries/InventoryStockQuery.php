@@ -39,7 +39,7 @@ class InventoryStockQuery extends BaseQuery
             }),
 
             // Warehouse filters
-            AllowedFilter::exact('warehouse.id', 'warehouse_id'),
+            AllowedFilter::exact('warehouse_id'),
 
             // Warehouse Location filters
             AllowedFilter::callback('warehouseLocation.search', function ($query, $value) {
