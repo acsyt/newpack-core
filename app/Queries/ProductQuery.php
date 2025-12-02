@@ -20,10 +20,6 @@ class ProductQuery extends BaseQuery
             AllowedFilter::partial('sku'),
             AllowedFilter::exact('type'),
             AllowedFilter::exact('is_active'),
-            AllowedFilter::exact('is_sellable'),
-            AllowedFilter::exact('is_purchasable'),
-            AllowedFilter::scope('raw_material'),
-            AllowedFilter::scope('compound'),
             AllowedFilter::scope('search'),
         ];
     }
