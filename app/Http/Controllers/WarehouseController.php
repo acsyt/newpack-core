@@ -58,7 +58,7 @@ class WarehouseController extends Controller
         $warehouse = app(CreateWarehouseAction::class)->handle($data);
         return response()->json([
             'data'      => new WarehouseResource($warehouse),
-            'message'   => 'Warehouse created successfully',
+            'message'   => 'Almacén creado exitosamente',
         ], Response::HTTP_CREATED);
     }
 
@@ -105,7 +105,7 @@ class WarehouseController extends Controller
         $warehouse = app(UpdateWarehouseAction::class)->handle($warehouse, $data);
         return response()->json([
             'data'      => new WarehouseResource($warehouse),
-            'message'   => 'Warehouse updated successfully',
+            'message'   => 'Almacén actualizado exitosamente',
         ], Response::HTTP_OK);
     }
 

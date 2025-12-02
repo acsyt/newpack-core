@@ -26,6 +26,7 @@ class InventoryMovement extends Model
         'user_id',
         'notes',
         'related_movement_id',
+        'transfer_id',
     ];
 
     protected $casts = [
@@ -67,5 +68,10 @@ class InventoryMovement extends Model
     public function relatedMovement(): BelongsTo
     {
         return $this->belongsTo(InventoryMovement::class, 'related_movement_id');
+    }
+
+    public function transfer(): BelongsTo
+    {
+        return $this->belongsTo(Transfer::class);
     }
 }

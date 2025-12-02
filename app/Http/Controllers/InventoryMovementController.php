@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\Inventory\CreateInventoryTransferAction;
+use App\Http\Actions\Inventory\ShipTransferAction;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Inventory\ShipTransferRequest;
 use App\Http\Requests\Inventory\StoreInventoryMovementRequest;
-use App\Http\Requests\Inventory\StoreInventoryTransferRequest;
 use App\Http\Resources\InventoryMovementResource;
+use App\Http\Resources\TransferResource;
 use App\Queries\InventoryMovementQuery;
+use Illuminate\Support\Facades\Auth;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(name: 'Inventory Movements')]
@@ -16,7 +18,7 @@ class InventoryMovementController extends Controller
     /**
      * @OA\Get(
      *     path="/api/inventory/movements",
-     *     summary="List all inventory movements (Kardex)",
+     *     summary="List all inventory movements",
      *     tags={"Inventory Movements"},
      *     security={{"sanctum": {}}},
      *     @OA\Parameter(name="page", in="query", required=false, @OA\Schema(type="integer")),
@@ -116,7 +118,7 @@ class InventoryMovementController extends Controller
     /**
      * @OA\Post(
      *     path="/api/inventory/movements/transfer",
-     *     summary="Create a new inventory transfer",
+     *     summary="Ship a new inventory transfer",
      *     tags={"Inventory Movements"},
      *     security={{"sanctum": {}}},
      *     @OA\RequestBody(
@@ -142,13 +144,19 @@ class InventoryMovementController extends Controller
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Transfer created successfully"
+     *         description="Transfer shipped successfully"
      *     )
      * )
      */
-    public function transfer(StoreInventoryTransferRequest $request)
+    public function transfer(ShipTransferRequest $request)
     {
-        CreateInventoryTransferAction::handle($request->validated());
-        return response()->json(['message' => 'Transfer created successfully'], 201);
+        $authId = Auth::id();
+        $transfer = ShipTransferAction::handle($request->validated(), $authId);
+
+        return response()->json([
+            'data' => new TransferResource($transfer),
+            'message' => 'Transferencia enviada correctamente'
+        ], 201);
     }
 }
+

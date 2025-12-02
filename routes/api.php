@@ -17,6 +17,7 @@ use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\WarehouseLocationController;
 use App\Http\Controllers\InventoryStockController;
 use App\Http\Controllers\InventoryMovementController;
+use App\Http\Controllers\TransferController;
 use App\Http\Controllers\ZipCodeController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\CityController;
@@ -52,7 +53,7 @@ Route::as('api.')
         });
     });
 
-    // Route::middleware('auth:sanctum')->group(function (): void {
+    Route::middleware('auth:sanctum')->group(function (): void {
 
         Route::prefix('roles')->group(function () {
             Route::get("/", [RoleController::class, 'findAll'])->name('roles.findAll');
@@ -193,10 +194,18 @@ Route::as('api.')
 
             Route::prefix('movements')->group(function () {
                 Route::get('/', [InventoryMovementController::class, 'findAllMovements'])->name('inventory_movements.findAll');
-                Route::post('/', [InventoryMovementController::class, 'store'])->name('inventory_movements.store');
+                // Route::post('/', [InventoryMovementController::class, 'store'])->name('inventory_movements.store'); ???
                 Route::post('/transfer', [InventoryMovementController::class, 'transfer'])->name('inventory_movements.transfer');
                 Route::prefix('{movement}')->group(function () {
                     Route::get('/', [InventoryMovementController::class, 'findOneMovement'])->name('inventory_movements.findOne');
+                });
+            });
+
+            Route::prefix('transfers')->group(function () {
+                Route::get('/', [TransferController::class, 'index'])->name('inventory_transfers.index');
+                Route::prefix('{id}')->group(function () {
+                    Route::get('/', [TransferController::class, 'show'])->name('inventory_transfers.show');
+                    Route::post('/receive', [TransferController::class, 'receive'])->name('inventory_transfers.receive');
                 });
             });
         });
@@ -208,5 +217,5 @@ Route::as('api.')
         Route::prefix('currencies')->group(function () {
             Route::get('/', [CurrencyController::class, 'findAllCurrencies'])->name('currencies.findAll');
         });
-    // });
+    });
 });

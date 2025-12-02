@@ -39,4 +39,5 @@ class Warehouse extends Model
     {
         return $query->where('name', 'like', "%{$search}%");
     }
+
 }
