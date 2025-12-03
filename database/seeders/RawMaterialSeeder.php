@@ -39,10 +39,7 @@ class RawMaterialSeeder extends Seeder
                     'measure_unit_id'       => $measureUnit ? $measureUnit->id : $defaultUnitId,
                     'product_class_id'      => $productClass ? $productClass->id : null,
                     'product_subclass_id'   => $productSubclass ? $productSubclass->id : null,
-                    'is_purchasable'        => true,
-                    'is_sellable'           => false,
                     'current_stock'         => 0,
-                    'average_cost'          => 0,
                 ]
             );
         }

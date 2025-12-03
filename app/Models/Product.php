@@ -21,18 +21,13 @@ class Product extends Model
         'measure_unit_id',
         'product_class_id',
         'product_subclass_id',
-        'average_cost',
-        'last_purchase_price',
         'current_stock',
         'min_stock',
         'max_stock',
         'is_active',
-        'is_sellable',
-        'is_purchasable',
     ];
 
     protected $casts = [
-        'average_cost' => 'decimal:4',
         'current_stock' => 'decimal:4',
         'is_active' => 'boolean',
     ];
@@ -90,20 +85,6 @@ class Product extends Model
             ->using(ProductCompound::class)
             ->withPivot(['id', 'quantity', 'wastage_percent', 'process_stage', 'is_active'])
             ->withTimestamps();
-    }
-
-    public function scopeRawMaterial($query)
-    {
-        return $query->whereHas('productType', function ($q) {
-            $q->where('code', ProductType::PRODUCT_TYPE_RAW);
-        });
-    }
-
-    public function scopeCompound($query)
-    {
-        return $query->whereHas('productType', function ($q) {
-            $q->where('code', ProductType::PRODUCT_TYPE_COMPOUND);
-        });
     }
 
     public function scopeSearch($query, $search)

@@ -12,7 +12,7 @@ use Illuminate\Validation\Rule;
  *     type="object",
  *     @OA\Property(property="name", type="string", nullable=true, example="Polietileno de Baja Densidad"),
  *     @OA\Property(property="sku", type="string", nullable=true, example="MP-PEBD-001"),
- *     @OA\Property(property="type", type="string", enum={"raw_material", "compound", "ingredient", "service", "wip"}, nullable=true, example="raw_material"),
+ *     @OA\Property(property="type", type="string", enum={"PT", "MP", "SERV", "COMP", "REF"}, nullable=true, example="MP"),
  *     @OA\Property(property="measure_unit_id", type="integer", nullable=true, example=1),
  *     @OA\Property(property="average_cost", type="number", format="float", nullable=true, example=25.50),
  *     @OA\Property(property="last_purchase_price", type="number", format="float", nullable=true, example=24.00),
@@ -50,14 +50,10 @@ class UpdateProductRequest extends FormRequest
             'sku'                   => ['sometimes', 'string', 'max:100', Rule::unique('products', 'sku')->ignore($this->route('product'))],
             'type'                  => ['sometimes', Rule::enum(ProductType::class)],
             'measure_unit_id'       => ['sometimes', 'integer', 'exists:measure_units,id'],
-            'average_cost'          => ['nullable', 'numeric', 'min:0'],
-            'last_purchase_price'   => ['nullable', 'numeric', 'min:0'],
             'current_stock'         => ['nullable', 'numeric', 'min:0'],
             'min_stock'             => ['nullable', 'numeric', 'min:0'],
             'max_stock'             => ['nullable', 'numeric', 'min:0'],
             'is_active'             => ['boolean'],
-            'is_sellable'           => ['boolean'],
-            'is_purchasable'        => ['boolean'],
 
             // Validación para ingredientes
             'ingredients'                   => ['nullable', 'array'],

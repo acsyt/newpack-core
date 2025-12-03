@@ -121,6 +121,18 @@ class SyncPermissions extends Command
 
             ['name' => 'inventory-stocks.index',     'description' => 'Listar existencias (Stock)',      'roles' => ['admin']],
             ['name' => 'inventory-stocks.export',    'description' => 'Exportar existencias',            'roles' => ['admin']],
+
+            ['name' => 'raw-materials.index',           'description' => 'Listar materias primas',               'roles' => ['admin']],
+            ['name' => 'raw-materials.create',          'description' => 'Crear materia prima',               'roles' => ['admin']],
+            ['name' => 'raw-materials.export',          'description' => 'Exportar listado de materias primas',   'roles' => ['admin']],
+            ['name' => 'raw-materials.show',            'description' => 'Ver detalles de materia prima',         'roles' => ['admin']],
+            ['name' => 'raw-materials.edit',            'description' => 'Editar materia prima',                  'roles' => ['admin']],
+
+            ['name' => 'compounds.index',           'description' => 'Listar compuestos',               'roles' => ['admin']],
+            ['name' => 'compounds.create',          'description' => 'Crear compuesto',               'roles' => ['admin']],
+            ['name' => 'compounds.export',          'description' => 'Exportar listado de compuestos',   'roles' => ['admin']],
+            ['name' => 'compounds.show',            'description' => 'Ver detalles de compuesto',         'roles' => ['admin']],
+            ['name' => 'compounds.edit',            'description' => 'Editar compuesto',                  'roles' => ['admin']],
         ]);
     }
 

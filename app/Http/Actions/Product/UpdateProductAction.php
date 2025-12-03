@@ -6,9 +6,9 @@ use App\Enums\ProductType;
 use App\Exceptions\CustomException;
 use App\Models\Product;
 use Exception;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 class UpdateProductAction
@@ -25,10 +25,13 @@ class UpdateProductAction
             $ingredients = $data['ingredients'] ?? null;
             unset($data['ingredients']);
 
+            $data['slug'] = Str::slug($data['name'] ?? $product->name);
+
             $product->update($data);
+            $product->load('productType');
 
             if ($ingredients !== null) {
-                if ($product->type === ProductType::COMPOUND) {
+                if ($product->productType->code === ProductType::COMPOUND->value) {
                     $this->syncIngredients->handle($product, $ingredients);
                 } elseif (!empty($ingredients)) {
                     throw new CustomException(
@@ -41,7 +44,7 @@ class UpdateProductAction
             }
 
             DB::commit();
-            $product->load('ingredients');
+            $product->load(['ingredients.productType', 'ingredients.measureUnit']);
 
             return $product;
 

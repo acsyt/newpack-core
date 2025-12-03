@@ -7,6 +7,7 @@ use App\Http\Actions\Product\UpdateProductAction;
 use App\Http\Resources\ProductResource;
 use App\Http\Requests\Product\StoreProductRequest;
 use App\Http\Requests\Product\UpdateProductRequest;
+use App\Models\Product;
 use App\Queries\ProductQuery;
 use Symfony\Component\HttpFoundation\Response;
 use OpenApi\Attributes as OA;
@@ -28,10 +29,6 @@ class ProductController extends Controller
      *     @OA\Parameter(name="filter[sku]", in="query", required=false, @OA\Schema(type="string"), description="Filter by SKU (partial match)"),
      *     @OA\Parameter(name="filter[type]", in="query", required=false, @OA\Schema(type="string"), description="Filter by type (exact match): raw_material, compound, ingredient, service, wip"),
      *     @OA\Parameter(name="filter[is_active]", in="query", required=false, @OA\Schema(type="boolean"), description="Filter by active status"),
-     *     @OA\Parameter(name="filter[is_sellable]", in="query", required=false, @OA\Schema(type="boolean"), description="Filter by sellable status"),
-     *     @OA\Parameter(name="filter[is_purchasable]", in="query", required=false, @OA\Schema(type="boolean"), description="Filter by purchasable status"),
-     *     @OA\Parameter(name="filter[raw_material]", in="query", required=false, @OA\Schema(type="boolean"), description="Filter for raw material products only"),
-     *     @OA\Parameter(name="filter[compound]", in="query", required=false, @OA\Schema(type="boolean"), description="Filter for compound products only"),
      *     @OA\Parameter(name="filter[search]", in="query", required=false, @OA\Schema(type="string"), description="Search across multiple fields using the search scope"),
      *     @OA\Parameter(name="include", in="query", required=false, @OA\Schema(type="string"), description="Include relationships: ingredients, usedInCompounds"),
      *     @OA\Response(response=200, description="Products list", @OA\JsonContent(ref="#/components/schemas/ProductResource")),
@@ -55,14 +52,14 @@ class ProductController extends Controller
      *     @OA\Response(response=422, description="Validation error")
      * )
      */
-    public function createProduct(StoreProductRequest $request)
+    public function createProduct(StoreProductRequest $request, CreateProductAction $createProductAction)
     {
         $data = $request->validated();
-        $product = app(CreateProductAction::class)->handle($data);
+        $product = $createProductAction->handle($data);
 
         return response()->json([
             'data'      => new ProductResource($product),
-            'message'   => 'Product created successfully',
+            'message'   => 'Registro creado exitosamente',
         ], Response::HTTP_CREATED);
     }
 
@@ -103,15 +100,14 @@ class ProductController extends Controller
      *     @OA\Response(response=422, description="Validation error")
      * )
      */
-    public function updateProduct(UpdateProductRequest $request, $id)
+    public function updateProduct(UpdateProductRequest $request, Product $product, UpdateProductAction $updateProductAction)
     {
-        $product = ProductQuery::make()->findById((int) $id);
         $data = $request->validated();
-        $product = app(UpdateProductAction::class)->handle($product, $data);
+        $product = $updateProductAction->handle($product, $data);
 
         return response()->json([
             'data'      => new ProductResource($product),
-            'message'   => 'Product updated successfully',
+            'message'   => 'Registro actualizado exitosamente',
         ], Response::HTTP_OK);
     }
 

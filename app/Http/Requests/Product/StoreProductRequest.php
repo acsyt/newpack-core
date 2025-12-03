@@ -13,7 +13,7 @@ use Illuminate\Validation\Rule;
  *     required={"name", "sku", "type", "measure_unit_id"},
  *     @OA\Property(property="name", type="string", example="Polietileno de Baja Densidad"),
  *     @OA\Property(property="sku", type="string", example="MP-PEBD-001"),
- *     @OA\Property(property="type", type="string", enum={"raw_material", "compound", "ingredient", "service", "wip"}, example="raw_material"),
+ *     @OA\Property(property="type", type="string", enum={"PT", "MP", "SERV", "COMP", "REF"}, example="MP"),
  *     @OA\Property(property="measure_unit_id", type="integer", example=1),
  *     @OA\Property(property="average_cost", type="number", format="float", nullable=true, example=25.50),
  *     @OA\Property(property="last_purchase_price", type="number", format="float", nullable=true, example=24.00),

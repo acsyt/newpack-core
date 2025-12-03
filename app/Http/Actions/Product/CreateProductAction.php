@@ -2,13 +2,14 @@
 
 namespace App\Http\Actions\Product;
 
-use App\Enums\ProductType;
 use App\Exceptions\CustomException;
+use App\Enums\ProductType;
 use App\Models\Product;
+use App\Models\ProductType as ModelsProductType;
 use Exception;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 class CreateProductAction
@@ -23,25 +24,31 @@ class CreateProductAction
 
         try {
             $ingredients = $data['ingredients'] ?? [];
+            Log::info('Ingredients', ['ingredients' => $ingredients]);
             unset($data['ingredients']);
 
-            if ($data['type'] === ProductType::RAW_MATERIAL->value) {
-                $data['is_purchasable'] = $data['is_purchasable'] ?? true;
-                $data['is_sellable'] = $data['is_sellable'] ?? false;
-            } elseif ($data['type'] === ProductType::COMPOUND->value) {
-                $data['is_purchasable'] = $data['is_purchasable'] ?? false;
-                $data['is_sellable'] = $data['is_sellable'] ?? true;
+            $productType = ModelsProductType::where('code', $data['type'])->first();
+            
+            if (!$productType) {
+                throw new CustomException(
+                    'El tipo de producto no existe.',
+                    Response::HTTP_NOT_FOUND
+                );
             }
+
+            $data['product_type_id'] = $productType->id;
+            $data['slug'] = Str::slug($data['name']);
 
             $product = Product::create($data);
 
-            if ($product->type === ProductType::COMPOUND && !empty($ingredients)) {
+            if ($productType->code === ProductType::COMPOUND->value && !empty($ingredients)) {
                 $this->syncIngredients->handle($product, $ingredients);
             }
 
+            $product->load(['ingredients.productType', 'ingredients.measureUnit']);
+            
             DB::commit();
-            $product->load('ingredients');
-
+            
             return $product;
 
         } catch (CustomException $e) {
