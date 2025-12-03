@@ -28,7 +28,7 @@ class ProductIngredientResource extends JsonResource
             'id'                => $this->id,
             'name'              => $this->name,
             'sku'               => $this->sku,
-            'type'              => $this->type->value,
+            'type'              => $this->productType?->code ?? null,
             'measureUnit'       => $this->measureUnit ? [
                 'id' => $this->measureUnit->id,
                 'name' => $this->measureUnit->name,
