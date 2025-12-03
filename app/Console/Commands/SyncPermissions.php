@@ -136,7 +136,7 @@ class SyncPermissions extends Command
             ['name' => 'compounds.show',            'description' => 'Ver detalles de compuesto',         'roles' => ['admin']],
             ['name' => 'compounds.edit',            'description' => 'Editar compuesto',                  'roles' => ['admin']],
 
-            ['name' => 'purchased-orders.index',    'description' => 'Listar órdenes de compra',          'roles' => ['admin']],
+            ['name' => 'purchase-orders.index',    'description' => 'Listar órdenes de compra',          'roles' => ['admin']],
         ]);
     }
 

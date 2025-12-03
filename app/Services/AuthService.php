@@ -25,7 +25,6 @@ class AuthService
 
         $user = User::with('roles.permissions')->firstWhere('email', $email);
 
-        //
         if (!$user || !Hash::check($password, $user->password)) {
 
 
@@ -33,7 +32,7 @@ class AuthService
                 Hash::check($password, '$2y$10$usesomesillystringfore7hnbRJHxXVLeakoG8K30oukPsA.ztMG');
             }
 
-            throw ValidationException::withMessages(['email' => ['Invalid username or password']]);
+            throw new CustomException('Invalid username or password', 401, ['email' => ['Invalid username or password']]);
         }
 
         if (isset($user->active) && !$user->active) {
