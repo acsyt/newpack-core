@@ -3,6 +3,7 @@
 namespace App\Http\Actions\Product;
 
 use App\Exceptions\CustomException;
+use App\Enums\ProductType;
 use App\Models\Product;
 use App\Models\ProductType as ModelsProductType;
 use Exception;
@@ -23,6 +24,7 @@ class CreateProductAction
 
         try {
             $ingredients = $data['ingredients'] ?? [];
+            Log::info('Ingredients', ['ingredients' => $ingredients]);
             unset($data['ingredients']);
 
             $productType = ModelsProductType::where('code', $data['type'])->first();
@@ -39,7 +41,11 @@ class CreateProductAction
 
             $product = Product::create($data);
 
-            $product->load('ingredients');
+            if ($productType->code === ProductType::COMPOUND->value && !empty($ingredients)) {
+                $this->syncIngredients->handle($product, $ingredients);
+            }
+
+            $product->load(['ingredients.productType', 'ingredients.measureUnit']);
             
             DB::commit();
             

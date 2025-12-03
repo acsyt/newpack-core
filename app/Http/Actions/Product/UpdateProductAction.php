@@ -28,9 +28,10 @@ class UpdateProductAction
             $data['slug'] = Str::slug($data['name'] ?? $product->name);
 
             $product->update($data);
+            $product->load('productType');
 
             if ($ingredients !== null) {
-                if ($product->type === ProductType::COMPOUND) {
+                if ($product->productType->code === ProductType::COMPOUND->value) {
                     $this->syncIngredients->handle($product, $ingredients);
                 } elseif (!empty($ingredients)) {
                     throw new CustomException(
@@ -43,7 +44,7 @@ class UpdateProductAction
             }
 
             DB::commit();
-            $product->load('ingredients');
+            $product->load(['ingredients.productType', 'ingredients.measureUnit']);
 
             return $product;
 
