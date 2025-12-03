@@ -43,7 +43,7 @@ Route::as('api.')
         Route::get('/validate-token', [AuthController::class, 'validateToken'])->name('password.validate_token');
         Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 
-        Route::post('/send-verification-email', [AuthController::class, 'sendVerificationEmail'])->name('auth.send_verification');
+    Route::post('/send-verification-email', [AuthController::class, 'sendVerificationEmail'])->name('auth.send_verification');
 
         Route::post('/verify-email-token', [AuthController::class, 'verifyEmailWithToken'])->name('auth.verify_email_token');
         Route::get('/verify-email/{id}/{hash}', [AuthController::class, 'verifyEmail'])->name('verification.verify');
@@ -71,6 +71,7 @@ Route::as('api.')
             Route::prefix('{user}')->group(function (): void {
                 Route::get('/', [UserController::class, 'findOneUser'])->name('user.findOne');
                 Route::patch('/', [UserController::class, 'updateUser'])->name('user.update');
+                Route::put('/password', [UserController::class, 'updatePassword'])->name('user.updatePassword');
                 Route::delete('/', [UserController::class, 'deleteUser'])->name('user.delete');
             });
         });

@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Actions\User\CreateUserAction;
 use App\Http\Actions\User\UpdateUserAction;
+use App\Http\Actions\User\UpdateUserPasswordAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\StoreUserRequest;
+use App\Http\Requests\User\UpdateUserPasswordRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
@@ -145,6 +147,43 @@ class UserController extends Controller
         return response()->json([
             'data'    => new UserResource($updatedUser),
             'message' => 'User updated successfully'
+        ]);
+    }
+
+    /**
+     * @OA\Put(
+     *     path="/api/users/{id}/password",
+     *     summary="Update user password",
+     *     tags={"Users"},
+     *     security={{"sanctum": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="User ID"
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/UpdateUserPasswordRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Password updated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Password updated successfully")
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="User not found"),
+     *     @OA\Response(response=422, description="Validation error")
+     * )
+     */
+    public function updatePassword(UpdateUserPasswordRequest $request, $id): Response
+    {
+        /** @var User $user */
+        $user = UserQuery::make()->findByIdOrFail($id);
+        UpdateUserPasswordAction::handle($user, $request->input('password'));
+        return response()->json([
+            'message' => 'Password updated successfully'
         ]);
     }
 

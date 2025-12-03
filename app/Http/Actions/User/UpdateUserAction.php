@@ -14,14 +14,12 @@ class UpdateUserAction
 
         DB::beginTransaction();
         try {
-            if (isset($data['password'])) {
-                $data['password'] = Hash::make($data['password']);
-            }
+
 
             if (isset($data['role_id'])) {
                 $role = Role::find($data['role_id']);
                 if ($role) {
-                    $user->assignRole($role);
+                    $user->syncRoles($role);
                 }
             }
 

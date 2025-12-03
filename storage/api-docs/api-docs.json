@@ -930,6 +930,247 @@
                 ]
             }
         },
+        "/api/currencies": {
+            "get": {
+                "tags": [
+                    "Currencies"
+                ],
+                "summary": "List all currencies",
+                "operationId": "138b79293fd37fbbf65e1d7efb618b61",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filter[id]",
+                        "in": "query",
+                        "description": "Filter by currency ID (exact match)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filter[name]",
+                        "in": "query",
+                        "description": "Filter by name (partial match)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[code]",
+                        "in": "query",
+                        "description": "Filter by code (partial match)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[active]",
+                        "in": "query",
+                        "description": "Filter by active status (exact match)",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "filter[created_at]",
+                        "in": "query",
+                        "description": "Filter by creation date range (format: YYYY-MM-DD,YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[updated_at]",
+                        "in": "query",
+                        "description": "Filter by last update date range (format: YYYY-MM-DD,YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of currencies",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/CurrencyResource"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Currencies"
+                ],
+                "summary": "Create a new currency",
+                "operationId": "99c227d60641db3241cd115a067675f5",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreCurrencyRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Currency created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/CurrencyResource"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Currency created successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/currencies/{id}": {
+            "get": {
+                "tags": [
+                    "Currencies"
+                ],
+                "summary": "Get currency by ID",
+                "operationId": "451da833d1ef00573a253afefb3454ab",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Currency ID",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Currency details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CurrencyResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Currency not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Currencies"
+                ],
+                "summary": "Update a currency",
+                "operationId": "69bdfe45cf6e8850ab10092732bc6ece",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Currency ID",
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateCurrencyRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Currency updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/CurrencyResource"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Currency updated successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Currency not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/customers": {
             "get": {
                 "tags": [
@@ -1215,7 +1456,7 @@
                 "tags": [
                     "Inventory Movements"
                 ],
-                "summary": "List all inventory movements (Kardex)",
+                "summary": "List all inventory movements",
                 "operationId": "8a7df6d142466c493a0b935ad4fdfcb4",
                 "parameters": [
                     {
@@ -1463,7 +1704,7 @@
                 "tags": [
                     "Inventory Movements"
                 ],
-                "summary": "Create a new inventory transfer",
+                "summary": "Ship a new inventory transfer",
                 "operationId": "278961350bce7af47cda7de589a4859a",
                 "requestBody": {
                     "required": true,
@@ -1524,7 +1765,7 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Transfer created successfully"
+                        "description": "Transfer shipped successfully"
                     }
                 },
                 "security": [
@@ -2299,42 +2540,6 @@
                         }
                     },
                     {
-                        "name": "filter[is_sellable]",
-                        "in": "query",
-                        "description": "Filter by sellable status",
-                        "required": false,
-                        "schema": {
-                            "type": "boolean"
-                        }
-                    },
-                    {
-                        "name": "filter[is_purchasable]",
-                        "in": "query",
-                        "description": "Filter by purchasable status",
-                        "required": false,
-                        "schema": {
-                            "type": "boolean"
-                        }
-                    },
-                    {
-                        "name": "filter[raw_material]",
-                        "in": "query",
-                        "description": "Filter for raw material products only",
-                        "required": false,
-                        "schema": {
-                            "type": "boolean"
-                        }
-                    },
-                    {
-                        "name": "filter[compound]",
-                        "in": "query",
-                        "description": "Filter for compound products only",
-                        "required": false,
-                        "schema": {
-                            "type": "boolean"
-                        }
-                    },
-                    {
                         "name": "filter[search]",
                         "in": "query",
                         "description": "Search across multiple fields using the search scope",
@@ -2785,6 +2990,80 @@
                     },
                     "422": {
                         "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/product-types": {
+            "get": {
+                "tags": [
+                    "Product Types"
+                ],
+                "summary": "Get all product types",
+                "operationId": "e9d20f28e9c70287daa00d6adef32f5e",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filter[code]",
+                        "in": "query",
+                        "description": "Filter by code (partial match)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[name]",
+                        "in": "query",
+                        "description": "Filter by name (partial match)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Sort by field (prefix with - for descending)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product types list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductTypeResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found"
                     }
                 },
                 "security": [
@@ -3490,6 +3769,205 @@
                 ]
             }
         },
+        "/api/inventory/transfers": {
+            "get": {
+                "tags": [
+                    "Transfers"
+                ],
+                "summary": "List all transfers",
+                "operationId": "593091cc58beac3ba48e01d6fc504de8",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filter[status]",
+                        "in": "query",
+                        "description": "Filter by status (pending, shipped, completed, cancelled)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "filter[source_warehouse_id]",
+                        "in": "query",
+                        "description": "Filter by source warehouse",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filter[destination_warehouse_id]",
+                        "in": "query",
+                        "description": "Filter by destination warehouse",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "filter[search]",
+                        "in": "query",
+                        "description": "Search by transfer number",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "description": "Include relationships (items, sourceWarehouse, destinationWarehouse, etc)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Sort by field (prefix with - for descending)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of transfers",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/inventory/transfers/{id}": {
+            "get": {
+                "tags": [
+                    "Transfers"
+                ],
+                "summary": "Get transfer by ID",
+                "operationId": "e726e43d7ff953a7867b194b7db7d493",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Transfer ID",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Transfer details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Transfer not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/inventory/transfers/{id}/receive": {
+            "post": {
+                "tags": [
+                    "Transfers"
+                ],
+                "summary": "Receive a shipped transfer",
+                "operationId": "534d4dcf67054807d23182892a0ac1d8",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Transfer ID",
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "items"
+                                ],
+                                "properties": {
+                                    "receiving_notes": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "items": {
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "transfer_item_id",
+                                                "quantity_received"
+                                            ],
+                                            "properties": {
+                                                "transfer_item_id": {
+                                                    "type": "integer"
+                                                },
+                                                "quantity_received": {
+                                                    "type": "number"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Transfer received successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/users": {
             "get": {
                 "tags": [
@@ -3746,6 +4224,62 @@
                                         "message": {
                                             "type": "string",
                                             "example": "User updated successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/users/{id}/password": {
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update user password",
+                "operationId": "3ed1985e1ca8343da92640495bb11e92",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateUserPasswordRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Password updated successfully"
                                         }
                                     },
                                     "type": "object"
@@ -4331,6 +4865,44 @@
                 },
                 "type": "object"
             },
+            "StoreCurrencyRequest": {
+                "required": [
+                    "name",
+                    "code"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "US Dollar"
+                    },
+                    "code": {
+                        "type": "string",
+                        "example": "USD"
+                    },
+                    "active": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateCurrencyRequest": {
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "US Dollar"
+                    },
+                    "code": {
+                        "type": "string",
+                        "example": "USD"
+                    },
+                    "active": {
+                        "type": "boolean",
+                        "example": true
+                    }
+                },
+                "type": "object"
+            },
             "StoreCustomerRequest": {
                 "required": [
                     "name",
@@ -4620,13 +5192,13 @@
                     "type": {
                         "type": "string",
                         "enum": [
-                            "raw_material",
-                            "compound",
-                            "ingredient",
-                            "service",
-                            "wip"
+                            "PT",
+                            "MP",
+                            "SERV",
+                            "COMP",
+                            "REF"
                         ],
-                        "example": "raw_material"
+                        "example": "MP"
                     },
                     "measure_unit_id": {
                         "type": "integer",
@@ -4722,13 +5294,13 @@
                     "type": {
                         "type": "string",
                         "enum": [
-                            "raw_material",
-                            "compound",
-                            "ingredient",
-                            "service",
-                            "wip"
+                            "PT",
+                            "MP",
+                            "SERV",
+                            "COMP",
+                            "REF"
                         ],
-                        "example": "raw_material",
+                        "example": "MP",
                         "nullable": true
                     },
                     "measure_unit_id": {
@@ -5187,6 +5759,47 @@
                         "type": "string",
                         "format": "email",
                         "example": "juan@mail.com"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "+525512345678"
+                    },
+                    "immediate_supervisor_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "secret123"
+                    },
+                    "password_confirmation": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "secret123"
+                    },
+                    "role_id": {
+                        "type": "integer",
+                        "example": 2
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateUserPasswordRequest": {
+                "required": [
+                    "password",
+                    "password_confirmation"
+                ],
+                "properties": {
+                    "password": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "newsecret123"
+                    },
+                    "password_confirmation": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "newsecret123"
                     }
                 },
                 "type": "object"
@@ -5205,6 +5818,28 @@
                         "type": "string",
                         "format": "email",
                         "example": "juan@mail.com"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "+525512345678"
+                    },
+                    "immediate_supervisor_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "secret123"
+                    },
+                    "password_confirmation": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "secret123"
+                    },
+                    "role_id": {
+                        "type": "integer",
+                        "example": 2
                     },
                     "active": {
                         "type": "boolean",
@@ -5427,6 +6062,37 @@
                         "description": "Nombre del país",
                         "type": "string",
                         "example": "México"
+                    }
+                },
+                "type": "object"
+            },
+            "CurrencyResource": {
+                "title": "Currency",
+                "description": "Currency resource representation",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "US Dollar"
+                    },
+                    "code": {
+                        "type": "string",
+                        "example": "USD"
+                    },
+                    "active": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
                     }
                 },
                 "type": "object"
@@ -5987,17 +6653,6 @@
                         "type": "integer",
                         "example": 1
                     },
-                    "averageCost": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 25.5
-                    },
-                    "lastPurchasePrice": {
-                        "type": "number",
-                        "format": "float",
-                        "example": 30,
-                        "nullable": true
-                    },
                     "currentStock": {
                         "type": "number",
                         "format": "float",
@@ -6015,14 +6670,6 @@
                         "nullable": true
                     },
                     "isActive": {
-                        "type": "boolean",
-                        "example": true
-                    },
-                    "isSellable": {
-                        "type": "boolean",
-                        "example": false
-                    },
-                    "isPurchasable": {
                         "type": "boolean",
                         "example": true
                     },
@@ -6556,6 +7203,9 @@
             "name": "Countries"
         },
         {
+            "name": "Currencies"
+        },
+        {
             "name": "Customers"
         },
         {
@@ -6577,6 +7227,9 @@
             "name": "Product Subclasses"
         },
         {
+            "name": "Product Types"
+        },
+        {
             "name": "States"
         },
         {
@@ -6584,6 +7237,9 @@
         },
         {
             "name": "Suppliers"
+        },
+        {
+            "name": "Transfers"
         },
         {
             "name": "Warehouses"

@@ -15,8 +15,12 @@ class CreateUserAction
         DB::beginTransaction();
         try {
 
-            $newPassword = Str::random(10);
-            $data['password'] = Hash::make( $newPassword );
+            if (isset($data['password'])) {
+                $data['password'] = Hash::make($data['password']);
+            } else {
+                $newPassword = Str::random(10);
+                $data['password'] = Hash::make($newPassword);
+            }
 
             $user = User::create($data);
 
