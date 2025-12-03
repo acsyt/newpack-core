@@ -5,6 +5,7 @@ namespace App\Queries;
 use App\Helpers\FilterHelper;
 use App\Models\InventoryMovement;
 use App\Queries\BaseQuery;
+use Illuminate\Database\Eloquent\Builder;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedSort;
 
@@ -27,6 +28,33 @@ class InventoryMovementQuery extends BaseQuery
             AllowedFilter::exact('user_id'),
             AllowedFilter::exact('reference_type'),
             AllowedFilter::exact('reference_id'),
+
+            AllowedFilter::callback('product.name', function (Builder $query, $value) {
+                $query->whereHas('product', function (Builder $q) use ($value) {
+                    $q->where('name', 'like', "%{$value}%")
+                        ->orWhere('sku', 'like', "%{$value}%");
+                });
+            }),
+
+            AllowedFilter::callback('user.fullName', function (Builder $query, $value) {
+                $query->whereHas('user', function (Builder $q) use ($value) {
+                    $q->where('full_name', 'like', "%{$value}%");
+                });
+            }),
+
+            AllowedFilter::callback('quantity', function (Builder $query, $value) {
+                $range = is_array($value) ? $value : explode(',', $value);
+                if (count($range) === 2) {
+                    $query->whereBetween('quantity', $range);
+                }
+            }),
+
+            AllowedFilter::callback('balance_after', function (Builder $query, $value) {
+                $range = is_array($value) ? $value : explode(',', $value);
+                if (count($range) === 2) {
+                    $query->whereBetween('balance_after', $range);
+                }
+            }),
 
             AllowedFilter::partial('sku'),
 

@@ -21,42 +21,28 @@ class InventoryStockQuery extends BaseQuery
             AllowedFilter::exact('id'),
             AllowedFilter::exact('status'),
 
-            // Product filters
-            AllowedFilter::callback('product.sku', function ($query, $value) {
-                $query->whereHas('product', function ($q) use ($value) {
-                    $q->where('sku', 'like', "%{$value}%");
-                });
-            }),
-            AllowedFilter::callback('product.name', function ($query, $value) {
-                $query->whereHas('product', function ($q) use ($value) {
-                    $q->where('name', 'like', "%{$value}%");
-                });
-            }),
+            AllowedFilter::partial('product.sku'),
+            AllowedFilter::partial('product.name'),
+
             AllowedFilter::callback('product.product_type_id', function ($query, $value) {
                 $query->whereHas('product', function ($q) use ($value) {
                     $q->where('product_type_id', $value);
                 });
             }),
 
-            // Warehouse filters
             AllowedFilter::exact('warehouse_id'),
 
-            // Warehouse Location filters
             AllowedFilter::callback('warehouseLocation.search', function ($query, $value) {
                 $query->whereHas('warehouseLocation', function ($q) use ($value) {
                     $q->whereRaw("CONCAT(aisle, ' - ', shelf, ' - ', section) LIKE ?", ["%{$value}%"]);
                 });
             }),
 
-            // Batch filters
-            AllowedFilter::callback('batch.code', function ($query, $value) {
-                $query->whereHas('batch', function ($q) use ($value) {
-                    $q->where('code', 'like', "%{$value}%");
-                });
-            }),
+            AllowedFilter::partial('batch.code'),
 
             AllowedFilter::callback('created_at', FilterHelper::dateRange('created_at')),
             AllowedFilter::callback('updated_at', FilterHelper::dateRange('updated_at')),
+
             AllowedFilter::callback('search', function ($query, $value) {
                 $query->whereHas('product', function ($q) use ($value) {
                     $q->where('name', 'like', "%{$value}%")
@@ -73,6 +59,14 @@ class InventoryStockQuery extends BaseQuery
             AllowedSort::field('quantity'),
             AllowedSort::field('created_at'),
             AllowedSort::field('updated_at'),
+            AllowedSort::callback('product.name', function ($query, $descending) {
+                $direction = $descending ? 'DESC' : 'ASC';
+                $query->join('products', 'inventory_stocks.product_id', '=', 'products.id')
+                    ->orderBy('products.name', $direction)
+                    ->select('inventory_stocks.*');
+            }),
+
+
         ];
     }
 
